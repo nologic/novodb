@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="novodb">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Novodb</title>
+    
+    <link rel="stylesheet" href="css/blitzer/jquery-ui-1.9.0.custom.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <script src="js-lib/jquery-1.8.2.min.js"></script>
+    <script src="js-lib/jquery-ui-1.9.0.custom.min.js"></script>
+    <script src="js-lib/bootstrap.min.js"></script>
+    <script src="js-lib/angular.js"></script>
+    <script src="js/app.js"></script>
+</head>
+<body ng-controller="dbg">
+    <a class='btn' ng-click="targetExe()">Target EXE</a>
+    <a class='btn' ng-click="launchTarget(session_id)">Launch Target</a>
+    <a class='btn' ng-click="setBreakpoint(session_id, breakpoint_symbol)">Set Breakpoint</a>
+    <a class='btn' ng-click="getThreads(session_id)">Get Threads</a>
+    <a class='btn' ng-click="listenEvent(session_id)">Listen Event</a>
+    <a class='btn' ng-click="getModules(session_id)">Get Modules</a>
+    <a class='btn' ng-click="readMemory(session_id, memory_addr)">Read Memory</a>
+    <a class='btn' ng-click="procState(session_id)">Proc state</a>
+
+    <br>
+    Breakpoint function: <input type="text" name="input" ng-model="breakpoint_symbol" ng-pattern="word" required ng-trim="true">
+    <br>
+    Read Memory: <input type="text" name="input" ng-model="memory_addr" ng-pattern="word" required ng-trim="true">
+    <br>
+
+    <pre>Session {{session_id}}</pre> <br>
+    <pre>{{thread_list}}</pre> <br>
+    <pre>State: {{proc_state}}</pre> <br>
+    <pre>Output {{gen_output}}</pre> <br>
+    <pre>Event {{event_output}}</pre> <br>
+    <pre>modules {{module_output}}</pre> <br>
+    <pre>memory {{memory_output}}</pre> <br>
+</body>
+</html>

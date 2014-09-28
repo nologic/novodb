@@ -1,0 +1,50 @@
+//
+//  dbg_handler.h
+//  Novodb
+//
+//  Created by mike on 9/10/14.
+//  Copyright (c) 2014 Mikhail Sosonkin. All rights reserved.
+//
+
+#ifndef __Novodb__dbg_handler__
+#define __Novodb__dbg_handler__
+
+#include "include/cef_app.h"
+#include "boost/network/uri.hpp"
+
+#include "request_router.h"
+
+class DbgResourceHandler : public CefResourceHandler {
+public:
+    DbgResourceHandler(RequestRouter& _router) : sent(false), router(_router), response(ActionResponse::no_error()) {
+        
+    }
+
+    ~DbgResourceHandler() {
+    }
+    
+    virtual void Cancel() OVERRIDE {
+        
+    }
+    virtual bool CanGetCookie( const CefCookie& cookie ) OVERRIDE {
+        return false;
+    }
+    virtual bool CanSetCookie( const CefCookie& cookie ) OVERRIDE {
+        return false;
+    }
+    virtual void GetResponseHeaders( CefRefPtr<CefResponse> response, int64& response_length, CefString& redirectUrl) OVERRIDE;
+    virtual bool ProcessRequest( CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback) OVERRIDE;
+    virtual bool ReadResponse( void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefCallback> callback) OVERRIDE;
+
+private:
+    ActionResponse response;
+    std::string out_data;
+    boost::property_tree::ptree output;
+    
+    bool sent;
+    RequestRouter& router;
+    
+    IMPLEMENT_REFCOUNTING(DbgResourceHandler)
+};
+
+#endif /* defined(__Novodb__dbg_handler__) */
