@@ -7,6 +7,8 @@
 //
 
 #include "llvm_scheme_handler.h"
+#include "json_serialize.h"
+#include "platform_support.h"
 
 #include <lldb/lldb-private.h>
 #include <lldb/Target/Process.h>
@@ -74,10 +76,10 @@ namespace novo {
             
             SBDebugger debugger = SBDebugger::Create();
             
-            char* val[3] = { "api", "all", NULL };
+            /*char* val[3] = { "api", "all", NULL };
             debugger.EnableLog("lldb", (const char**)val);
             debugger.SetLoggingCallback(log_cb, NULL);
-            debugger.HandleCommand("log enable -f /Users/mike/GitHub/Novodb/Build/Novodb/Build/Products/Debug/log.txt lldb api");
+            debugger.HandleCommand("log enable -f /Users/mike/GitHub/Novodb/Build/Novodb/Build/Products/Debug/log.txt lldb api");*/
             
             debugger.SetAsync(false);
             
@@ -160,11 +162,13 @@ namespace novo {
             }
         }, true);
         
-        req_router.register_path({"read", "symbols"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "symbols"}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
+            using namespace boost::property_tree;
             
             int session_id = stoi(req.at("session"));
+            int module_index = stoi(req.at("module"));
             
             if(session_id < 0 || session_id > this->sessions.size()) {
                 return ActionResponse::error(string("session out of range"));
@@ -172,7 +176,22 @@ namespace novo {
             
             LldbProcessSession& session = this->sessions[session_id];
             
-            SBSymbolContextList scontext = session.target.FindSymbols("m*");
+            SBModule module = session.target.GetModuleAtIndex(module_index);
+            auto symbols = module.GetNumSymbols();
+            ptree sym_list;
+            
+            for(decltype(symbols) s = 0; s < symbols; s++) {
+                SBSymbol symbol = module.GetSymbolAtIndex(s);
+                ptree sym_out;
+                
+                sym_out.put("index", to_string(s));
+                
+                to_json(symbol, sym_out, &session.target);
+                
+                sym_list.push_back(make_pair("", sym_out));
+            }
+            
+            output.put_child("symbols", sym_list);
             
             return ActionResponse::no_error();
         });
@@ -207,6 +226,7 @@ namespace novo {
                     SBSection section = mod.GetSectionAtIndex(s);
                     
                     ptree pt_section;
+                    pt_section.put("index", to_string(s));
                     pt_section.put("name", string(section.GetName()));
                     pt_section.put("address", to_string(section.GetLoadAddress(session.target)));
                     
@@ -229,6 +249,8 @@ namespace novo {
             using namespace boost::property_tree;
             
             int session_id = stoi(req.at("session"));
+            int thread_ind = stoi(req.at("thread"));
+            int frame_ind  = stoi(req.at("frame"));
             
             if(session_id < 0 || session_id > this->sessions.size()) {
                 return ActionResponse::error(string("session out of range"));
@@ -236,7 +258,7 @@ namespace novo {
             
             LldbProcessSession& session = this->sessions[session_id];
             
-            SBFrame frame = session.process.GetThreadAtIndex(0).GetFrameAtIndex(0);
+            SBFrame frame = session.process.GetThreadAtIndex(thread_ind).GetFrameAtIndex(frame_ind);
             
             SBValueList reg_vals = frame.GetRegisters();
             ptree regvals;
@@ -245,8 +267,43 @@ namespace novo {
                 SBValue reg_val = reg_vals.GetValueAtIndex(i);
                 ptree rval;
                 
-                rval.put("summary", string(reg_val.GetSummary()));
-                rval.put("value", string(reg_val.GetValue()));
+                vector< pair<string, const char*> > vals = {
+                    make_pair(string("summary"), reg_val.GetSummary()),
+                    make_pair(string("value"), reg_val.GetValue()),
+                    make_pair(string("name"), reg_val.GetName())
+                };
+            
+                for(auto p : vals) {
+                    if(p.second != nullptr) {
+                        rval.put(p.first, string(p.second));
+                        cout << p.first << " " << string(p.second) << endl;
+                    }
+                }
+                
+                ptree child_values;
+                uint32_t num_ch;
+                if(reg_val.MightHaveChildren() && (num_ch = reg_val.GetNumChildren()) > 0) {
+                    for(decltype(num_ch) c = 0; c < num_ch; c++) {
+                        ptree child_pt;
+                        SBValue regc_val(reg_val.GetChildAtIndex(c));
+                        
+                        vector< pair<string, const char*> > vals = {
+                            make_pair(string("summary"), regc_val.GetSummary()),
+                            make_pair(string("value"), regc_val.GetValue()),
+                            make_pair(string("name"), regc_val.GetName())
+                        };
+                        
+                        for(auto p : vals) {
+                            if(p.second != nullptr) {
+                                child_pt.put(p.first, string(p.second));
+                            }
+                        }
+                        
+                        child_values.push_back(make_pair("", child_pt));
+                    }
+                    
+                    rval.put_child("registers", child_values);
+                }
                 
                 regvals.push_back(make_pair("", rval));
             }
@@ -310,6 +367,41 @@ namespace novo {
             }
             
             output.put_child("threads", out_th);
+            
+            return ActionResponse::no_error();
+        });
+        
+        req_router.register_path({"list", "frames"}, [this] ACTION_CALLBACK(req, output) {
+            using namespace std;
+            using namespace lldb;
+            using namespace boost::property_tree;
+            
+            int session_id = stoi(req.at("session"));
+            int thread_ind = stoi(req.at("thread"));
+            
+            if(session_id < 0 || session_id >= this->sessions.size()) {
+                return ActionResponse::error(string("session out of range"));
+            }
+            
+            LldbProcessSession& session = this->sessions[session_id];
+            SBThread thread = session.process.GetThreadAtIndex(thread_ind);
+            
+            ptree frames_pt;
+            auto frames = thread.GetNumFrames();
+            for(decltype(frames) f = 0; f < frames; f++) {
+                SBFrame frame = thread.GetFrameAtIndex(f);
+                ptree frame_pt;
+                
+                const char* disasm = frame.Disassemble();
+                
+                if(disasm != nullptr) {
+                    frame_pt.put("disasm", string(disasm));
+                }
+                
+                frames_pt.push_back(make_pair("", frame_pt));
+            }
+            
+            output.put_child("frames", frames_pt);
             
             return ActionResponse::no_error();
         });
@@ -385,43 +477,66 @@ namespace novo {
                 return ActionResponse::error(string("Unable to wait for event"));
             }
         }, true);
-        
-        req_router.register_path({"event", "listen", "proc"}, [this] ACTION_CALLBACK(req, output) {
+
+        req_router.register_path({"read", "instructions"}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
             
             int session_id = stoi(req.at("session"));
+            addr_t addr = stoull(req.at("address"), 0, 16);
+            size_t count = stol(req.at("count"));
             
             if(session_id < 0 || session_id >= this->sessions.size()) {
                 return ActionResponse::error(string("session out of range"));
             }
             
             LldbProcessSession& session = this->sessions[session_id];
-            SBListener listener("Process Listener");
+            array<unsigned char, 4096> mem_arr;
             
-            session.process.GetBroadcaster().AddListener(listener, lldb::SBProcess::eBroadcastBitStateChanged);
-            SBEvent event;
+            SBInstructionList insts = session.target.GetInstructions(addr, mem_arr.data(), min(mem_arr.size(), count));
+            auto inst_count = insts.GetSize();
             
-            /*if(listen.WaitForEvent(60, event)) {
-                SBStream desc;
+            ptree insts_out;
+            
+            for(decltype(inst_count) i = 0; i < inst_count; i++) {
+                SBInstruction inst(insts.GetInstructionAtIndex((uint)i));
                 
-                event.GetDescription(desc);
+                ptree inst_out;
+                SBStream inst_desc;
                 
-                output.put("valid", to_string(event.IsValid()));
-                output.put("type", to_string(event.GetType()));
-                output.put("flavor", string(event.GetDataFlavor()));
-                output.put("broadcaster", string(event.GetBroadcasterClass()));
-                output.put("description", string(desc.GetData(), desc.GetSize()));
+                if(inst.GetDescription(inst_desc)) {
+                    inst_out.put("description", string(inst_desc.GetData(), inst_desc.GetSize()));
+                }
                 
-                return ActionResponse::no_error();
-            } else {
-                return ActionResponse::error(string("Unable to wait for event"));
-            }*/
+                insts_out.push_back(make_pair("", inst_out));
+            }
+            
+            output.add_child("instructions", insts_out);
             
             return ActionResponse::no_error();
-        }, true);
-
+        });
+        
+        req_router.register_path({"list", "proc"}, [this] ACTION_CALLBACK(req, output) {
+            using namespace boost::property_tree;
+            
+            ptree proc_items;
+            auto proc_list = get_process_listing();
+            
+            for(auto proc_tuple : proc_list) {
+                ptree proc_item;
+                
+                proc_item.put("pid", std::to_string(std::get<0>(proc_tuple)));
+                proc_item.put("debuggable", std::to_string(std::get<1>(proc_tuple)));
+                proc_item.put("path", std::get<2>(proc_tuple));
+                
+                proc_items.push_back(make_pair("", proc_item));
+            }
+            
+            output.put_child("processes", proc_items);
+            
+            return ActionResponse::no_error();
+        });
     }
 
 }

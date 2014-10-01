@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="novodb">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Novodb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Novodb">
+    <meta name="author" content="Mikhail Sosonkin">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">   
+    <style>
+        body { padding-top: 70px; }
+    </style>
+    <script src="js/jquery.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/novodb.js"></script>
+</head>
+
+<body ng-controller="dbg">
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span><span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button> <a class="navbar-brand" href="#">Novodb</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <!--<li class="active">
+                <a href="#">Link</a>
+            </li>
+            <li>
+                <a href="#">Link</a>
+            </li>
+            <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown<strong class="caret"></strong></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#">Action</a>
+                    </li>
+                    <li>
+                        <a href="#">Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">Something else here</a>
+                    </li>
+                    <li class="divider">
+                    </li>
+                    <li>
+                        <a href="#">Separated link</a>
+                    </li>
+                    <li class="divider">
+                    </li>
+                    <li>
+                        <a href="#">One more separated link</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" ng-model="exe_file_path" required ng-trim="true">
+            </div>
+            <button ng-click="targetExe(exe_file_path)" type="submit" class="btn btn-default">Load EXE</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="#">Link</a>
+            </li>
+            <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown<strong class="caret"></strong></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#">Action</a>
+                    </li>
+                    <li>
+                        <a href="#">Another action</a>
+                    </li>
+                    <li>
+                        <a href="#">Something else here</a>
+                    </li>
+                    <li class="divider">
+                    </li>
+                    <li>
+                        <a href="#">Separated link</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>-->
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+
+
+        </div>
+    </div>
+
+    <div class="row clearfix">
+        <div class="col-md-8 column">
+            <div class="form-group">
+                <input type="text" value="/Users/mike/cef/sample/hellow/a.out" class="form-control" ng-model="exe_file_path" required ng-trim="true" />
+                <button ng-click="targetExe(exe_file_path)" type="submit" class="btn btn-default">Load EXE</button>
+                <button class="btn btn-default" ng-click="launchTarget(session_id)">Launch</button>
+            </div>
+        </div>
+
+        <div class="col-md-4 column">
+            <pre>State: {{proc_state}}</pre>
+        </div>
+    </div>
+
+    <div class="row clearfix">
+        <div class="col-md-4 column">
+            <h2>
+                Registers
+            </h2>
+            <p>
+                {{register_output}}
+            </p>
+            <p>
+                <button class="btn btn-default" ng-click="readRegisters(session_id)">Read Registers</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Instructions
+            </h2>
+            <p>
+                {{inst_output}}
+            </p>
+            <p>
+                <input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
+                <button class="btn btn-default" ng-click="readInstructions(session_id, inst_addr)">Read Instruction</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Modules
+            </h2>
+            <p>
+                {{module_output}}
+            </p>
+            <p>
+                <button class="btn btn-default" ng-click="getModules(session_id)">Get Modules</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Memory
+            </h2>
+            <p>
+                {{memory_output}}
+            </p>
+            <p>
+                <input type="text" name="input" ng-model="read_mem_addr" required ng-trim="true">
+                <button class="btn btn-default" ng-click="readMemory(session_id, read_mem_addr)">Read Memory</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Symbols
+            </h2>
+            <p>
+                {{symbols_output}}
+            </p>
+            <p>
+                <button class="btn btn-default" ng-click="listSymbols(session_id)">List symbols</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Threads
+            </h2>
+            <p>
+                {{thread_list}}
+            </p>
+            <p>
+                <button class="btn btn-default" ng-click="getThreads(session_id)">Get Threads</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Thread Frames
+            </h2>
+            <p>
+                {{frames_list}}
+            </p>
+            <p>
+                <input type="text" name="input" ng-model="thread_ind" required ng-trim="true">
+                <button class="btn btn-default" ng-click="getFrames(session_id, thread_ind)">Get Threads</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Breakpoints
+            </h2>
+            <p>
+                {{bp_output}}
+            </p>
+            <p>
+                <input type="text" name="input" ng-model="breakpoint_symbol" required ng-trim="true">
+                <button class="btn btn-default" ng-click="setBreakpoint(session_id, breakpoint_symbol)">Set Breakpoint</button>
+            </p>
+        </div>
+        <div class="col-md-4 column">
+            <h2>
+                Processes
+            </h2>
+            <p>
+                {{proc_output}}
+            </p>
+            <p>
+                <button class="btn btn-default" ng-click="getProcesses()">Get Processes</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

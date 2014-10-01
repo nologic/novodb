@@ -201,6 +201,8 @@
 		275750A019BB32FA00784C39 /* Chromium Embedded Framework.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A419BB738D00784C39 /* Novodb Helper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */; };
 		2768F45519D7C7E300BEC791 /* llvm_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */; };
+		2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
+		2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219C19DB5BCC00592CA8 /* platform_support.cpp */; };
 		27936AB119BA3C7B00EC4B6F /* novodb-help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */; };
 		E78D966C1638A18900DE580E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78D966B1638A18900DE580E /* Cocoa.framework */; };
 		E78D96A61638BA0B00DE580E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E78D96A31638BA0B00DE580E /* main.mm */; };
@@ -438,10 +440,13 @@
 		2757501F19BB19F700784C39 /* simple_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simple_handler.h; path = Independent/simple_handler.h; sourceTree = "<group>"; };
 		2757502219BB1A3100784C39 /* simple_handler_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = simple_handler_mac.mm; path = Mac/simple_handler_mac.mm; sourceTree = "<group>"; };
 		2757502419BB1D4600784C39 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = Independent/util.h; sourceTree = "<group>"; };
-		2757502519BB221500784C39 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resources; path = CEF/cef_binary_3.1750.1738_macosx64/resources; sourceTree = "<group>"; };
 		2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "libs/cef_binary_3.1750.1738_macosx64/framework/Release/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
 		2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = llvm_scheme_handler.cpp; path = Independent/llvm_scheme_handler.cpp; sourceTree = "<group>"; };
 		2768F45419D7C7E300BEC791 /* llvm_scheme_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = llvm_scheme_handler.h; path = Independent/llvm_scheme_handler.h; sourceTree = "<group>"; };
+		2784219919D8946900592CA8 /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_serialize.cpp; path = Independent/json_serialize.cpp; sourceTree = "<group>"; };
+		2784219A19D8946900592CA8 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/json_serialize.h; sourceTree = "<group>"; };
+		2784219C19DB5BCC00592CA8 /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = Mac/platform_support.cpp; sourceTree = "<group>"; };
+		2784219F19DB5C2D00592CA8 /* platform_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform_support.h; path = Independent/platform_support.h; sourceTree = "<group>"; };
 		27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Novodb Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27936AAE19B9F3E400EC4B6F /* Novodb Helper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Novodb Helper-Info.plist"; path = "/Users/mike/GitHub/Novodb/src/Mac/Resources/Novodb Helper-Info.plist"; sourceTree = "<absolute>"; };
 		27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "novodb-help.cpp"; path = "Mac/novodb-help.cpp"; sourceTree = "<group>"; };
@@ -772,6 +777,9 @@
 				273823D919C47C7B00559F61 /* request_router.h */,
 				2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */,
 				2768F45419D7C7E300BEC791 /* llvm_scheme_handler.h */,
+				2784219919D8946900592CA8 /* json_serialize.cpp */,
+				2784219A19D8946900592CA8 /* json_serialize.h */,
+				2784219F19DB5C2D00592CA8 /* platform_support.h */,
 				E78D96721638A18900DE580E /* Supporting Files */,
 			);
 			name = Novodb;
@@ -781,7 +789,6 @@
 		E78D96721638A18900DE580E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				2757502519BB221500784C39 /* resources */,
 				2757502219BB1A3100784C39 /* simple_handler_mac.mm */,
 				E78D96A31638BA0B00DE580E /* main.mm */,
 				E78D96A01638BA0B00DE580E /* Novodb-Prefix.pch */,
@@ -791,6 +798,7 @@
 				E78D96B31638BA4B00DE580E /* Credits.rtf */,
 				E78D96B51638BA4B00DE580E /* InfoPlist.strings */,
 				E78D96B71638BA4B00DE580E /* MainMenu.xib */,
+				2784219C19DB5BCC00592CA8 /* platform_support.cpp */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1262,10 +1270,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */,
 				2757502319BB1A3100784C39 /* simple_handler_mac.mm in Sources */,
 				2768F45519D7C7E300BEC791 /* llvm_scheme_handler.cpp in Sources */,
 				2757502119BB19F700784C39 /* simple_handler.cpp in Sources */,
 				273823DA19C47C7B00559F61 /* request_router.cpp in Sources */,
+				2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */,
 				E78D96A61638BA0B00DE580E /* main.mm in Sources */,
 				271775B019C0B30100051986 /* dbg_handler.cpp in Sources */,
 				2757502019BB19F700784C39 /* simple_app.cpp in Sources */,
