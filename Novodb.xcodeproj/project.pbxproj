@@ -203,13 +203,13 @@
 		2768F45519D7C7E300BEC791 /* llvm_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */; };
 		2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
 		2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219C19DB5BCC00592CA8 /* platform_support.cpp */; };
+		278421A119DCE8B500592CA8 /* frontend in Resources */ = {isa = PBXBuildFile; fileRef = 278421A019DCE8B500592CA8 /* frontend */; };
 		27936AB119BA3C7B00EC4B6F /* novodb-help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */; };
 		E78D966C1638A18900DE580E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78D966B1638A18900DE580E /* Cocoa.framework */; };
 		E78D96A61638BA0B00DE580E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E78D96A31638BA0B00DE580E /* main.mm */; };
 		E78D96B91638BA4B00DE580E /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E78D96B31638BA4B00DE580E /* Credits.rtf */; };
 		E78D96BA1638BA4B00DE580E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E78D96B51638BA4B00DE580E /* InfoPlist.strings */; };
 		E78D96BB1638BA4B00DE580E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E78D96B71638BA4B00DE580E /* MainMenu.xib */; };
-		E78D982B1638C5D900DE580E /* html in Resources */ = {isa = PBXBuildFile; fileRef = E78D982A1638C5D900DE580E /* html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -447,6 +447,7 @@
 		2784219A19D8946900592CA8 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/json_serialize.h; sourceTree = "<group>"; };
 		2784219C19DB5BCC00592CA8 /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = Mac/platform_support.cpp; sourceTree = "<group>"; };
 		2784219F19DB5C2D00592CA8 /* platform_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform_support.h; path = Independent/platform_support.h; sourceTree = "<group>"; };
+		278421A019DCE8B500592CA8 /* frontend */ = {isa = PBXFileReference; lastKnownFileType = folder; path = frontend; sourceTree = "<group>"; };
 		27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Novodb Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27936AAE19B9F3E400EC4B6F /* Novodb Helper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Novodb Helper-Info.plist"; path = "/Users/mike/GitHub/Novodb/src/Mac/Resources/Novodb Helper-Info.plist"; sourceTree = "<absolute>"; };
 		27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "novodb-help.cpp"; path = "Mac/novodb-help.cpp"; sourceTree = "<group>"; };
@@ -461,7 +462,6 @@
 		E78D96B41638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = src/Mac/Resources/en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E78D96B61638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = src/Mac/Resources/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E78D96B81638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = src/Mac/Resources/en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		E78D982A1638C5D900DE580E /* html */ = {isa = PBXFileReference; lastKnownFileType = folder; name = html; path = src/html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -721,7 +721,7 @@
 		E78D965C1638A18900DE580E = {
 			isa = PBXGroup;
 			children = (
-				E78D982A1638C5D900DE580E /* html */,
+				278421A019DCE8B500592CA8 /* frontend */,
 				271775C219C0F0DE00051986 /* libcef_dll_wrapper */,
 				E78D96711638A18900DE580E /* Novodb */,
 				27496EB019BBCD00008DAC32 /* test_cmd */,
@@ -1066,10 +1066,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				278421A119DCE8B500592CA8 /* frontend in Resources */,
 				E78D96B91638BA4B00DE580E /* Credits.rtf in Resources */,
 				E78D96BA1638BA4B00DE580E /* InfoPlist.strings in Resources */,
 				E78D96BB1638BA4B00DE580E /* MainMenu.xib in Resources */,
-				E78D982B1638C5D900DE580E /* html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -108,49 +108,53 @@
                 <input type="text" value="/Users/mike/cef/sample/hellow/a.out" class="form-control" ng-model="exe_file_path" required ng-trim="true" />
                 <button ng-click="targetExe(exe_file_path)" type="submit" class="btn btn-default">Load EXE</button>
                 <button class="btn btn-default" ng-click="launchTarget(session_id)">Launch</button>
+                <button class="btn btn-default" ng-click="attachTarget(exe_file_path)">Attach</button>
             </div>
         </div>
 
         <div class="col-md-4 column">
-            <pre>State: {{proc_state}}</pre>
+            <pre>State: {{proc_state.description}} ({{proc_state.session}})</pre>
         </div>
     </div>
 
     <div class="row clearfix">
         <div class="col-md-4 column">
-            <h2>
-                Registers
-            </h2>
-            <p>
-                {{register_output}}
-            </p>
-            <p>
-                <button class="btn btn-default" ng-click="readRegisters(session_id)">Read Registers</button>
-            </p>
+            <button class="btn btn-default" ng-click="readRegisters(session_id)">Get Registers</button>
+            <input type="text" ng-model="reg_search" ng-trim="true">
+
+            <div ng-repeat="reg_set in register_output.registers">
+                {{ reg_set.name }}:
+                <table>
+                    <tr ng-repeat="reg in reg_set.values | filter:reg_search | filter:{value: '!!'}">
+                        <td>{{ reg.name }}</td>
+                        <td>{{ reg.value }}</td>
+                    </tr>
+                </table>
+                <hr width="75%">
+            </div>
         </div>
         <div class="col-md-4 column">
-            <h2>
-                Instructions
-            </h2>
-            <p>
-                {{inst_output}}
-            </p>
-            <p>
-                <input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
-                <button class="btn btn-default" ng-click="readInstructions(session_id, inst_addr)">Read Instruction</button>
-            </p>
+            <input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
+            <button class="btn btn-default" ng-click="readInstructions(session_id, inst_addr)">Read Instruction</button>
+
+            <table>
+                <tr ng-repeat="inst in inst_output.instructions">
+                    <td>{{ inst.description }}</td>
+                </tr>
+            </table>
+
         </div>
+
         <div class="col-md-4 column">
-            <h2>
-                Modules
-            </h2>
-            <p>
-                {{module_output}}
-            </p>
-            <p>
-                <button class="btn btn-default" ng-click="getModules(session_id)">Get Modules</button>
-            </p>
+            <button class="btn btn-default" ng-click="getModules(session_id)">Get Modules</button>
+            <input type="text" ng-model="module_search" ng-trim="true">
+            <table>
+                <tr ng-repeat="mod in module_output.modules | filter:module_search">
+                    <td>{{ mod.filename }}</td>
+                </tr>
+            </table>
         </div>
+
         <div class="col-md-4 column">
             <h2>
                 Memory
@@ -210,15 +214,14 @@
             </p>
         </div>
         <div class="col-md-4 column">
-            <h2>
-                Processes
-            </h2>
-            <p>
-                {{proc_output}}
-            </p>
-            <p>
-                <button class="btn btn-default" ng-click="getProcesses()">Get Processes</button>
-            </p>
+            <button class="btn btn-default" ng-click="getProcesses()">Get Processes</button>
+            <input type="text" ng-model="proc_search" ng-trim="true">
+            <table>
+                <tr ng-repeat="proc in proc_output | filter:proc_search">
+                    <td>{{proc.pid}}</td>
+                    <td title="{{proc.path}}">{{proc.path | limitTo:-30}}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>

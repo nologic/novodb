@@ -28,7 +28,7 @@ namespace novo {
 class LldbProcessSession {
 public:
     LldbProcessSession(const lldb::SBTarget& _target) : target(_target) {}
-    LldbProcessSession(const lldb::SBProcess& _process) : process(_process) {}
+    LldbProcessSession(const lldb::SBProcess& _process) : process(_process), target(_process.GetTarget()) {}
 
     lldb::SBProcess process;
     lldb::SBTarget target;

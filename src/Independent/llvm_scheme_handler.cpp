@@ -101,7 +101,46 @@ namespace novo {
         });
         
         req_router.register_path({"create", "target", "attach"}, [this] ACTION_CALLBACK(req, output) {
-            return ActionResponse::error(501, "Not Implemented");
+            using namespace lldb;
+            using namespace std;
+            
+            stringstream ss;
+            //string exe_path(req.at("path"));
+            lldb::pid_t pid = stoi(req.at("pid"));
+
+            SBDebugger debugger = SBDebugger::Create();
+            
+            char* val[3] = { "api", "all", NULL };
+            debugger.EnableLog("lldb", (const char**)val);
+            debugger.SetLoggingCallback(log_cb, NULL);
+            debugger.HandleCommand("log enable -f /Users/mike/GitHub/Novodb/Build/Novodb/Build/Products/Debug/log.txt lldb api");
+            
+            debugger.SetAsync(false);
+            
+            if(!debugger.IsValid()) {
+                return ActionResponse::error("Debugger not valid");
+            }
+            
+            SBTarget target = debugger.CreateTarget(nullptr);
+            
+            if(!target.IsValid()) {
+                return ActionResponse::error("Target invalid");
+            }
+            
+            SBAttachInfo attach_info(pid);
+            SBError error;
+            
+            LldbProcessSession session(target.Attach(attach_info, error));
+            
+            if(error.Success()) {
+                this->sessions.push_back(session);
+            
+                output.put("session", to_string(this->sessions.size() - 1));
+            
+                return ActionResponse::no_error();
+            } else {
+                return ActionResponse::error("Failed to attach");
+            }
         });
         
         req_router.register_path({"create", "target", "remote"}, [this] ACTION_CALLBACK(req, output) {
@@ -218,8 +257,16 @@ namespace novo {
                 
                 SBModule mod = session.target.GetModuleAtIndex(i);
                 
-                pt.put("filename", string(mod.GetFileSpec().GetFilename()));
-                pt.put("filepath", string(mod.GetFileSpec().GetDirectory()));
+                vector< pair<string, const char*> > vals = {
+                    make_pair(string("filename"), mod.GetFileSpec().GetFilename()),
+                    make_pair(string("filepath"), mod.GetFileSpec().GetDirectory()),
+                };
+                
+                for(auto p : vals) {
+                    if(p.second != nullptr) {
+                        pt.put(p.first, string(p.second));
+                    }
+                }
                 
                 auto num_sec = mod.GetNumSections();
                 for(decltype(num_sec) s = 0; s < num_sec; s++) {
@@ -302,7 +349,7 @@ namespace novo {
                         child_values.push_back(make_pair("", child_pt));
                     }
                     
-                    rval.put_child("registers", child_values);
+                    rval.put_child("values", child_values);
                 }
                 
                 regvals.push_back(make_pair("", rval));

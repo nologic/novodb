@@ -12,6 +12,14 @@ novo.controller("dbg", ['$scope', '$http',
 			});
 		};
 
+        $scope.attachTarget = function(pid) {
+            $http.get('dbg-llvm://create/target/attach?pid=' + pid).success(function(data) {
+                $scope.session_id = data.session;
+
+                $scope.listSymbols(data.session);
+            });
+        };
+
 		$scope.launchTarget = function(session_id) {
 			$http.get("dbg-llvm://launch?session=" + session_id).success(function(data) {
 				$scope.gen_output = JSON.stringify(data);
@@ -38,7 +46,7 @@ novo.controller("dbg", ['$scope', '$http',
 
 		$scope.getModules = function(session_id) {
 			$http.get('dbg-llvm://list/modules?session=' + session_id).success(function(data) {
-				$scope.module_output = JSON.stringify(data, null, "\t");
+				$scope.module_output = data;
 			});
 		};
 
@@ -59,7 +67,8 @@ novo.controller("dbg", ['$scope', '$http',
 		$scope.procState = function(session_id) {
 			$http.get('dbg-llvm://proc/state?session=' + session_id).success(function(data) {
                 data.session = session_id;
-				$scope.proc_state = JSON.stringify(data, null, "\t");
+
+                $scope.proc_state = data;
 			});
 		};
 
@@ -72,7 +81,7 @@ novo.controller("dbg", ['$scope', '$http',
                     frame: 0
                 }
             }).success(function(data) {
-				$scope.register_output = JSON.stringify(data, null, "\t");
+				$scope.register_output = data;
 			});
 		};
 
@@ -85,9 +94,7 @@ novo.controller("dbg", ['$scope', '$http',
 					address: _address
 				}
 			}).success(function(data) {
-                $scope.inst_output = data.instructions.map(function(inst) {
-                    return inst.description;
-                }).join("\n");
+                $scope.inst_output = data;
 			});
 		};
 
@@ -117,9 +124,7 @@ novo.controller("dbg", ['$scope', '$http',
 
         $scope.getProcesses = function() {
             $http.get('dbg-llvm://list/proc').success(function(data) {
-                $scope.proc_output = data.processes.map(function(proc){
-                    return proc.pid + " " + proc.path;
-                }).join("\n");
+                $scope.proc_output = data.processes;
             });
         };
 
