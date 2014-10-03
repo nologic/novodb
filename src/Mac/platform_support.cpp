@@ -126,14 +126,8 @@ std::vector<std::tuple<int, bool, std::string>> get_process_listing() {
             } else {
                 proc_vec.push_back(make_tuple(pid, (bool)allow_dbg, string(pathbuf)));
             }
-            
-            cout << string(pathbuf) << endl;
         }
-        
-        cout << " count " << procCount << endl;
     }
-    
-    cout << " count- " << procCount << endl;
     
     return proc_vec;
 }

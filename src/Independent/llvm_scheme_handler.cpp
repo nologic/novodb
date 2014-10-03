@@ -461,7 +461,7 @@ namespace novo {
             int session_id = stoi(req.at("session"));
             addr_t addr = stoull(req.at("address"), 0, 16);
             size_t get_bytes = stol(req.at("count"));
-            string sep = req.at("sep");
+            string sep = boost::network::uri::decoded(req.at("sep"));
             
             if(session_id < 0 || session_id >= this->sessions.size()) {
                 return ActionResponse::error(string("session out of range"));

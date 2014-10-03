@@ -12,6 +12,7 @@
 #include "dbg_handler.h"
 #include "request_router.h"
 #include "llvm_scheme_handler.h"
+#include "platform_support.h"
 
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
@@ -46,7 +47,7 @@ void SimpleApp::OnContextInitialized() {
   CefRefPtr<CefCommandLine> command_line = CefCommandLine::GetGlobalCommandLine();
   url = command_line->GetSwitchValue("url");
   if (url.empty()) {
-        url = "file://./html/index.html";
+        url = "file://" + app_path() + "/frontend/index.html";
   }
 
   novo::install_llvm_scheme();

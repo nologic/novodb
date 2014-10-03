@@ -14,4 +14,6 @@
 
 std::vector<std::tuple<int, bool, std::string>> get_process_listing();
 
+// on mac this is in the .mm file.
+std::string app_path();
 #endif

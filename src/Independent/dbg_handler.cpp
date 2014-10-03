@@ -68,21 +68,23 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
 }
 
 bool DbgResourceHandler::ReadResponse( void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefCallback> callback) {
-    // making a lot of assumtions here!
-    // to be redone.
-    int read_count = std::min((int)out_data.size(), bytes_to_read);
-    memcpy(data_out, out_data.data(), read_count);
+    using namespace std;
     
-    bytes_read = read_count;
+    int read_count = std::min((int)(out_data.size() - bytes_sent), bytes_to_read);
     
-    std::cout << "bytes_read " << bytes_read << " " << out_data << std::endl;
-
-    callback->Continue();
-    
-    if(!sent) {
-        sent = true;
-        return true;
-    } else {
+    if(read_count <= 0) {
+        bytes_read = 0;
+        callback->Continue();
+        
         return false;
     }
+    
+    memcpy(data_out, (out_data.data() + (bytes_sent * sizeof(string::value_type))), read_count * sizeof(string::value_type));
+    
+    bytes_read = read_count;
+    bytes_sent += read_count;
+    
+    callback->Continue();
+    
+    return true;
 }

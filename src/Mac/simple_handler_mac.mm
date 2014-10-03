@@ -19,3 +19,7 @@ void SimpleHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
   NSString* str = [NSString stringWithUTF8String:titleStr.c_str()];
   [window setTitle:str];
 }
+
+std::string app_path() {
+    return [[[NSBundle mainBundle] resourcePath] cStringUsingEncoding:NSUTF8StringEncoding];
+}

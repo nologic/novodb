@@ -790,6 +790,7 @@
 			isa = PBXGroup;
 			children = (
 				2757502219BB1A3100784C39 /* simple_handler_mac.mm */,
+				2784219C19DB5BCC00592CA8 /* platform_support.cpp */,
 				E78D96A31638BA0B00DE580E /* main.mm */,
 				E78D96A01638BA0B00DE580E /* Novodb-Prefix.pch */,
 				27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */,
@@ -798,7 +799,6 @@
 				E78D96B31638BA4B00DE580E /* Credits.rtf */,
 				E78D96B51638BA4B00DE580E /* InfoPlist.strings */,
 				E78D96B71638BA4B00DE580E /* MainMenu.xib */,
-				2784219C19DB5BCC00592CA8 /* platform_support.cpp */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

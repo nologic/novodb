@@ -16,7 +16,9 @@
 
 class DbgResourceHandler : public CefResourceHandler {
 public:
-    DbgResourceHandler(RequestRouter& _router) : sent(false), router(_router), response(ActionResponse::no_error()) {
+    DbgResourceHandler(RequestRouter& _router) : router(_router),
+                                                 bytes_sent(0),
+                                                 response(ActionResponse::no_error()) {
         
     }
 
@@ -41,7 +43,7 @@ private:
     std::string out_data;
     boost::property_tree::ptree output;
     
-    bool sent;
+    int bytes_sent;
     RequestRouter& router;
     
     IMPLEMENT_REFCOUNTING(DbgResourceHandler)

@@ -106,7 +106,7 @@ novo.controller("dbg", ['$scope', '$http',
 					module: 0,
 				}
 			}).success(function(data) {
-				$scope.symbols_output = JSON.stringify(data, null, "\t");
+				$scope.symbols_output = data;
 			});
 		};
 
