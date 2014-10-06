@@ -98,7 +98,7 @@ namespace novo {
             output.put("session", to_string(this->sessions.size() - 1));
             
             return ActionResponse::no_error();
-        });
+        }, true);
         
         req_router.register_path({"create", "target", "attach"}, [this] ACTION_CALLBACK(req, output) {
             using namespace lldb;
@@ -141,7 +141,7 @@ namespace novo {
             } else {
                 return ActionResponse::error("Failed to attach");
             }
-        });
+        }, true);
         
         req_router.register_path({"create", "target", "remote"}, [this] ACTION_CALLBACK(req, output) {
             return ActionResponse::error(501, "Not Implemented");

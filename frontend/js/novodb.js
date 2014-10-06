@@ -1,8 +1,8 @@
 //function format_mem
 
-var novo = angular.module('novodb', []);
+var novo = angular.module('novodb', ['ui.bootstrap']);
 
-novo.controller("dbg", ['$scope', '$http', 
+novo.controller("dbg", ['$scope', '$http',
 	function($scope, $http) {
         $scope.targetExe = function(path) {
 			$http.get('dbg-llvm://create/target/exe?path=' + path).success(function(data) {
@@ -103,7 +103,7 @@ novo.controller("dbg", ['$scope', '$http',
 				method: "GET",
 				params: {
 					session: session_id,
-					module: 0,
+					module: 0
 				}
 			}).success(function(data) {
 				$scope.symbols_output = data;
@@ -122,10 +122,39 @@ novo.controller("dbg", ['$scope', '$http',
             });
         };
 
-        $scope.getProcesses = function() {
-            $http.get('dbg-llvm://list/proc').success(function(data) {
-                $scope.proc_output = data.processes;
-            });
+        $scope.onSelectPart = function($item, $model, $label) {
+            $scope.attachAutocomplete = $item.pid + " " + $item.path;
+        };
+
+        $scope.get_attach_data = function(partial) {
+            if(partial != undefined) {
+                if (partial.indexOf('a') == 0) {
+                    // doing the attach.
+
+                    var splitPartial = partial.split(' ');
+
+                    splitPartial.shift();
+
+                    return $http.get('dbg-llvm://list/proc').then(function(data) {
+                        return data.data.processes.map(function (proc) {
+                            var slashIndex = proc.path.lastIndexOf('/');
+                            proc.proc_name = (slashIndex > -1?proc.path.substring(slashIndex + 1):proc.path);
+
+                            return proc;
+                        }).filter(function (testProc) {
+                            return splitPartial.reduce(function (acc, testVal) {
+                                return acc && ((testProc.pid + "").indexOf(testVal) > -1 || testProc.path.indexOf(testVal) > -1);
+                            }, true);
+                        });
+                    });
+                } else if(partial.indexOf('e') == 0) {
+                    return ['need', 'a', 'list'];
+                }
+
+                return [];
+            }
+
+            return ['exe', 'attach'];
         };
 
         setInterval(function() {
