@@ -193,6 +193,8 @@
 		271A4F8319CB6F120089495F /* libboost_thread-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 271A4F8219CB6F120089495F /* libboost_thread-mt.a */; };
 		273823DA19C47C7B00559F61 /* request_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 273823D819C47C7B00559F61 /* request_router.cpp */; };
 		273823E219C4E64400559F61 /* libcppnetlib-uri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 273823E119C4E64400559F61 /* libcppnetlib-uri.a */; };
+		2739889919E4326F0010C12F /* util_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2739889719E4326F0010C12F /* util_scheme_handler.cpp */; };
+		2739889B19E448A80010C12F /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2739889A19E448A80010C12F /* libboost_filesystem-mt.a */; };
 		2757502019BB19F700784C39 /* simple_app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501C19BB19F700784C39 /* simple_app.cpp */; };
 		2757502119BB19F700784C39 /* simple_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501E19BB19F700784C39 /* simple_handler.cpp */; };
 		2757502319BB1A3100784C39 /* simple_handler_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2757502219BB1A3100784C39 /* simple_handler_mac.mm */; };
@@ -432,6 +434,9 @@
 		273823D819C47C7B00559F61 /* request_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = request_router.cpp; path = Independent/request_router.cpp; sourceTree = "<group>"; };
 		273823D919C47C7B00559F61 /* request_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = request_router.h; path = Independent/request_router.h; sourceTree = "<group>"; };
 		273823E119C4E64400559F61 /* libcppnetlib-uri.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcppnetlib-uri.a"; path = "libs/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a"; sourceTree = "<group>"; };
+		2739889719E4326F0010C12F /* util_scheme_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = util_scheme_handler.cpp; path = Independent/util_scheme_handler.cpp; sourceTree = "<group>"; };
+		2739889819E4326F0010C12F /* util_scheme_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util_scheme_handler.h; path = Independent/util_scheme_handler.h; sourceTree = "<group>"; };
+		2739889A19E448A80010C12F /* libboost_filesystem-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_filesystem-mt.a"; path = "../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_filesystem-mt.a"; sourceTree = "<group>"; };
 		27496EB119BBCD00008DAC32 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		27496EB319BBCD00008DAC32 /* test_cmd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = test_cmd.1; sourceTree = "<group>"; };
 		2757501C19BB19F700784C39 /* simple_app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simple_app.cpp; path = Independent/simple_app.cpp; sourceTree = "<group>"; };
@@ -485,6 +490,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2739889B19E448A80010C12F /* libboost_filesystem-mt.a in Frameworks */,
 				271A4F8319CB6F120089495F /* libboost_thread-mt.a in Frameworks */,
 				271A4F7D19CB6D6B0089495F /* libboost_log-mt.a in Frameworks */,
 				271A4F7E19CB6D6B0089495F /* libboost_system-mt.a in Frameworks */,
@@ -744,6 +750,7 @@
 		E78D966A1638A18900DE580E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2739889A19E448A80010C12F /* libboost_filesystem-mt.a */,
 				271A4F8219CB6F120089495F /* libboost_thread-mt.a */,
 				2717759E19BBD79000051986 /* LLDB.framework */,
 				2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */,
@@ -777,6 +784,8 @@
 				273823D919C47C7B00559F61 /* request_router.h */,
 				2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */,
 				2768F45419D7C7E300BEC791 /* llvm_scheme_handler.h */,
+				2739889719E4326F0010C12F /* util_scheme_handler.cpp */,
+				2739889819E4326F0010C12F /* util_scheme_handler.h */,
 				2784219919D8946900592CA8 /* json_serialize.cpp */,
 				2784219A19D8946900592CA8 /* json_serialize.h */,
 				2784219F19DB5C2D00592CA8 /* platform_support.h */,
@@ -1270,6 +1279,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2739889919E4326F0010C12F /* util_scheme_handler.cpp in Sources */,
 				2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */,
 				2757502319BB1A3100784C39 /* simple_handler_mac.mm in Sources */,
 				2768F45519D7C7E300BEC791 /* llvm_scheme_handler.cpp in Sources */,

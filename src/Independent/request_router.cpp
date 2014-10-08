@@ -94,7 +94,7 @@ ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request) : request(_request)
         std::cerr << param_parts[0] << " = " << param_parts[1] << std::endl;
         
         if(param_parts.size() > 1) {
-            (*this)[param_parts[0]] = param_parts[1];
+            (*this)[param_parts[0]] = boost::network::uri::decoded(param_parts[1]);
         } else {
             (*this)[param_parts[0]] = "";
         }

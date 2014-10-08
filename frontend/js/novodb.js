@@ -124,6 +124,8 @@ novo.controller("dbg", ['$scope', '$http',
 
         $scope.onSelectPart = function($item, $model, $label) {
             $scope.attachAutocomplete = $item.pid + " " + $item.path;
+
+            $scope.attachTarget($item.pid);
         };
 
         $scope.get_attach_data = function(partial) {
@@ -135,10 +137,10 @@ novo.controller("dbg", ['$scope', '$http',
 
                     splitPartial.shift();
 
-                    return $http.get('dbg-llvm://list/proc').then(function(data) {
+                    return $http.get('dbg-llvm://list/proc').then(function (data) {
                         return data.data.processes.map(function (proc) {
                             var slashIndex = proc.path.lastIndexOf('/');
-                            proc.proc_name = (slashIndex > -1?proc.path.substring(slashIndex + 1):proc.path);
+                            proc.proc_name = (slashIndex > -1 ? proc.path.substring(slashIndex + 1) : proc.path);
 
                             return proc;
                         }).filter(function (testProc) {
@@ -147,14 +149,35 @@ novo.controller("dbg", ['$scope', '$http',
                             }, true);
                         });
                     });
-                } else if(partial.indexOf('e') == 0) {
-                    return ['need', 'a', 'list'];
-                }
+                } else if (partial.indexOf('l') == 0) {
+                    // load by path
+                    var splitPartial = partial.split(' ');
 
-                return [];
+                    splitPartial.shift();
+
+                    if(splitPartial.length == 0) {
+                        return [];
+                    }
+
+                    return $http.get('util://ls', {
+                        method: "GET",
+                        params: {
+                            path: splitPartial[0],
+                            maxcount: 100
+                        }
+                    }).then(function (data) {
+                        console.info(JSON.stringify(data, null, "\t"));
+
+                        return data.data.files.map(function (file) {
+                            return {
+                                proc_name: splitPartial[0] + (splitPartial[0] !== '/'?"/":"") + file.file
+                            }
+                        });
+                    });
+                }
             }
 
-            return ['exe', 'attach'];
+            return ['load', 'attach'];
         };
 
         setInterval(function() {
@@ -164,3 +187,7 @@ novo.controller("dbg", ['$scope', '$http',
         }, 1000);
 	}
 ]);
+
+$( document ).ready(function() {
+    log("Welcome to Novodb. Enjoy your debugging experience!");
+});

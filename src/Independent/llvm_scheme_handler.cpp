@@ -19,8 +19,6 @@
 
 #include <boost/log/trivial.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
 
 namespace novo {
     void log_cb (const char *s, void *baton) {
@@ -461,7 +459,7 @@ namespace novo {
             int session_id = stoi(req.at("session"));
             addr_t addr = stoull(req.at("address"), 0, 16);
             size_t get_bytes = stol(req.at("count"));
-            string sep = boost::network::uri::decoded(req.at("sep"));
+            string sep = req.at("sep");
             
             if(session_id < 0 || session_id >= this->sessions.size()) {
                 return ActionResponse::error(string("session out of range"));

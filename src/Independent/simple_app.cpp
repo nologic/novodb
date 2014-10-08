@@ -12,6 +12,7 @@
 #include "dbg_handler.h"
 #include "request_router.h"
 #include "llvm_scheme_handler.h"
+#include "util_scheme_handler.h"
 #include "platform_support.h"
 
 #include "include/cef_browser.h"
@@ -51,6 +52,7 @@ void SimpleApp::OnContextInitialized() {
   }
 
   novo::install_llvm_scheme();
+    novo::install_util_scheme();
     
   // Create the first browser window.
   CefBrowserHost::CreateBrowser(window_info, handler.get(), url, browser_settings, NULL);
