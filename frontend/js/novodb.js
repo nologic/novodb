@@ -188,6 +188,13 @@ novo.controller("dbg", ['$scope', '$http',
 	}
 ]);
 
+document.onkeyup = function(e) {
+    if(e.ctrlKey && e.keyCode == 82) {
+        // ctrl+r reload page
+        location.reload();
+    }
+}
+
 $( document ).ready(function() {
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
