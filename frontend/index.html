@@ -35,7 +35,7 @@
             left: 0px;
             right: 0px;
             margin-top: 0px;
-            height: 50%;
+            height: 100%;
             border: 0px;
             font-family: "Courier New", monospace;
             font-size: 10px;
@@ -167,9 +167,9 @@
                        typeahead-on-select='onSelectPart($item, $model, $label)'
                        typeahead-template-url="autocomplete_template">
 
-                <button ng-click="targetExe(exe_file_path)" type="submit" class="btn btn-default">Load EXE</button>
-                <button class="btn btn-default" ng-click="launchTarget(session_id)">Launch</button>
-                <button class="btn btn-default" ng-click="attachTarget(exe_file_path)">Attach</button>
+                <button class="btn btn-default" ng-click="targetExe(attachAutocomplete)">Load EXE</button>
+                <button class="btn btn-default" ng-click="launchTarget()">Launch</button>
+                <button class="btn btn-default" ng-click="attachTarget(attachAutocomplete)">Attach</button>
             </div>
         </div>
     </div>

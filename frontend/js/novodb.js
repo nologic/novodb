@@ -4,26 +4,29 @@ var novo = angular.module('novodb', ['ui.bootstrap']);
 
 novo.controller("dbg", ['$scope', '$http',
 	function($scope, $http) {
+        var session = null;
+
+        db.create_session(function(_session) {
+            session = _session;
+        });
+
         $scope.targetExe = function(path) {
-			$http.get('dbg-llvm://create/target/exe?path=' + path).success(function(data) {
-				$scope.session_id = data.session;
-
-                $scope.listSymbols(data.session);
-			});
-		};
-
-        $scope.attachTarget = function(pid) {
-            $http.get('dbg-llvm://create/target/attach?pid=' + pid).success(function(data) {
-                $scope.session_id = data.session;
-
-                $scope.listSymbols(data.session);
+            db.load(path, [], session, function(_session) {
+                $scope.listSymbols(_session.id);
             });
         };
 
-		$scope.launchTarget = function(session_id) {
-			$http.get("dbg-llvm://launch?session=" + session_id).success(function(data) {
-				$scope.gen_output = JSON.stringify(data);
-			});
+        $scope.attachTarget = function(pid) {
+            pid = pid.split(" ");
+            pid.shift();
+
+            db.attach(pid[0], session, function(_session) {
+                $scope.listSymbols(_session.id);
+            });
+        };
+
+		$scope.launchTarget = function() {
+            db.launch(session);
 		};
 
 		$scope.getThreads = function(session_id) {
@@ -137,7 +140,7 @@ novo.controller("dbg", ['$scope', '$http',
 
                     splitPartial.shift();
 
-                    return $http.get('dbg-llvm://list/proc').then(function (data) {
+                    return $http.get('util://list/proc').then(function (data) {
                         return data.data.processes.map(function (proc) {
                             var slashIndex = proc.path.lastIndexOf('/');
                             proc.proc_name = (slashIndex > -1 ? proc.path.substring(slashIndex + 1) : proc.path);

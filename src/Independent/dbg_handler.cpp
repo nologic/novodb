@@ -39,6 +39,8 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
         auto proc_func = [this, callback, handler, a_req]() {
             this->response = handler(a_req, this->output);
             
+            BOOST_LOG_TRIVIAL(trace) << this->response.get_status() << " " << this->response.get_message();
+            
             std::stringstream ss;
             boost::property_tree::write_json(ss, this->output, false);
             
@@ -57,8 +59,13 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
             proc_func();
         }
         
+    } catch(RequestConstraint::Valid not_valid){
+        // request is not valid, this should not happen unless of
+        // a programmer fail therefore accepting performance overhead
+        
+        this->response = ActionResponse::error(not_valid);
     } catch (bool not_found) {
-        // should only be false but shouldn't happen unless a typo occurs.
+        // 'not_found' should only be false but shouldn't happen unless a typo occurs.
         this->response = ActionResponse::error(404, "Handler not found");
     }
     

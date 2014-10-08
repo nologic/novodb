@@ -16,8 +16,8 @@
 #include <iostream>
 #include <sstream>
 
-void RequestRouter::register_path(const std::vector<std::string>& path, path_handler handler, bool blocking) {
-    handler_entry entry(RequestPath(path), handler, blocking);
+void RequestRouter::register_path(const std::vector<std::string>& path, const RequestConstraint::constraint_list& constraints, path_handler handler, bool blocking) {
+    handler_entry entry(RequestPath(path), constraints, handler, blocking);
     
     prefix_list.push_back(entry);
     
@@ -46,7 +46,14 @@ std::tuple<RequestRouter::path_handler, bool> RequestRouter::find_handler(const 
     });
 
     if(found_pair != std::end(prefix_list)) {
-        return make_tuple(get<1>(*found_pair), get<2>(*found_pair));
+        RequestConstraint::constraint_list constraints = get<1>(*found_pair);
+        RequestConstraint::Valid valid = RequestConstraint::validate(constraints, req);
+        
+        if(!valid.is_valid()) {
+            throw valid;
+        }
+        
+        return make_tuple(get<2>(*found_pair), get<3>(*found_pair));
     } else {
         BOOST_LOG_TRIVIAL(warning) << "no path handler registered: " << req_path.toString();
         
@@ -99,4 +106,45 @@ ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request) : request(_request)
             (*this)[param_parts[0]] = "";
         }
     });
+}
+
+// RequestConstraint
+namespace RequestConstraint {
+    constraint exists(const std::string& key) {
+        return [key] (const ActionRequest& req) {
+            if(req.count(key) == 0) {
+                return Valid::aint("Key required: " + key);
+            } else {
+                return Valid();
+            }
+        };
+    }
+
+    constraint has_int(const std::string& key) {
+        return [key] (const ActionRequest& req) {
+            if(req.count(key) == 0) {
+                return Valid::aint("Key required: " + key);
+            } else {
+                int parsed;
+            
+                if((std::stringstream(req.at(key)) >> parsed).fail()) {
+                    return Valid::aint("Value not int for: " + key);
+                }
+            
+                return Valid();
+            }
+        };
+    }
+    
+    Valid validate(const RequestConstraint::constraint_list& constraints, const ActionRequest& req) {
+        for(constraint con : constraints) {
+            Valid val = con(req);
+            
+            if(!val.is_valid()) {
+                return val;
+            }
+        }
+        
+        return Valid();
+    }
 }

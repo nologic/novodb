@@ -57,7 +57,7 @@ namespace novo {
         
         lldb::SBDebugger::Initialize();
         
-        req_router.register_path({"version"}, [] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"version"}, {}, [] ACTION_CALLBACK(req, output) {
             using namespace std;
             
             output.put("version", string(lldb::SBDebugger::GetVersionString()));
@@ -65,7 +65,9 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"create", "target", "exe"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"create", "target", "exe"}, {
+            RequestConstraint::exists("path")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace lldb;
             using namespace std;
             
@@ -98,7 +100,9 @@ namespace novo {
             return ActionResponse::no_error();
         }, true);
         
-        req_router.register_path({"create", "target", "attach"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"create", "target", "attach"}, {
+            RequestConstraint::has_int("pid")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace lldb;
             using namespace std;
             
@@ -141,11 +145,11 @@ namespace novo {
             }
         }, true);
         
-        req_router.register_path({"create", "target", "remote"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"create", "target", "remote"}, {}, [this] ACTION_CALLBACK(req, output) {
             return ActionResponse::error(501, "Not Implemented");
         });
         
-        req_router.register_path({"breakpoint", "set"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"breakpoint", "set"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
@@ -171,7 +175,7 @@ namespace novo {
             }
         });
 
-        req_router.register_path({"launch"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"launch"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
@@ -199,7 +203,7 @@ namespace novo {
             }
         }, true);
         
-        req_router.register_path({"list", "symbols"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "symbols"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -233,7 +237,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "modules"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "modules"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -288,7 +292,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "registers"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "registers"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -358,7 +362,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
 
-        req_router.register_path({"proc", "state"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"proc", "state"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
@@ -377,7 +381,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "threads"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "threads"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -416,7 +420,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "frames"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "frames"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -451,7 +455,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"read", "memory"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"read", "memory"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -490,7 +494,7 @@ namespace novo {
             }
         });
         
-        req_router.register_path({"event", "listen"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"event", "listen"}, {}, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -523,7 +527,9 @@ namespace novo {
             }
         }, true);
 
-        req_router.register_path({"read", "instructions"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"read", "instructions"}, {
+            RequestConstraint::has_int("session")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -562,23 +568,42 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "proc"}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"cmd", "step"}, {}, [this] ACTION_CALLBACK(req, output) {
+            using namespace std;
+            using namespace lldb;
             using namespace boost::property_tree;
             
-            ptree proc_items;
-            auto proc_list = get_process_listing();
+            int session_id = stoi(req.at("session"));
+            int thread_ind = stoi(req.at("thread"));
             
-            for(auto proc_tuple : proc_list) {
-                ptree proc_item;
-                
-                proc_item.put("pid", std::to_string(std::get<0>(proc_tuple)));
-                proc_item.put("debuggable", std::to_string(std::get<1>(proc_tuple)));
-                proc_item.put("path", std::get<2>(proc_tuple));
-                
-                proc_items.push_back(make_pair("", proc_item));
+            if(session_id < 0 || session_id >= this->sessions.size()) {
+                return ActionResponse::error(string("session out of range"));
             }
             
-            output.put_child("processes", proc_items);
+            LldbProcessSession& session = this->sessions[session_id];
+            SBThread thread = session.process.GetThreadAtIndex(thread_ind);
+            
+            thread.StepInstruction(false);
+            
+            return ActionResponse::no_error();
+        });
+        
+        req_router.register_path({"cmd", "resume"}, {}, [this] ACTION_CALLBACK(req, output) {
+            using namespace std;
+            using namespace lldb;
+            using namespace boost::property_tree;
+            
+            int session_id = stoi(req.at("session"));
+            int thread_ind = stoi(req.at("thread"));
+            
+            if(session_id < 0 || session_id >= this->sessions.size()) {
+                return ActionResponse::error(string("session out of range"));
+            }
+            
+            LldbProcessSession& session = this->sessions[session_id];
+            SBThread thread = session.process.GetThreadAtIndex(thread_ind);
+            
+            thread.Resume();
             
             return ActionResponse::no_error();
         });

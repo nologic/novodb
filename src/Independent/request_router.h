@@ -23,6 +23,8 @@
 #include "include/cef_base.h"
 #include "include/cef_app.h"
 
+#define ACTION_CALLBACK(req, output) (const ActionRequest& req, boost::property_tree::ptree& output)
+
 class ActionResponse {
 public:
     ActionResponse(const ActionResponse& other) : status_code(other.status_code), msg(other.msg) {
@@ -59,8 +61,6 @@ private:
     std::string msg;
     int status_code;
 };
-
-class ActionRequest;
 
 class RequestPath : public std::vector<std::string> {
 public:
@@ -101,27 +101,6 @@ private:
     IMPLEMENT_REFCOUNTING(RequestRouter);
 };
 
-#define ACTION_CALLBACK(req, output) (const ActionRequest& req, boost::property_tree::ptree& output)
-
-class RequestRouter {
-public:
-    typedef RequestPath path_type;
-    typedef std::function<ActionResponse (const ActionRequest& req, boost::property_tree::ptree& out_tree)> path_handler;
-    typedef std::tuple<path_type, path_handler, bool> handler_entry;
-    
-    RequestRouter() {}
-    
-    void register_path(const std::vector<std::string>& path, path_handler handler, bool blocking = false);
-    void unregister_path(const std::string& path);
-    std::tuple<path_handler, bool> find_handler(const ActionRequest& req);
-    
-private:
-    std::vector<handler_entry> prefix_list;
-    
-    IMPLEMENT_REFCOUNTING(RequestRouter);
-};
-
-
 class ActionRequest : public std::map<std::string, std::string> {
 public:
     ActionRequest(CefRefPtr<CefRequest> _request);
@@ -136,6 +115,56 @@ public:
 private:
     CefRefPtr<CefRequest> request;
     RequestPath path;
+    
+    IMPLEMENT_REFCOUNTING(RequestRouter);
+};
+
+namespace RequestConstraint {
+
+    class Valid : public std::string {
+    public:
+        Valid() : _is_valid(true) {}
+        Valid(const std::string& msg) : std::string(msg), _is_valid(false) {}
+        Valid(const Valid& other) : std::string(other), _is_valid(other._is_valid) {}
+    
+        static Valid aint(const std::string& msg) {
+            return Valid(msg);
+        }
+    
+        bool is_valid() const {
+            return _is_valid;
+        }
+    
+    private:
+        bool _is_valid;
+    };
+
+    typedef std::function< Valid (const ActionRequest& req) > constraint;
+    typedef std::vector<constraint> constraint_list;
+    
+    // the constraint validators
+    constraint exists(const std::string& key);
+    constraint has_int(const std::string& key);
+    
+    // validation
+    Valid validate(const RequestConstraint::constraint_list& constraints, const ActionRequest& req);
+    
+} // namespace RequestConstraint
+
+class RequestRouter {
+public:
+    typedef RequestPath path_type;
+    typedef std::function<ActionResponse (const ActionRequest& req, boost::property_tree::ptree& out_tree)> path_handler;
+    typedef std::tuple<path_type, RequestConstraint::constraint_list, path_handler, bool> handler_entry;
+    
+    RequestRouter() {}
+    
+    void register_path(const std::vector<std::string>& path, const RequestConstraint::constraint_list& constraints, path_handler handler, bool blocking = false);
+    void unregister_path(const std::string& path);
+    std::tuple<path_handler, bool> find_handler(const ActionRequest& req);
+    
+private:
+    std::vector<handler_entry> prefix_list;
     
     IMPLEMENT_REFCOUNTING(RequestRouter);
 };

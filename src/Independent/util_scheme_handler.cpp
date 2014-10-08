@@ -7,6 +7,7 @@
 //
 
 #include "util_scheme_handler.h"
+#include "platform_support.h"
 
 #include <utility>
 #include <string>
@@ -20,7 +21,7 @@ namespace novo {
     UtilSchemeHandler::UtilSchemeHandler() {
         BOOST_LOG_TRIVIAL(trace) << "UtilSchemeHandler initializing";
         
-        req_router.register_path({"ls"}, [] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"ls"}, {}, [] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace boost::filesystem;
             
@@ -57,5 +58,25 @@ namespace novo {
             return ActionResponse::no_error();
         });
 
+        req_router.register_path({"list", "proc"}, {}, [this] ACTION_CALLBACK(req, output) {
+            using namespace boost::property_tree;
+            
+            ptree proc_items;
+            auto proc_list = get_process_listing();
+            
+            for(auto proc_tuple : proc_list) {
+                ptree proc_item;
+                
+                proc_item.put("pid", std::to_string(std::get<0>(proc_tuple)));
+                proc_item.put("debuggable", std::to_string(std::get<1>(proc_tuple)));
+                proc_item.put("path", std::get<2>(proc_tuple));
+                
+                proc_items.push_back(make_pair("", proc_item));
+            }
+            
+            output.put_child("processes", proc_items);
+            
+            return ActionResponse::no_error();
+        });
     }
 }
