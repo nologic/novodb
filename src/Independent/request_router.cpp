@@ -136,6 +136,10 @@ namespace RequestConstraint {
         };
     }
     
+    constraint matches(const std::string& key, const std::string& regex) {
+        throw "Not implemented";
+    }
+    
     Valid validate(const RequestConstraint::constraint_list& constraints, const ActionRequest& req) {
         for(constraint con : constraints) {
             Valid val = con(req);

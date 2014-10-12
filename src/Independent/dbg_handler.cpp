@@ -64,6 +64,7 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
         // a programmer fail therefore accepting performance overhead
         
         this->response = ActionResponse::error(not_valid);
+        std::cout << not_valid << std::endl;
     } catch (bool not_found) {
         // 'not_found' should only be false but shouldn't happen unless a typo occurs.
         this->response = ActionResponse::error(404, "Handler not found");

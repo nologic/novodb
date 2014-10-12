@@ -145,6 +145,7 @@ namespace RequestConstraint {
     // the constraint validators
     constraint exists(const std::string& key);
     constraint has_int(const std::string& key);
+    constraint matches(const std::string& key, const std::string& regex);
     
     // validation
     Valid validate(const RequestConstraint::constraint_list& constraints, const ActionRequest& req);

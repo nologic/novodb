@@ -149,7 +149,10 @@ namespace novo {
             return ActionResponse::error(501, "Not Implemented");
         });
         
-        req_router.register_path({"breakpoint", "set"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"breakpoint", "set"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::exists("symbol")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
@@ -175,7 +178,9 @@ namespace novo {
             }
         });
 
-        req_router.register_path({"launch"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"launch"}, {
+            RequestConstraint::has_int("session")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
@@ -203,7 +208,10 @@ namespace novo {
             }
         }, true);
         
-        req_router.register_path({"list", "symbols"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "symbols"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("module")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -237,7 +245,9 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "modules"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "modules"}, {
+            RequestConstraint::has_int("session")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -292,7 +302,11 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "registers"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "registers"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("thread"),
+            RequestConstraint::has_int("frame")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -362,7 +376,9 @@ namespace novo {
             return ActionResponse::no_error();
         });
 
-        req_router.register_path({"proc", "state"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"proc", "state"}, {
+            RequestConstraint::has_int("session")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
@@ -381,7 +397,9 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "threads"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "threads"}, {
+            RequestConstraint::has_int("session")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -420,7 +438,10 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "frames"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "frames"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("thread")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -455,7 +476,11 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"read", "memory"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"read", "memory"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::exists("address"),
+            RequestConstraint::has_int("count")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -494,7 +519,9 @@ namespace novo {
             }
         });
         
-        req_router.register_path({"event", "listen"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"event", "listen"}, {
+            RequestConstraint::has_int("session")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -528,7 +555,9 @@ namespace novo {
         }, true);
 
         req_router.register_path({"read", "instructions"}, {
-            RequestConstraint::has_int("session")
+            RequestConstraint::has_int("session"),
+            RequestConstraint::exists("address"),
+            RequestConstraint::has_int("count")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
@@ -568,7 +597,10 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"cmd", "step"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"cmd", "step"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("thread")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
@@ -588,7 +620,10 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"cmd", "resume"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"cmd", "resume"}, {
+            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("thread")
+        }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;

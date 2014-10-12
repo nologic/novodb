@@ -29,47 +29,33 @@ novo.controller("dbg", ['$scope', '$http',
             db.launch(session);
 		};
 
-		$scope.getThreads = function(session_id) {
-			$http.get('dbg-llvm://list/threads?session=' + session_id).success(function(data) {
+		$scope.getThreads = function() {
+			db.getThreads(session, function(data) {
 				$scope.thread_list = JSON.stringify(data);
 			});
 		};
 
 		$scope.setBreakpoint = function(session_id, symbol) {
-			$http.get('dbg-llvm://breakpoint/set?session=' + session_id + "&symbol=" + symbol).success(function(data) {
+            db.setBreakpoint(symbol, session, function(data) {
 				$scope.bp_output = JSON.stringify(data);
 			});
 		};
 
-		$scope.listenEvent = function(session_id) {
-			$http.get('dbg-llvm://event/listen?session=' + session_id).success(function(data) {
-				$scope.event_output = JSON.stringify(data);
-			});
-		};
-
-		$scope.getModules = function(session_id) {
-			$http.get('dbg-llvm://list/modules?session=' + session_id).success(function(data) {
+		$scope.getModules = function() {
+			db.getModules(session, function(data) {
 				$scope.module_output = data;
 			});
 		};
 
-		$scope.readMemory = function(session_id, _address) {
-			$http.get('dbg-llvm://read/memory', {
-				method: "GET",
-				params: {
-					session: session_id,
-					count: 4096,
-					address: _address,
-					sep: ' '
-				}
-			}).success(function(data) {
+		$scope.readMemory = function(_address) {
+			db.readMemory(_address, 4096, ' ', session, function(data) {
 				$scope.memory_output = JSON.stringify(data, null, "\t");
 			});
 		};
 
-		$scope.procState = function(session_id) {
-			$http.get('dbg-llvm://proc/state?session=' + session_id).success(function(data) {
-                data.session = session_id;
+		$scope.procState = function() {
+			db.getProcState(session, function(data) {
+                data.session = session.id;
 
                 $scope.proc_state = data;
 			});
@@ -101,26 +87,14 @@ novo.controller("dbg", ['$scope', '$http',
 			});
 		};
 
-		$scope.listSymbols = function(session_id) {
-			$http.get('dbg-llvm://list/symbols', {
-				method: "GET",
-				params: {
-					session: session_id,
-					module: 0
-				}
-			}).success(function(data) {
+		$scope.listSymbols = function() {
+            db.getSymbols(session, 0, function(data) {
 				$scope.symbols_output = data;
 			});
 		};
 
-        $scope.getFrames = function(session_id, thread_ind) {
-            $http.get('dbg-llvm://list/frames', {
-                method: "GET",
-                params: {
-                    session: session_id,
-                    thread: thread_ind
-                }
-            }).success(function(data) {
+        $scope.getFrames = function(thread_ind) {
+            db.getFrames(thread_ind, session, function(data) {
                 $scope.frames_list = JSON.stringify(data, null, "\t");
             });
         };
