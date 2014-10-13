@@ -13,6 +13,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+std::string addr_to_string(lldb::addr_t address);
+
 bool to_json(lldb::SBSymbol& symbol, boost::property_tree::ptree& pt, lldb::SBTarget* target);
 bool to_json(const lldb::SBAddress& address, boost::property_tree::ptree& pt, lldb::SBTarget* target);
 //bool to_json(const lldb::SBModule& symbol, boost::property_tree::ptree& pt);
