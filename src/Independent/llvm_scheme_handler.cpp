@@ -57,6 +57,8 @@ namespace novo {
         
         lldb::SBDebugger::Initialize();
         
+        auto session_bounds = [this](int sid) { return sid >= 0 && sid < this->sessions.size(); };
+        
         req_router.register_path({"version"}, {}, [] ACTION_CALLBACK(req, output) {
             using namespace std;
             
@@ -66,7 +68,7 @@ namespace novo {
         });
         
         req_router.register_path({"create", "target", "exe"}, {
-            RequestConstraint::exists("path")
+            RequestConstraint::exists({"path"})
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace lldb;
             using namespace std;
@@ -150,8 +152,8 @@ namespace novo {
         });
         
         req_router.register_path({"breakpoint", "set"}, {
-            RequestConstraint::has_int("session"),
-            RequestConstraint::exists("symbol")
+            RequestConstraint::has_int("session", session_bounds),
+            RequestConstraint::exists({"symbol"})
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
@@ -159,10 +161,6 @@ namespace novo {
             string bp_symbol(req.at("symbol"));
             
             int session_id = stoi(req.at("session"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             SBTarget& target = session.target;
@@ -179,16 +177,12 @@ namespace novo {
         });
 
         req_router.register_path({"launch"}, {
-            RequestConstraint::has_int("session")
+            RequestConstraint::has_int("session", session_bounds)
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
             int session_id = stoi(req.at("session"));
-            
-            if(session_id < 0 || session_id > this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             
@@ -209,7 +203,7 @@ namespace novo {
         }, true);
         
         req_router.register_path({"list", "symbols"}, {
-            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("session", session_bounds),
             RequestConstraint::has_int("module")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
@@ -218,10 +212,6 @@ namespace novo {
             
             int session_id = stoi(req.at("session"));
             int module_index = stoi(req.at("module"));
-            
-            if(session_id < 0 || session_id > this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             
@@ -246,17 +236,13 @@ namespace novo {
         });
         
         req_router.register_path({"list", "modules"}, {
-            RequestConstraint::has_int("session")
+            RequestConstraint::has_int("session", session_bounds)
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
             
             int session_id = stoi(req.at("session"));
-            
-            if(session_id < 0 || session_id > this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             
@@ -303,7 +289,7 @@ namespace novo {
         });
         
         req_router.register_path({"list", "registers"}, {
-            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("session", session_bounds),
             RequestConstraint::has_int("thread"),
             RequestConstraint::has_int("frame")
         }, [this] ACTION_CALLBACK(req, output) {
@@ -314,10 +300,6 @@ namespace novo {
             int session_id = stoi(req.at("session"));
             int thread_ind = stoi(req.at("thread"));
             int frame_ind  = stoi(req.at("frame"));
-            
-            if(session_id < 0 || session_id > this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             
@@ -377,16 +359,12 @@ namespace novo {
         });
 
         req_router.register_path({"proc", "state"}, {
-            RequestConstraint::has_int("session")
+            RequestConstraint::has_int("session", session_bounds)
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             
             int session_id = stoi(req.at("session"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             StateType state = session.process.GetState();
@@ -398,17 +376,13 @@ namespace novo {
         });
         
         req_router.register_path({"list", "threads"}, {
-            RequestConstraint::has_int("session")
+            RequestConstraint::has_int("session", session_bounds),
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
             
             int session_id = stoi(req.at("session"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             
@@ -439,7 +413,7 @@ namespace novo {
         });
         
         req_router.register_path({"list", "frames"}, {
-            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("session", session_bounds),
             RequestConstraint::has_int("thread")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
@@ -448,10 +422,6 @@ namespace novo {
             
             int session_id = stoi(req.at("session"));
             int thread_ind = stoi(req.at("thread"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             SBThread thread = session.process.GetThreadAtIndex(thread_ind);
@@ -477,8 +447,8 @@ namespace novo {
         });
         
         req_router.register_path({"read", "memory"}, {
-            RequestConstraint::has_int("session"),
-            RequestConstraint::exists("address"),
+            RequestConstraint::has_int("session", session_bounds),
+            RequestConstraint::exists({"address"}),
             RequestConstraint::has_int("count")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
@@ -489,10 +459,6 @@ namespace novo {
             addr_t addr = stoull(req.at("address"), 0, 16);
             size_t get_bytes = stol(req.at("count"));
             string sep = req.at("sep");
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             SBError error;
@@ -520,17 +486,13 @@ namespace novo {
         });
         
         req_router.register_path({"event", "listen"}, {
-            RequestConstraint::has_int("session")
+            RequestConstraint::has_int("session", session_bounds)
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace lldb;
             using namespace boost::property_tree;
             
             int session_id = stoi(req.at("session"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             
@@ -555,8 +517,8 @@ namespace novo {
         }, true);
 
         req_router.register_path({"read", "instructions"}, {
-            RequestConstraint::has_int("session"),
-            RequestConstraint::exists("address"),
+            RequestConstraint::has_int("session", session_bounds),
+            RequestConstraint::exists({"address"}),
             RequestConstraint::has_int("count")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
@@ -566,10 +528,6 @@ namespace novo {
             int session_id = stoi(req.at("session"));
             addr_t addr = stoull(req.at("address"), 0, 16);
             size_t count = stol(req.at("count"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             array<unsigned char, 4096> mem_arr;
@@ -598,7 +556,7 @@ namespace novo {
         });
         
         req_router.register_path({"cmd", "step"}, {
-            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("session", session_bounds),
             RequestConstraint::has_int("thread")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
@@ -607,10 +565,6 @@ namespace novo {
             
             int session_id = stoi(req.at("session"));
             int thread_ind = stoi(req.at("thread"));
-            
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
             
             LldbProcessSession& session = this->sessions[session_id];
             SBThread thread = session.process.GetThreadAtIndex(thread_ind);
@@ -621,7 +575,7 @@ namespace novo {
         });
         
         req_router.register_path({"cmd", "resume"}, {
-            RequestConstraint::has_int("session"),
+            RequestConstraint::has_int("session", session_bounds),
             RequestConstraint::has_int("thread")
         }, [this] ACTION_CALLBACK(req, output) {
             using namespace std;
@@ -631,14 +585,18 @@ namespace novo {
             int session_id = stoi(req.at("session"));
             int thread_ind = stoi(req.at("thread"));
             
-            if(session_id < 0 || session_id >= this->sessions.size()) {
-                return ActionResponse::error(string("session out of range"));
-            }
-            
             LldbProcessSession& session = this->sessions[session_id];
             SBThread thread = session.process.GetThreadAtIndex(thread_ind);
             
             thread.Resume();
+            
+            return ActionResponse::no_error();
+        });
+        
+        req_router.register_path({"log", "start"}, {
+            RequestConstraint::has_int("session", session_bounds),
+        }, [this] ACTION_CALLBACK(req, output) {
+            int session_id = stoi(req.at("session"));
             
             return ActionResponse::no_error();
         });

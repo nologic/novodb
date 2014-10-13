@@ -140,11 +140,13 @@ namespace RequestConstraint {
     };
 
     typedef std::function< Valid (const ActionRequest& req) > constraint;
+    typedef std::function< bool (int value) > int_bounds_check;
     typedef std::vector<constraint> constraint_list;
     
     // the constraint validators
-    constraint exists(const std::string& key);
-    constraint has_int(const std::string& key);
+    constraint exists(const std::vector<std::string>& keys);
+    constraint has_int(const std::string& key, int min = INT_MIN, int max = INT_MAX);
+    constraint has_int(const std::string& key, int_bounds_check chfn);
     constraint matches(const std::string& key, const std::string& regex);
     
     // validation

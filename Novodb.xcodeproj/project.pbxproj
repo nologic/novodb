@@ -227,6 +227,7 @@
 		27E6B1D819EB71DE00681256 /* test_units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27E6B1D719EB71DE00681256 /* test_units.cpp */; };
 		27E6B1E019EB7DE000681256 /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E6B1DF19EB7DE000681256 /* libgtest_main.a */; };
 		27E6B1E119EB7DF700681256 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E6B1BA19EB59AC00681256 /* gtest.framework */; };
+		27E6B1E819EC6DAD00681256 /* validation_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27E6B1E719EC6DAD00681256 /* validation_tests.cpp */; };
 		E78D966C1638A18900DE580E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78D966B1638A18900DE580E /* Cocoa.framework */; };
 		E78D96A61638BA0B00DE580E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E78D96A31638BA0B00DE580E /* main.mm */; };
 		E78D96B91638BA4B00DE580E /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E78D96B31638BA4B00DE580E /* Credits.rtf */; };
@@ -487,6 +488,7 @@
 		27E6B1BA19EB59AC00681256 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = libs/gtest.framework; sourceTree = "<group>"; };
 		27E6B1D719EB71DE00681256 /* test_units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_units.cpp; sourceTree = "<group>"; };
 		27E6B1DF19EB7DE000681256 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = libs/gtest.framework/libgtest_main.a; sourceTree = "<group>"; };
+		27E6B1E719EC6DAD00681256 /* validation_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = validation_tests.cpp; sourceTree = "<group>"; };
 		E78D96671638A18900DE580E /* Novodb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Novodb.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E78D966B1638A18900DE580E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		E78D966E1638A18900DE580E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -767,6 +769,7 @@
 			isa = PBXGroup;
 			children = (
 				27E6B1D719EB71DE00681256 /* test_units.cpp */,
+				27E6B1E719EC6DAD00681256 /* validation_tests.cpp */,
 			);
 			name = unit_tests;
 			path = src/unit_tests;
@@ -1395,6 +1398,7 @@
 				27E6B1BE19EB6A8600681256 /* simple_app.cpp in Sources */,
 				27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */,
 				27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */,
+				27E6B1E819EC6DAD00681256 /* validation_tests.cpp in Sources */,
 				27E6B1C419EB6A8600681256 /* request_router.cpp in Sources */,
 				27E6B1C619EB6A8600681256 /* llvm_scheme_handler.cpp in Sources */,
 				27E6B1C819EB6A8600681256 /* util_scheme_handler.cpp in Sources */,

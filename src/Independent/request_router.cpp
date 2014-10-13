@@ -110,27 +110,40 @@ ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request) : request(_request)
 
 // RequestConstraint
 namespace RequestConstraint {
-    constraint exists(const std::string& key) {
-        return [key] (const ActionRequest& req) {
-            if(req.count(key) == 0) {
-                return Valid::aint("Key required: " + key);
-            } else {
-                return Valid();
+    constraint exists(const std::vector<std::string>& keys) {
+        return [keys] (const ActionRequest& req) {
+            
+            for(auto key : keys) {
+                if(req.count(key) == 0) {
+                    return Valid::aint("Key required: " + key);
+                }
             }
+            
+            return Valid();
         };
     }
 
-    constraint has_int(const std::string& key) {
-        return [key] (const ActionRequest& req) {
+    constraint has_int(const std::string& key, int min, int max) {
+        return has_int(key, [min, max](int value) {
+            return value <= max && value >= min;
+        });
+    }
+    
+    constraint has_int(const std::string& key, int_bounds_check chfn) {
+        return [key, chfn] (const ActionRequest& req) {
             if(req.count(key) == 0) {
                 return Valid::aint("Key required: " + key);
             } else {
                 int parsed;
-            
+                
                 if((std::stringstream(req.at(key)) >> parsed).fail()) {
                     return Valid::aint("Value not int for: " + key);
                 }
-            
+                
+                if(!chfn(parsed)) {
+                    return Valid::aint("Int value validation failed: " + key);
+                }
+                
                 return Valid();
             }
         };

@@ -9,6 +9,6 @@
 #include "gtest/gtest.h"
 #include "../Independent/json_serialize.h"
 
-TEST(TString, ZeroZero) {
-    EXPECT_EQ(0, 0);
+TEST(ToString, ZeroZero) {
+    EXPECT_EQ("0", addr_to_string(0x0));
 }
