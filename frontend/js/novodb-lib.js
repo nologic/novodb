@@ -44,54 +44,54 @@ function create_ndb_session($http) {
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://create/target/attach", {
             pid: proc_pid
-        }, function(resp) {
-            session_id = resp.data.session;
+        }, extract_data(function(sdata) {
+            session_id = sdata.session;
 
             if (f_success == undefined) {
                 f_success = default_success;
             }
 
-            f_success(resp);
-        }, f_fail);
+            f_success(sdata);
+        }), f_fail);
     };
 
     NdbSession.prototype.load = function (path, args, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://create/target/exe", {
             path: path
-        }, function(resp) {
-            session_id = resp.data.session;
+        }, extract_data(function(resp) {
+            session_id = sdata.session;
 
             if (f_success == undefined) {
                 f_success = default_success;
             }
 
-            f_success(resp);
-        }, f_fail);
+            f_success(sdata);
+        }), f_fail);
     };
 
     NdbSession.prototype.launch = function (f_success, f_fail) {
         url_get_passthrough("dbg-llvm://launch", {
             session: session_id
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getThreads = function (f_success, f_fail) {
         url_get_passthrough("dbg-llvm://list/threads", {
             session: session_id
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getModules = function (f_success, f_fail) {
         url_get_passthrough("dbg-llvm://list/modules", {
             session: session_id
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getFrames = function (thread_ind, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://list/frames", {
             session: session_id,
             thread: thread_ind
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getSymbols = function (module, f_success, f_fail) {
@@ -104,14 +104,14 @@ function create_ndb_session($http) {
     NdbSession.prototype.getProcState = function (f_success, f_fail) {
         url_get_passthrough("dbg-llvm://proc/state", {
             session: session_id
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.setBreakpoint = function(symbol, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://breakpoint/set", {
             session: session_id,
             symbol: symbol
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.readMemory = function(address, count, f_success, f_fail) {
@@ -120,7 +120,7 @@ function create_ndb_session($http) {
             address: address,
             count: count,
             sep: mem_separator
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.writeMemory = function(address, count, f_success, f_fail) {
@@ -132,7 +132,7 @@ function create_ndb_session($http) {
             session: session_id,
             frame: frame,
             thread: thread
-        }, f_success, f_fail);
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.writeRegisters = function(frame, thread, f_success, f_fail) {
