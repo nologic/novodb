@@ -39,8 +39,6 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
         auto proc_func = [this, callback, handler, a_req]() {
             this->response = handler(a_req, this->output);
             
-            BOOST_LOG_TRIVIAL(trace) << this->response.get_status() << " " << this->response.get_message();
-            
             std::stringstream ss;
             boost::property_tree::write_json(ss, this->output, false);
             
@@ -70,7 +68,7 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
         this->response = ActionResponse::error(404, "Handler not found");
     }
     
-    BOOST_LOG_TRIVIAL(trace) << "Processed request " << request->GetURL().ToString();
+    BOOST_LOG_TRIVIAL(trace) << this->response.get_status() << " " << this->response.get_message() << " (" << request->GetURL().ToString() << ")";
 
     return true;
 }

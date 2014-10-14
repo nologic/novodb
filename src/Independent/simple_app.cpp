@@ -52,7 +52,7 @@ void SimpleApp::OnContextInitialized() {
   }
 
   novo::install_llvm_scheme();
-    novo::install_util_scheme();
+  novo::install_util_scheme();
     
   // Create the first browser window.
   CefBrowserHost::CreateBrowser(window_info, handler.get(), url, browser_settings, NULL);

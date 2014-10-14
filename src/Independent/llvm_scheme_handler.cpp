@@ -78,11 +78,6 @@ namespace novo {
             
             SBDebugger debugger = SBDebugger::Create();
             
-            /*char* val[3] = { "api", "all", NULL };
-            debugger.EnableLog("lldb", (const char**)val);
-            debugger.SetLoggingCallback(log_cb, NULL);
-            debugger.HandleCommand("log enable -f /Users/mike/GitHub/Novodb/Build/Novodb/Build/Products/Debug/log.txt lldb api");*/
-            
             debugger.SetAsync(false);
             
             if(!debugger.IsValid()) {
@@ -113,11 +108,6 @@ namespace novo {
             lldb::pid_t pid = stoi(req.at("pid"));
 
             SBDebugger debugger = SBDebugger::Create();
-            
-            char* val[3] = { "api", "all", NULL };
-            debugger.EnableLog("lldb", (const char**)val);
-            debugger.SetLoggingCallback(log_cb, NULL);
-            debugger.HandleCommand("log enable -f /Users/mike/GitHub/Novodb/Build/Novodb/Build/Products/Debug/log.txt lldb api");
             
             debugger.SetAsync(false);
             
@@ -547,6 +537,13 @@ namespace novo {
                     inst_out.put("description", string(inst_desc.GetData(), inst_desc.GetSize()));
                 }
                 
+                inst_out.put("mnem", string(inst.GetMnemonic(session.target)));
+                inst_out.put("operands", string(inst.GetOperands(session.target)));
+                inst_out.put("size", to_string(inst.GetByteSize()));
+                inst_out.put("branch", to_string(inst.DoesBranch()));
+                inst_out.put("valid", to_string(inst.IsValid()));
+                inst_out.put("comment", string(inst.GetComment(session.target)));
+                
                 insts_out.push_back(make_pair("", inst_out));
             }
             
@@ -594,9 +591,20 @@ namespace novo {
         });
         
         req_router.register_path({"log", "start"}, {
-            RequestConstraint::has_int("session", session_bounds),
+            RequestConstraint::has_int("session", session_bounds)
         }, [this] ACTION_CALLBACK(req, output) {
-            int session_id = stoi(req.at("session"));
+            using namespace std;
+            using namespace lldb;
+            using namespace boost::property_tree;
+            
+            LldbProcessSession& session = this->sessions[stoi(req.at("session"))];
+            
+            SBDebugger debugger = session.target.GetDebugger();
+            
+            char* val[3] = { "api", "all", NULL };
+            debugger.EnableLog("lldb", (const char**)val);
+            debugger.SetLoggingCallback(log_cb, NULL);
+            debugger.HandleCommand("log enable -f ./log.txt lldb api");
             
             return ActionResponse::no_error();
         });

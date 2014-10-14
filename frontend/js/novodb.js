@@ -1,18 +1,12 @@
-//function format_mem
-
 var novo = angular.module('novodb', ['ui.bootstrap']);
 
 novo.controller("dbg", ['$scope', '$http',
 	function($scope, $http) {
-        var session = null;
-
-        db.create_session(function(_session) {
-            session = _session;
-        });
+        var session = create_ndb_session($http);
 
         $scope.targetExe = function(path) {
-            db.load(path, [], session, function(_session) {
-                $scope.listSymbols(_session.id);
+            session.load(path, [], function() {
+                $scope.listSymbols();
             });
         };
 
@@ -20,81 +14,65 @@ novo.controller("dbg", ['$scope', '$http',
             pid = pid.split(" ");
             pid.shift();
 
-            db.attach(pid[0], session, function(_session) {
-                $scope.listSymbols(_session.id);
+            session.attach(pid[0], function() {
+                $scope.listSymbols();
             });
         };
 
 		$scope.launchTarget = function() {
-            db.launch(session);
+            session.launch();
 		};
 
 		$scope.getThreads = function() {
-			db.getThreads(session, function(data) {
-				$scope.thread_list = JSON.stringify(data);
+			session.getThreads(function(resp) {
+				$scope.thread_list = JSON.stringify(resp);
 			});
 		};
 
 		$scope.setBreakpoint = function(session_id, symbol) {
-            db.setBreakpoint(symbol, session, function(data) {
+            session.setBreakpoint(symbol, function(data) {
 				$scope.bp_output = JSON.stringify(data);
 			});
 		};
 
 		$scope.getModules = function() {
-			db.getModules(session, function(data) {
+			session.getModules(function(data) {
 				$scope.module_output = data;
 			});
 		};
 
 		$scope.readMemory = function(_address) {
-			db.readMemory(_address, 4096, ' ', session, function(data) {
+			session.readMemory(_address, 4096, function(data) {
 				$scope.memory_output = JSON.stringify(data, null, "\t");
 			});
 		};
 
 		$scope.procState = function() {
-			db.getProcState(session, function(data) {
-                data.session = session.id;
-
+			session.getProcState(function(data) {
                 $scope.proc_state = data;
 			});
 		};
 
-		$scope.readRegisters = function(session_id) {
-			$http.get('dbg-llvm://list/registers', {
-                method: "GET",
-                params: {
-                    session: session_id,
-                    thread: 0,
-                    frame: 0
-                }
-            }).success(function(data) {
+		$scope.readRegisters = function() {
+            session.readRegisters(0, 0, function(data) {
 				$scope.register_output = data;
 			});
 		};
 
-		$scope.readInstructions = function(session_id, _address) {
-			$http.get('dbg-llvm://read/instructions', {
-				method: "GET",
-				params: {
-					session: session_id,
-					count: 4096,
-					address: _address
-				}
-			}).success(function(data) {
+		$scope.readInstructions = function(_address) {
+			session.readInstructions(_address, 4096, function(data) {
                 $scope.inst_output = data;
 			});
 		};
 
 		$scope.listSymbols = function() {
-            db.getSymbols(session, 0, function(data) {
+            session.getSymbols(0, function(data) {
 				$scope.symbols_output = data;
 			});
 		};
 
         $scope.getFrames = function(thread_ind) {
-            db.getFrames(thread_ind, session, function(data) {
+            session.getFrames(thread_ind, function(data) {
                 $scope.frames_list = JSON.stringify(data, null, "\t");
             });
         };
@@ -102,7 +80,9 @@ novo.controller("dbg", ['$scope', '$http',
         $scope.onSelectPart = function($item, $model, $label) {
             $scope.attachAutocomplete = $item.pid + " " + $item.path;
 
-            $scope.attachTarget($item.pid);
+            session.attach($item.pid, function() {
+                $scope.listSymbols();
+            });
         };
 
         $scope.get_attach_data = function(partial) {
