@@ -1,1 +1,10 @@
-<pre>This is memview!</pre>
+<h2>
+    Memory
+</h2>
+<p class="memory_view">
+    {{memory_output.block}}
+</p>
+<p>
+    <input type="text" name="input" ng-model="read_mem_addr" required ng-trim="true">
+    <button class="btn btn-default" ng-click="readMemory(read_mem_addr)">Read Memory</button>
+</p>

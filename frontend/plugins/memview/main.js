@@ -16,7 +16,17 @@ load_plugin(function(angular_module) {
         };
     }]).controller("ndbPluginmemview", ['$scope', '$http', '$compile',
         function($scope, $http, $compile) {
-            console.info("Controller :", $scope);
+            var session = $scope.$parent.session;
+
+            $scope.readMemory = function(_address) {
+                console.info("read memory from " + _address);
+
+                console.info($scope);
+
+                session.readMemory(_address, 4096, function(data) {
+                    $scope.memory_output = data;
+                });
+            };
         }
     ]);
 });

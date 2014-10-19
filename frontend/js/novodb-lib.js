@@ -123,7 +123,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.readMemory = function(address, count, f_success, f_fail) {
-        url_get_passthrough("dbg-llvm://breakpoint/set", {
+        url_get_passthrough("dbg-llvm://read/memory", {
             session: session_id,
             address: address,
             count: count,
