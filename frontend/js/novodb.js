@@ -1,7 +1,7 @@
 var novo = angular.module('novodb', ['ui.bootstrap']);
 
-novo.controller("dbg", ['$scope', '$http',
-	function($scope, $http) {
+novo.controller("dbg", ['$scope', '$http', '$compile',
+	function($scope, $http, $compile) {
         var session = create_ndb_session($http);
 
         $scope.targetExe = function(path) {
@@ -85,6 +85,14 @@ novo.controller("dbg", ['$scope', '$http',
             });
         };
 
+        $scope.plugins = [];
+        $scope.addPlugin = function() {
+            $scope.plugins.push({
+                name: "memview",
+                session: session
+            });
+        };
+
         $scope.get_attach_data = function(partial) {
             if(partial != undefined) {
                 if (partial.indexOf('a') == 0) {
@@ -143,7 +151,34 @@ novo.controller("dbg", ['$scope', '$http',
             }
         }, 1000);
 	}
-]);
+]).directive("ndbPluginsContainer", function($compile) {
+    return {
+        scope:{
+            ndbPluginsContainer:"=" //import referenced model to our directives scope
+        },
+        link: function(scope, elem, attr, ctrl) {
+            scope.$watch('ndbPluginsContainer', function(){ // watch for when model changes
+                console.info(scope);
+                var d = scope.ndbPluginsContainer[scope.ndbPluginsContainer.length - 1];
+
+                if(d == undefined) {
+                    return;
+                }
+
+                var s = scope.$new(); //create a new scope
+                angular.extend(s,d); //copy data onto it
+
+                var template = "<div ndb-plugin-" + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
+                elem.append($compile(template)(s)); // compile template & append
+
+            }, true); //look deep into object
+        }
+    };
+});
+
+function load_plugin(plFunc) {
+    plFunc(novo);
+}
 
 document.onkeyup = function(e) {
     if(e.ctrlKey && e.keyCode == 82) {
@@ -155,3 +190,4 @@ document.onkeyup = function(e) {
 $( document ).ready(function() {
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
+

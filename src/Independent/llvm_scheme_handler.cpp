@@ -448,7 +448,6 @@ namespace novo {
             int session_id = stoi(req.at("session"));
             addr_t addr = stoull(req.at("address"), 0, 16);
             size_t get_bytes = stol(req.at("count"));
-            string sep = req.at("sep");
             
             LldbProcessSession& session = this->sessions[session_id];
             SBError error;
@@ -461,8 +460,8 @@ namespace novo {
 
                 os << hex << setfill('0');  // set the stream to hex with 0 fill
                 
-                std::for_each(std::begin(mem_arr), std::end(mem_arr), [&os, &sep] (int i) {
-                    os << setw(2) << i << sep;
+                std::for_each(std::begin(mem_arr), std::end(mem_arr), [&os] (int i) {
+                    os << setw(2) << i;
                 });
                 
                 output.put("address", to_string(addr));

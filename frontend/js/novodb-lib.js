@@ -114,6 +114,14 @@ function create_ndb_session($http) {
         }, extract_data(f_success), f_fail);
     };
 
+    NdbSession.prototype.readInstructions = function(address, count, f_success, f_fail) {
+        url_get_passthrough("dbg-llvm://read/instructions", {
+            session: session_id,
+            address: address,
+            count: count
+        }, extract_data(f_success), f_fail);
+    };
+
     NdbSession.prototype.readMemory = function(address, count, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://breakpoint/set", {
             session: session_id,

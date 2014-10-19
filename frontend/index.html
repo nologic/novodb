@@ -66,6 +66,8 @@
     <script src="js/ui-bootstrap-tpls-0.9.0.js"></script>
     <script src="js/novodb-lib.js"></script>
     <script src="js/novodb.js"></script>
+    <script src="plugins/memview/main.js"></script>
+
 </head>
 
 <body ng-controller="dbg">
@@ -176,7 +178,7 @@
 
     <div class="row clearfix">
         <div class="col-md-4 column">
-            <button class="btn btn-default" ng-click="readRegisters(session_id)">Get Registers</button>
+            <button class="btn btn-default" ng-click="readRegisters()">Get Registers</button>
             <input type="text" ng-model="reg_search" ng-trim="true">
 
             <div ng-repeat="reg_set in register_output.registers">
@@ -192,7 +194,7 @@
         </div>
         <div class="col-md-4 column">
             <input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
-            <button class="btn btn-default" ng-click="readInstructions(session_id, inst_addr)">Read Instruction</button>
+            <button class="btn btn-default" ng-click="readInstructions(inst_addr)">Read Instruction</button>
 
             <table>
                 <tr ng-repeat="inst in inst_output.instructions">
@@ -203,7 +205,7 @@
         </div>
 
         <div class="col-md-4 column">
-            <button class="btn btn-default" ng-click="getModules(session_id)">Get Modules</button>
+            <button class="btn btn-default" ng-click="getModules()">Get Modules</button>
             <input type="text" ng-model="module_search" ng-trim="true">
             <table>
                 <tr ng-repeat="mod in module_output.modules | filter:module_search">
@@ -221,11 +223,11 @@
             </p>
             <p>
                 <input type="text" name="input" ng-model="read_mem_addr" required ng-trim="true">
-                <button class="btn btn-default" ng-click="readMemory(session_id, read_mem_addr)">Read Memory</button>
+                <button class="btn btn-default" ng-click="readMemory(read_mem_addr)">Read Memory</button>
             </p>
         </div>
         <div class="col-md-4 column">
-            <button class="btn btn-default" ng-click="listSymbols(session_id)">List symbols</button>
+            <button class="btn btn-default" ng-click="listSymbols()">List symbols</button>
             <input type="text" ng-model="sym_search" ng-trim="true">
             <table>
                 <tr ng-repeat="sym in symbols_output.symbols | filter:sym_search">
@@ -242,7 +244,7 @@
                 {{thread_list}}
             </p>
             <p>
-                <button class="btn btn-default" ng-click="getThreads(session_id)">Get Threads</button>
+                <button class="btn btn-default" ng-click="getThreads()">Get Threads</button>
             </p>
         </div>
         <div class="col-md-4 column">
@@ -254,7 +256,7 @@
             </p>
             <p>
                 <input type="text" name="input" ng-model="thread_ind" required ng-trim="true">
-                <button class="btn btn-default" ng-click="getFrames(session_id, thread_ind)">Get Threads</button>
+                <button class="btn btn-default" ng-click="getFrames(thread_ind)">Get Threads</button>
             </p>
         </div>
         <div class="col-md-4 column">
@@ -266,8 +268,14 @@
             </p>
             <p>
                 <input type="text" name="input" ng-model="breakpoint_symbol" required ng-trim="true">
-                <button class="btn btn-default" ng-click="setBreakpoint(session_id, breakpoint_symbol)">Set Breakpoint</button>
+                <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
             </p>
+        </div>
+
+        <div class="col-md-4 column">
+            <button ng-click="addPlugin()">Add Plugin</button>
+
+            <div ndb-plugins-container="plugins"></div>
         </div>
     </div>
 </div>
