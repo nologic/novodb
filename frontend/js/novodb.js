@@ -4,14 +4,6 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
 	function($scope, $http, $compile) {
         var session = create_ndb_session($http);
 
-        $http.get("util://list/ui_plugins", {
-            method: "GET"
-        }).then(function (resp) {
-            console.info("plugins: ", resp);
-        }, function (resp) {
-            console.info("fail plugins: ", resp);
-        });
-
         $scope.targetExe = function(path) {
             session.load(path, [], function() {
                 $scope.listSymbols();
@@ -192,6 +184,8 @@ function load_plugin(plugin_spec) {
     plugin_specs.push(plugin_spec);
 
     plugin_spec.attach_ui(novo);
+
+    log("loaded plugin: " + plugin_spec.get_plugin_name());
 }
 
 function load_js_file(filename){
@@ -213,6 +207,17 @@ document.onkeyup = function(e) {
 };
 
 $( document ).ready(function() {
+    $.get( "util://list/ui_plugins", function( resp ) {
+        console.info("plugins", resp);
+
+        resp.plugins.forEach(function(p) {
+            load_js_file("plugins/" + p.name + "/main.js");
+        });
+    }).fail(function (resp) {
+        console.info("fail plugins: ", resp);
+        log("Failed to load UI plugins");
+    });
+
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
 

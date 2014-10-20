@@ -37,6 +37,10 @@ load_plugin(function() {
         session = new_session;
     };
 
+    MemView.prototype.get_plugin_name = function() {
+        return "Memview";
+    }
+
     _instance = new MemView();
 
     return _instance;
