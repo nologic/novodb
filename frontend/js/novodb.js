@@ -4,6 +4,14 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
 	function($scope, $http, $compile) {
         var session = create_ndb_session($http);
 
+        $http.get("util://list/ui_plugins", {
+            method: "GET"
+        }).then(function (resp) {
+            console.info("plugins: ", resp);
+        }, function (resp) {
+            console.info("fail plugins: ", resp);
+        });
+
         $scope.targetExe = function(path) {
             session.load(path, [], function() {
                 $scope.listSymbols();
@@ -85,10 +93,12 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
             });
         };
 
-        $scope.plugins = [];
+        $scope.plugins = [{
+            name: "Memview"
+        }];
         $scope.addPlugin = function() {
             $scope.plugins.push({
-                name: "memview",
+                name: "Memview",
                 session: session
             });
         };
@@ -168,7 +178,7 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
                 var s = scope.$new(); //create a new scope
                 angular.extend(s,d); //copy data onto it
 
-                var template = "<div ndb-plugin-" + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
+                var template = '<div class="col-md-4 column" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
                 elem.append($compile(template)(s)); // compile template & append
 
             }, true); //look deep into object
@@ -176,8 +186,23 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
     };
 });
 
-function load_plugin(plFunc) {
-    plFunc(novo);
+var plugin_specs = [];
+
+function load_plugin(plugin_spec) {
+    plugin_specs.push(plugin_spec);
+
+    plugin_spec.attach_ui(novo);
+}
+
+function load_js_file(filename){
+    var fileref = document.createElement('script');
+
+    fileref.setAttribute("type","text/javascript");
+    fileref.setAttribute("src", filename);
+
+    if (typeof fileref != "undefined") {
+        document.getElementsByTagName("head")[0].appendChild(fileref);
+    }
 }
 
 document.onkeyup = function(e) {
@@ -185,7 +210,7 @@ document.onkeyup = function(e) {
         // ctrl+r reload page
         location.reload();
     }
-}
+};
 
 $( document ).ready(function() {
     log("Welcome to Novodb. Enjoy your debugging experience!");

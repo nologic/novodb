@@ -78,5 +78,34 @@ namespace novo {
             
             return ActionResponse::no_error();
         });
+        
+        req_router.register_path({"list", "ui_plugins"}, {}, [this] ACTION_CALLBACK(req, output) {
+            using namespace std;
+            using namespace boost::filesystem;
+            
+            path plugins_path(path(app_path()) / path("frontend/plugins"));
+            
+            if(!exists(plugins_path)) {
+                return ActionResponse::error("Does not exist " + plugins_path.string());
+            }
+            
+            if(!is_directory(plugins_path)) {
+                return ActionResponse::error("Not a directory" + plugins_path.string());
+            }
+            
+            boost::property_tree::ptree dirlist;
+            
+            for(directory_iterator dir_itr(plugins_path); dir_itr != directory_iterator(); dir_itr++) {
+                boost::property_tree::ptree dirent;
+                
+                dirent.put("name", dir_itr->path().filename().string());
+                
+                dirlist.push_back(make_pair("", dirent));
+            }
+            
+            output.add_child("plugins", dirlist);
+            
+            return ActionResponse::no_error();
+        });
     }
 }
