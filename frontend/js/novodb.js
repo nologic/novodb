@@ -1,6 +1,14 @@
 var novo = angular.module('novodb', ['ui.bootstrap']);
 
-novo.controller("dbg", ['$scope', '$http', '$compile',
+novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, $filterProvider, $provide) {
+    novo.controllerProvider = $controllerProvider;
+    novo.compileProvider    = $compileProvider;
+    //novo.routeProvider      = $routeProvider;
+    novo.filterProvider     = $filterProvider;
+    novo.provide            = $provide;
+
+    // Register routes with the $routeProvider
+}).controller("dbg", ['$scope', '$http', '$compile',
 	function($scope, $http, $compile) {
         var session = create_ndb_session($http);
 
@@ -85,9 +93,7 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
             });
         };
 
-        $scope.plugins = [{
-            name: "Memview"
-        }];
+        $scope.plugins = [];
         $scope.addPlugin = function() {
             $scope.plugins.push({
                 name: "Memview",
@@ -152,6 +158,20 @@ novo.controller("dbg", ['$scope', '$http', '$compile',
                 $scope.procState($scope.session_id);
             }
         }, 1000);
+
+        $http.get("util://list/ui_plugins", {
+            method: "GET"
+        }).then(function (resp) {
+            console.info("plugins", resp);
+
+            resp.data.plugins.forEach(function(p) {
+                load_js_file("plugins/" + p.name + "/main.js");
+            });
+        }, function (resp) {
+            console.info("fail plugins: ", resp);
+
+            log("Failed to load UI plugins");
+        });
 	}
 ]).directive("ndbPluginsContainer", function($compile) {
     return {
@@ -207,17 +227,6 @@ document.onkeyup = function(e) {
 };
 
 $( document ).ready(function() {
-    $.get( "util://list/ui_plugins", function( resp ) {
-        console.info("plugins", resp);
-
-        resp.plugins.forEach(function(p) {
-            load_js_file("plugins/" + p.name + "/main.js");
-        });
-    }).fail(function (resp) {
-        console.info("fail plugins: ", resp);
-        log("Failed to load UI plugins");
-    });
-
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
 
