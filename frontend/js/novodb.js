@@ -1,3 +1,14 @@
+function load_js_file(filename){
+    var fileref = document.createElement('script');
+
+    fileref.setAttribute("type","text/javascript");
+    fileref.setAttribute("src", filename);
+
+    if (typeof fileref != "undefined") {
+        document.getElementsByTagName("head")[0].appendChild(fileref);
+    }
+}
+
 var novo = angular.module('novodb', ['ui.bootstrap']);
 
 novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, $filterProvider, $provide) {
@@ -99,6 +110,11 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 name: "Memview",
                 session: session
             });
+
+            $scope.plugins.push({
+                name: "Regview",
+                session: session
+            });
         };
 
         $scope.get_attach_data = function(partial) {
@@ -165,7 +181,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             console.info("plugins", resp);
 
             resp.data.plugins.forEach(function(p) {
-                load_js_file("plugins/" + p.name + "/main.js");
+                load_js_file("plugins/" + p.name + "/" + p.name + ".js");
             });
         }, function (resp) {
             console.info("fail plugins: ", resp);
@@ -180,19 +196,19 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         },
         link: function(scope, elem, attr, ctrl) {
             scope.$watch('ndbPluginsContainer', function(){ // watch for when model changes
-                console.info(scope);
-                var d = scope.ndbPluginsContainer[scope.ndbPluginsContainer.length - 1];
+                while(scope.ndbPluginsContainer.length > 0) {
+                    var d = scope.ndbPluginsContainer.shift();
 
-                if(d == undefined) {
-                    return;
+                    if (d == undefined) {
+                        return;
+                    }
+
+                    var s = scope.$new(); //create a new scope
+                    angular.extend(s, d); //copy data onto it
+
+                    var template = '<div class="col-md-4 column" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
+                    elem.append($compile(template)(s)); // compile template & append
                 }
-
-                var s = scope.$new(); //create a new scope
-                angular.extend(s,d); //copy data onto it
-
-                var template = '<div class="col-md-4 column" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
-                elem.append($compile(template)(s)); // compile template & append
-
             }, true); //look deep into object
         }
     };
@@ -200,33 +216,14 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
 var plugin_specs = [];
 
-function load_plugin(plugin_spec) {
-    plugin_specs.push(plugin_spec);
-
-    plugin_spec.attach_ui(novo);
-
-    log("loaded plugin: " + plugin_spec.get_plugin_name());
-}
-
-function load_js_file(filename){
-    var fileref = document.createElement('script');
-
-    fileref.setAttribute("type","text/javascript");
-    fileref.setAttribute("src", filename);
-
-    if (typeof fileref != "undefined") {
-        document.getElementsByTagName("head")[0].appendChild(fileref);
-    }
-}
-
-document.onkeyup = function(e) {
-    if(e.ctrlKey && e.keyCode == 82) {
-        // ctrl+r reload page
-        location.reload();
-    }
-};
-
 $( document ).ready(function() {
+    document.onkeyup = function(e) {
+        if(e.ctrlKey && e.keyCode == 82) {
+            // ctrl+r reload page
+            location.reload();
+        }
+    };
+
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
 

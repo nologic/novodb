@@ -98,9 +98,10 @@ namespace novo {
             for(directory_iterator dir_itr(plugins_path); dir_itr != directory_iterator(); dir_itr++) {
                 boost::property_tree::ptree dirent;
                 
-                dirent.put("name", dir_itr->path().filename().string());
-                
-                dirlist.push_back(make_pair("", dirent));
+                if(is_directory(*dir_itr)) {
+                    dirent.put("name", dir_itr->path().filename().string());
+                    dirlist.push_back(make_pair("", dirent));
+                }
             }
             
             output.add_child("plugins", dirlist);

@@ -1,0 +1,16 @@
+<h2>
+    Registers
+</h2>
+
+<div ng-repeat="reg_set in register_output.registers">
+    {{ reg_set.name }}:
+    <table>
+        <tr ng-repeat="reg in reg_set.values | filter:reg_search | filter:{value: '!!'}">
+            <td>{{ reg.name }}</td>
+            <td>{{ reg.value }}</td>
+        </tr>
+    </table>
+    <hr width="75%">
+</div>
+
+<button class="btn btn-default" ng-click="readRegisters()">Get Registers</button>
