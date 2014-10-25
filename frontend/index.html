@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/autocomplete.css">
     <style>
         body {
-            padding-top: 70px;
+            padding-top: 100px;
         }
 
         .memory_view {
@@ -81,7 +81,7 @@
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
+        <!--<ul class="nav navbar-nav">-->
             <div>
                 {{proc_state.description}} ({{proc_state.session}})
             </div>
@@ -147,7 +147,21 @@
             </li>
         </ul>-->
     </div>
+
+    <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="instantiatePlugin('Memview')">Memory</button>
+            <button type="button" class="btn btn-default" ng-click="">Stack</button>
+            <button type="button" class="btn btn-default" ng-click="">Threads</button>
+            <button type="button" class="btn btn-default" ng-click="">Disasm</button>
+            <button type="button" class="btn btn-default" ng-click="">Modules</button>
+            <button type="button" class="btn btn-default" ng-click="">Symbols</button>
+            <button type="button" class="btn btn-default" ng-click="">Breakpoints</button>
+            <button type="button" class="btn btn-default" ng-click="instantiatePlugin('Regview')">Register</button>
+        </div>
+    </div>
 </nav>
+
 
 <script type="text/ng-template" id="autocomplete_template">
     <a>
@@ -177,21 +191,6 @@
 
     <div class="row clearfix">
         <div class="col-md-4 column">
-            <button class="btn btn-default" ng-click="readRegisters()">Get Registers</button>
-            <input type="text" ng-model="reg_search" ng-trim="true">
-
-            <div ng-repeat="reg_set in register_output.registers">
-                {{ reg_set.name }}:
-                <table>
-                    <tr ng-repeat="reg in reg_set.values | filter:reg_search | filter:{value: '!!'}">
-                        <td>{{ reg.name }}</td>
-                        <td>{{ reg.value }}</td>
-                    </tr>
-                </table>
-                <hr width="75%">
-            </div>
-        </div>
-        <div class="col-md-4 column">
             <input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
             <button class="btn btn-default" ng-click="readInstructions(inst_addr)">Read Instruction</button>
 
@@ -213,18 +212,6 @@
             </table>
         </div>
 
-        <div class="col-md-4 column">
-            <h2>
-                Memory
-            </h2>
-            <p class="memory_view">
-                {{memory_output.block}}
-            </p>
-            <p>
-                <input type="text" name="input" ng-model="read_mem_addr" required ng-trim="true">
-                <button class="btn btn-default" ng-click="readMemory(read_mem_addr)">Read Memory</button>
-            </p>
-        </div>
         <div class="col-md-4 column">
             <button class="btn btn-default" ng-click="listSymbols()">List symbols</button>
             <input type="text" ng-model="sym_search" ng-trim="true">
@@ -269,12 +256,6 @@
                 <input type="text" name="input" ng-model="breakpoint_symbol" required ng-trim="true">
                 <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
             </p>
-        </div>
-
-        <div class="row clearfix">
-            <div class="col-md-4 column">
-                <button ng-click="addPlugin()">Add Plugin</button>
-            </div>
         </div>
 
         <div class="row clearfix" ndb-plugins-container="plugins">

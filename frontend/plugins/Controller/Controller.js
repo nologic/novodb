@@ -21,7 +21,7 @@ load_plugin(function() {
 
             $scope.resume = function (thread_num) {
                 session.resume(thread_num, function(data){
-                    // refresh all.
+                    dispatch_event(EVENT.ipchange);
                 });
             };
         }

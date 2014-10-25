@@ -105,19 +105,9 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         };
 
         $scope.plugins = [];
-        $scope.addPlugin = function() {
+        $scope.instantiatePlugin = function(pluginName) {
             $scope.plugins.push({
-                name: "Memview",
-                session: session
-            });
-
-            $scope.plugins.push({
-                name: "Regview",
-                session: session
-            });
-
-            $scope.plugins.push({
-                name: "Controller",
+                name: pluginName,
                 session: session
             });
         };
