@@ -14,6 +14,12 @@ load_plugin(function() {
                     $scope.register_output = data;
                 });
             };
+
+            listen_event(EVENT.ipchange, function(e) {
+                $scope.readRegisters();
+
+                console.info("refreshing registers!")
+            });
         }
     ]);
 
@@ -27,10 +33,6 @@ load_plugin(function() {
 
     MemView.prototype.get_plugin_name = function() {
         return pluginName;
-    };
-
-    MemView.prototype.refresh = function() {
-
     };
 
     _instance = new MemView();

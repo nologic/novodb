@@ -11,9 +11,28 @@ function make_ui_func(pluginName, controllerArray) {
 }
 
 function load_plugin(plugin_spec) {
+    if(window.plugin_specs == undefined) {
+        window.plugin_specs = [];
+    }
+
     plugin_specs.push(plugin_spec);
 
     plugin_spec.attach_ui(novo);
 
     log("loaded plugin: " + plugin_spec.get_plugin_name());
+}
+
+var EVENT = {
+    ipchange: "ip-change"
+};
+
+function dispatch_event(type, params, plugin_type, plugin_instance) {
+    var event = new Event(type);
+    event.params = params;
+
+    document.dispatchEvent(event);
+}
+
+function listen_event(type, fcn) {
+    document.addEventListener(type, fcn);
 }

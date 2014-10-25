@@ -147,6 +147,21 @@ function create_ndb_session($http) {
         f_fail("Not yet implemented");
     };
 
+    // EIP commands
+    NdbSession.prototype.step = function(thread, f_success, f_fail) {
+        url_get_passthrough("dbg-llvm://cmd/step", {
+            session: session_id,
+            thread: thread
+        }, extract_data(f_success), f_fail);
+    };
+
+    NdbSession.prototype.resume = function(thread, f_success, f_fail) {
+        url_get_passthrough("dbg-llvm://cmd/resume", {
+            session: session_id,
+            thread: thread
+        }, extract_data(f_success), f_fail);
+    };
+
     return new NdbSession();
 }
 

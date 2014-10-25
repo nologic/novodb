@@ -115,6 +115,11 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 name: "Regview",
                 session: session
             });
+
+            $scope.plugins.push({
+                name: "Controller",
+                session: session
+            });
         };
 
         $scope.get_attach_data = function(partial) {
@@ -213,8 +218,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         }
     };
 });
-
-var plugin_specs = [];
 
 $( document ).ready(function() {
     document.onkeyup = function(e) {

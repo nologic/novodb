@@ -377,10 +377,12 @@ namespace novo {
             LldbProcessSession& session = this->sessions[session_id];
             
             auto num_threads = session.process.GetNumThreads();
+            auto cur_thread = session.process.GetSelectedThread();
             
-            ptree out_th;
+            ptree out_threads;
             
             for(decltype(num_threads) i = 0; i < num_threads; i++) {
+                ptree out_th;
                 SBThread thread = session.process.GetThreadAtIndex(i);
                 SBStream status;
                 
@@ -395,9 +397,15 @@ namespace novo {
                 if(thread.GetStatus(status)) {
                     out_th.put("status", string(status.GetData()));
                 }
+                
+                if(thread.GetThreadID() == cur_thread.GetThreadID()) {
+                    out_th.put("current", "true");
+                }
+                
+                out_threads.push_back(make_pair("", out_th));
             }
             
-            output.put_child("threads", out_th);
+            output.put_child("threads", out_threads);
             
             return ActionResponse::no_error();
         });
