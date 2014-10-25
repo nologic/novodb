@@ -36,6 +36,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             session.attach(pid[0], function() {
                 $scope.listSymbols();
                 $scope.instantiatePlugin('Regview');
+                log("Attaced to " + pid[0]);
             });
         };
 
@@ -102,6 +103,8 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
             session.attach($item.pid, function() {
                 $scope.listSymbols();
+                $scope.instantiatePlugin('Regview');
+                log("Attaced to " + $item.pid);
             });
         };
 
@@ -198,6 +201,8 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     if (d == undefined) {
                         return;
                     }
+
+                    log("Instantiating: " + d);
 
                     var s = scope.$new(); //create a new scope
                     angular.extend(s, d); //copy data onto it
