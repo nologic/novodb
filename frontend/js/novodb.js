@@ -35,6 +35,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
             session.attach(pid[0], function() {
                 $scope.listSymbols();
+                $scope.instantiatePlugin('Regview');
             });
         };
 

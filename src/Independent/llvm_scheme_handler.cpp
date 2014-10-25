@@ -104,7 +104,6 @@ namespace novo {
             using namespace std;
             
             stringstream ss;
-            //string exe_path(req.at("path"));
             lldb::pid_t pid = stoi(req.at("pid"));
 
             SBDebugger debugger = SBDebugger::Create();
@@ -389,6 +388,7 @@ namespace novo {
                 const char* name = thread.GetName();
                 
                 out_th.put("tid", to_string(thread.GetThreadID()));
+                out_th.put("index", to_string(i));
                 
                 if(name != NULL) {
                     out_th.put("name", string(thread.GetName()));
