@@ -10,7 +10,8 @@ load_plugin(function() {
             _instance.set_session($scope.$parent.session);
 
             $scope.step = function (thread_num) {
-                session.step(thread_num, function(data){
+                console.info(session.get_selectedThread());
+                session.step(session.get_selectedThread()['index'], function(data){
                     dispatch_event(EVENT.ipchange);
                 });
             };

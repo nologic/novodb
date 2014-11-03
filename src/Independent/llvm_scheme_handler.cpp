@@ -388,7 +388,7 @@ namespace novo {
                 const char* name = thread.GetName();
                 
                 out_th.put("tid", to_string(thread.GetThreadID()));
-                out_th.put("index", to_string(i));
+                out_th.put("index", std::to_string(i));
                 
                 if(name != NULL) {
                     out_th.put("name", string(thread.GetName()));

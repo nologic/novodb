@@ -103,7 +103,9 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
             session.attach($item.pid, function() {
                 $scope.listSymbols();
+                $scope.getThreads();
                 $scope.instantiatePlugin('Regview');
+                $scope.instantiatePlugin('Controller');
                 log("Attaced to " + $item.pid);
             });
         };

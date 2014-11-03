@@ -2,6 +2,11 @@ function create_ndb_session($http) {
     var session_id = null;
     var mem_separator = ' ';
 
+    // observable cached variables.
+    var stepCount = 0;
+    var procState = { state: 0, description: "invalid" };
+    var selectedThread = undefined;
+
     function NdbSession() {}
 
     function default_err(resp) {
@@ -18,7 +23,14 @@ function create_ndb_session($http) {
 
     function extract_data(func) {
         return function(resp){
-            return func(resp.data);
+            if(typeof(func) == "function") {
+                return func(resp.data);
+            } else {
+                // we actually have an array of functions to exec.
+                func.forEach(function(f) {
+                    f(resp.data);
+                });
+            }
         }
     }
 
@@ -41,32 +53,35 @@ function create_ndb_session($http) {
         });
     }
 
+    // cached values
+    NdbSession.prototype.get_selectedThread = function() {
+        return selectedThread;
+    }
+
+    NdbSession.prototype.get_stepCount = function() {
+        return stepCount;
+    }
+
+    NdbSession.prototype.get_procState = function() {
+        return procState;
+    }
+
+    // backend function
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://create/target/attach", {
             pid: proc_pid
-        }, extract_data(function(sdata) {
+        }, extract_data([function(sdata) {
             session_id = sdata.session;
-
-            if (f_success == undefined) {
-                f_success = default_success;
-            }
-
-            f_success(sdata);
-        }), f_fail);
+        },
+        f_success]), f_fail);
     };
 
     NdbSession.prototype.load = function (path, args, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://create/target/exe", {
             path: path
-        }, extract_data(function(resp) {
+        }, extract_data([function(sdata) {
             session_id = sdata.session;
-
-            if (f_success == undefined) {
-                f_success = default_success;
-            }
-
-            f_success(sdata);
-        }), f_fail);
+        }, f_success]), f_fail);
     };
 
     NdbSession.prototype.launch = function (f_success, f_fail) {
@@ -78,7 +93,11 @@ function create_ndb_session($http) {
     NdbSession.prototype.getThreads = function (f_success, f_fail) {
         url_get_passthrough("dbg-llvm://list/threads", {
             session: session_id
-        }, extract_data(f_success), f_fail);
+        }, extract_data([function(data) {
+            selectedThread = data.threads.filter(function(th) {
+                return ('current' in th) && th.current == "true";
+            })[0];
+        }, f_success]), f_fail);
     };
 
     NdbSession.prototype.getModules = function (f_success, f_fail) {
@@ -104,7 +123,10 @@ function create_ndb_session($http) {
     NdbSession.prototype.getProcState = function (f_success, f_fail) {
         url_get_passthrough("dbg-llvm://proc/state", {
             session: session_id
-        }, extract_data(f_success), f_fail);
+        }, extract_data([function(data) {
+            procState = data;
+        },
+        f_success]), f_fail);
     };
 
     NdbSession.prototype.setBreakpoint = function(symbol, f_success, f_fail) {
@@ -152,7 +174,10 @@ function create_ndb_session($http) {
         url_get_passthrough("dbg-llvm://cmd/step", {
             session: session_id,
             thread: thread
-        }, extract_data(f_success), f_fail);
+        }, extract_data([function(data) {
+            // returned from step.
+            stepCount += 1;
+        }, f_success]), f_fail);
     };
 
     NdbSession.prototype.resume = function(thread, f_success, f_fail) {
@@ -161,6 +186,11 @@ function create_ndb_session($http) {
             thread: thread
         }, extract_data(f_success), f_fail);
     };
+    // // end backend functions.
+
+    // Front end functions
+
+    // // end Front end functions
 
     return new NdbSession();
 }

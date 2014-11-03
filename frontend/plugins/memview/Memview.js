@@ -16,6 +16,10 @@ load_plugin(function() {
                     $scope.memory_output = data;
                 });
             };
+
+            $scope.$watch(session.get_stepCount, function(newVal) {
+                $scope.readMemory($scope.read_mem_addr);
+            });
         }
     ]);
 
@@ -29,10 +33,6 @@ load_plugin(function() {
 
     MemView.prototype.get_plugin_name = function() {
         return pluginName;
-    };
-
-    MemView.prototype.refresh = function() {
-
     };
 
     _instance = new MemView();
