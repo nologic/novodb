@@ -11,6 +11,8 @@ load_plugin(function() {
 
             _instance.set_session($scope.$parent.session);
 
+            log("config: " + JSON.stringify($scope.$parent.params));
+
             $scope.readMemory = function (_address) {
                 session.readMemory(_address, 4096, function (data) {
                     $scope.memory_output = data;

@@ -1,0 +1,8 @@
+<input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
+<button class="btn btn-default" ng-click="readInstructions(inst_addr)">Read Instruction</button>
+
+<table>
+    <tr ng-repeat="inst in inst_output.instructions">
+        <td>{{ inst.description }}</td>
+    </tr>
+</table>

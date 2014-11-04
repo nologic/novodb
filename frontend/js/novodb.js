@@ -111,10 +111,11 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         };
 
         $scope.plugins = [];
-        $scope.instantiatePlugin = function(pluginName) {
+        $scope.instantiatePlugin = function(pluginName, params) {
             $scope.plugins.push({
                 name: pluginName,
-                session: session
+                session: session,
+                params: params
             });
         };
 
@@ -218,12 +219,12 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 });
 
 $( document ).ready(function() {
-    document.onkeyup = function(e) {
+    /*document.onkeyup = function(e) {
         if(e.ctrlKey && e.keyCode == 82) {
             // ctrl+r reload page
             location.reload();
         }
-    };
+    };*/
 
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });

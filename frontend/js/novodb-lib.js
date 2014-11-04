@@ -6,6 +6,7 @@ function create_ndb_session($http) {
     var stepCount = 0;
     var procState = { state: 0, description: "invalid" };
     var selectedThread = undefined;
+    var currentPc = undefined;
 
     function NdbSession() {}
 
@@ -64,6 +65,10 @@ function create_ndb_session($http) {
 
     NdbSession.prototype.get_procState = function() {
         return procState;
+    }
+
+    NdbSession.prototype.get_currentPc = function() {
+        return currentPc;
     }
 
     // backend function
@@ -162,7 +167,11 @@ function create_ndb_session($http) {
             session: session_id,
             frame: frame,
             thread: thread
-        }, extract_data(f_success), f_fail);
+        }, extract_data([function(data) {
+            currentPc = data.registers[0].values.filter(function(regval) {
+                return regval.name == "rip" || regval.name == "eip";
+            })[0];
+        }, f_success]), f_fail);
     };
 
     NdbSession.prototype.writeRegisters = function(frame, thread, f_success, f_fail) {
