@@ -211,7 +211,12 @@ function log(txt) {
         txt = JSON.stringify(txt, null, '\t');
     }
 
+    output(txt);
+}
+
+function output(txt) {
     var log_pre = $('#log_view');
     log_pre.append(txt);
     log_pre.append('\n');
+    log_pre.scrollTop( log_pre.prop("scrollHeight") );    
 }

@@ -190,6 +190,45 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
             log("Failed to load UI plugins");
         });
+
+        register_command({
+            cmd: "attach", 
+            description: "Attach to a process",
+            complete: function(params) {
+                if(params.length == 0) {
+                    return ["[pid]", "[name]"];
+                } else {
+                    var filterBy = params[0];
+
+                    return $http.get('util://list/proc').then(function (data) {
+                        return data.data.processes.map(function (proc) {
+                            var slashIndex = proc.path.lastIndexOf('/');
+                            var proc_name = (slashIndex > -1 ? proc.path.substring(slashIndex + 1) : proc.path);
+
+                            return proc.pid + ":" + proc_name;
+                        }).filter(function (testVal) {
+                            return testVal.indexOf(filterBy) > -1;
+                        });
+                    });
+                }
+            },
+            execute: function(params) {
+                output("Executing! attach");
+            }
+        });
+
+        register_command({
+            cmd: "load",
+            description: "Load an executable",
+            complete: function(params) {
+                if(params.length == 0) {
+                    return ["[path]"];
+                }
+            },
+            execute: function(params) {
+                output("Executing! load");
+            }
+        });
 	}
 ]).directive("ndbPluginsContainer", function($compile) {
     return {
@@ -218,13 +257,87 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
     };
 });
 
+var commands = [];
+
+function register_command(cmd) {
+    commands.push(cmd);
+}
+
 $( document ).ready(function() {
-    /*document.onkeyup = function(e) {
-        if(e.ctrlKey && e.keyCode == 82) {
-            // ctrl+r reload page
-            location.reload();
+    $('#cmd_line').keydown(function(e){
+        if(e.keyCode == 9) { 
+            // tab completion
+            var cmdText = $('#cmd_line').val().split(/\s+/); 
+    
+            var execCmd = commands.filter(function(cmd) {
+                return cmd.cmd.indexOf(cmdText[0]) == 0;
+            });
+
+            if(execCmd.length > 1) {
+                output(execCmd.map(function(cmd) {
+                    return cmd.cmd;
+                }).join(" "));
+            } else if(execCmd.length == 1) {
+                if(cmdText.length == 1) {
+                    $('#cmd_line').val(execCmd[0].cmd + " ");
+                }
+
+                cmdText.shift();
+                var compl = execCmd[0].complete(cmdText);
+
+                if(compl != undefined) {
+                    function proc_completes(arr) {
+                        if(arr.length == 1) {
+                            cmdText[cmdText.length - 1] = arr[0];
+
+                            $('#cmd_line').val(execCmd[0].cmd + " " + cmdText.join(" "));
+                        } else if(arr.length < 10) {
+                            output(execCmd[0].cmd + ": " + arr.join(" "));
+                        } else {
+                            arr.forEach(function(c) {
+                                output(c);
+                            });
+                        }
+                    }
+
+                    if(typeof compl.then === 'function') {
+                        compl.then(proc_completes);
+                    } else {
+                        proc_completes(compl);
+                    }
+                }
+            } else {
+                output("Command '" + cmdText[0] + "' not found");
+            }
+
+            return e.preventDefault();
+        } else if(e.keyCode == 13) {
+            // execute command!
+            var cmdText = $('#cmd_line').val().split(/\s+/);
+    
+            var execCmd = commands.filter(function(cmd) {
+                return cmd.cmd.indexOf(cmdText[0]) == 0;
+            });
+
+            if(execCmd.length > 1) {
+                output("Disambiguate: " + execCmd.map(function(cmd) {
+                    return cmd.cmd;
+                }).join(" "));
+            } else if(execCmd.length == 1) {
+                $('#cmd_line').val('');
+                output(cmdText.join(' '));
+
+                cmdText.shift();
+                execCmd[0].execute(cmdText);
+            } else {
+                output("Command '" + cmdText[0] + "' not found");
+            }
+
+            return e.preventDefault();
         }
-    };*/
+
+        return true;
+    });
 
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
