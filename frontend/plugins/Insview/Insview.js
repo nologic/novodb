@@ -10,7 +10,7 @@ load_plugin(function() {
             _instance.set_session($scope.$parent.session);
 
             $scope.readInstructions = function (_address) {
-                session.readInstructions(_address, 4096, function(data) {
+                session.readInstructions(_address, 20, function(data) {
                     $scope.inst_addr = _address;
                     $scope.inst_output = data;
                 });

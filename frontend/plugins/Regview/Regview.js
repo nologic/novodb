@@ -11,15 +11,30 @@ load_plugin(function() {
 
             $scope.readRegisters = function() {
                 session.readRegisters(0, 0, function(data) {
-                    $scope.register_output = data;
+                    $scope.register_output = data.registers.reduce(function(acc, regset) {
+                        regset.values.forEach(function(reg) {
+                            acc.push(reg);
+                        });
+
+                        return acc;
+                    }, []);
                 });
             };
 
-            listen_event(EVENT.ipchange, function(e) {
-                $scope.readRegisters();
+            $scope.configRegisters = function(val, index) {
+                // preconfigured user selected list of registers.
+                var chosen = {
+                    eax: true, rax: true
+                };
 
-                console.info("refreshing registers!")
+                return val.name in chosen;
+            };
+
+            $scope.$watch(session.get_stepCount, function(new_step) {
+                $scope.readRegisters();
             });
+
+            $scope.readRegisters();
         }
     ]);
 

@@ -1,17 +1,18 @@
-<h2>
-    Registers
-</h2>
-<input type="text" ng-model="reg_search" ng-trim="true">
+<div style="padding:5px">
+	<span class="operative_text"><a ng-click="readRegisters()">Registers</a></span>
 
-<div ng-repeat="reg_set in register_output.registers">
-    {{ reg_set.name }}:
-    <table>
-        <tr ng-repeat="reg in reg_set.values | filter:reg_search | filter:{value: '!!'}">
-            <td>{{ reg.name }}</td>
-            <td>{{ reg.value }}</td>
-        </tr>
-    </table>
-    <hr width="75%">
+	<input class="operative_text" type="text" ng-model="reg_search" ng-trim="true">
+
+	<table class="operative_text">
+	    <tr ng-if="reg_search.length > 0"
+	        ng-repeat="reg in register_output | filter:reg_search | filter:{value: '!!'}">
+	        <td style="padding-right: 10px;">{{ reg.name }}</td>
+	        <td>{{ reg.value }}</td>
+	    </tr>
+	    <tr ng-if="reg_search == undefined || reg_search.length == 0"
+	        ng-repeat="reg in register_output | filter:configRegisters | filter:{value: '!!'}">
+	        <td style="padding-right: 10px;">{{ reg.name }}</td>
+	        <td>{{ reg.value }}</td>
+	    </tr>
+	</table>
 </div>
-
-<button class="btn btn-default" ng-click="readRegisters()">Get Registers</button>

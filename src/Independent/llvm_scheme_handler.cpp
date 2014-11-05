@@ -527,9 +527,9 @@ namespace novo {
             size_t count = stol(req.at("count"));
             
             LldbProcessSession& session = this->sessions[session_id];
-            array<unsigned char, 4096> mem_arr;
+            //array<unsigned char, 4096> mem_arr;
             
-            SBInstructionList insts = session.target.GetInstructions(addr, mem_arr.data(), min(mem_arr.size(), count));
+            SBInstructionList insts = session.target.ReadInstructions(session.target.ResolveLoadAddress(addr), (uint32_t)count);
             auto inst_count = insts.GetSize();
             
             ptree insts_out;
