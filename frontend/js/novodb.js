@@ -121,26 +121,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
         $scope.get_attach_data = function(partial) {
             if(partial != undefined) {
-                if (partial.indexOf('a') == 0) {
-                    // doing the attach.
-
-                    var splitPartial = partial.split(' ');
-
-                    splitPartial.shift();
-
-                    return $http.get('util://list/proc').then(function (data) {
-                        return data.data.processes.map(function (proc) {
-                            var slashIndex = proc.path.lastIndexOf('/');
-                            proc.proc_name = (slashIndex > -1 ? proc.path.substring(slashIndex + 1) : proc.path);
-
-                            return proc;
-                        }).filter(function (testProc) {
-                            return splitPartial.reduce(function (acc, testVal) {
-                                return acc && ((testProc.pid + "").indexOf(testVal) > -1 || testProc.path.indexOf(testVal) > -1);
-                            }, true);
-                        });
-                    });
-                } else if (partial.indexOf('l') == 0) {
+                if (partial.indexOf('l') == 0) {
                     // load by path
                     var splitPartial = partial.split(' ');
 
@@ -213,7 +194,44 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 }
             },
             execute: function(params) {
-                output("Executing! attach");
+                function attach_pid(pid) {
+                    session.attach(pid, function() {
+                        $scope.listSymbols();
+                        $scope.getThreads();
+                        $scope.instantiatePlugin('Regview');
+                        $scope.instantiatePlugin('Controller');
+                        log("Attaced to " + $item.pid);
+                    });
+                }
+
+                var parts = params[0].split(":");
+
+                if(parts.length == 1) {
+                    if((/[0-9]+/).test(parts[0])) {
+                        attach_pid(parts[0]);
+                    } else {
+                        $http.get('util://list/proc').then(function (data) {
+                            var procs = data.data.processes.map(function (proc) {
+                                var slashIndex = proc.path.lastIndexOf('/');
+                                var proc_name = (slashIndex > -1 ? proc.path.substring(slashIndex + 1) : proc.path);
+
+                                return proc.pid + ":" + proc_name;
+                            }).filter(function (testVal) {
+                                return testVal.indexOf(parts[0]) > -1;
+                            });
+
+                            if(procs.length == 0) {
+                                output("Process " + parts[0] + " not found");
+                            } else if(procs.length > 1) {
+                                output("Process name " + parts[0] + " is ambiguous");
+                            } else {
+                                attach_pid(procs[0].split(":")[0]);
+                            }
+                        });
+                    }
+                } else {
+                    attach_pid(parts[0]);
+                }
             }
         });
 
@@ -264,79 +282,82 @@ function register_command(cmd) {
 }
 
 $( document ).ready(function() {
-    $('#cmd_line').keydown(function(e){
-        if(e.keyCode == 9) { 
-            // tab completion
-            var cmdText = $('#cmd_line').val().split(/\s+/); 
-    
-            var execCmd = commands.filter(function(cmd) {
-                return cmd.cmd.indexOf(cmdText[0]) == 0;
-            });
+    $('#footer_terminal').terminal(function (command, term) {
+        // execute command!
+        var cmdText = command.split(/\s+/);
 
-            if(execCmd.length > 1) {
-                output(execCmd.map(function(cmd) {
-                    return cmd.cmd;
-                }).join(" "));
-            } else if(execCmd.length == 1) {
-                if(cmdText.length == 1) {
-                    $('#cmd_line').val(execCmd[0].cmd + " ");
-                }
+        var execCmd = commands.filter(function(cmd) {
+            return cmd.cmd.indexOf(cmdText[0]) == 0;
+        });
 
-                cmdText.shift();
-                var compl = execCmd[0].complete(cmdText);
+        if(execCmd.length > 1) {
+            term.echo("Disambiguate: " + execCmd.map(function(cmd) {
+                return cmd.cmd;
+            }).join(" "));
+        } else if(execCmd.length == 1) {
+            $('#cmd_line').val('');
+            term.echo(cmdText.join(' '));
 
-                if(compl != undefined) {
-                    function proc_completes(arr) {
-                        if(arr.length == 1) {
-                            cmdText[cmdText.length - 1] = arr[0];
+            cmdText.shift();
+            var execStr = execCmd[0].execute(cmdText);
 
-                            $('#cmd_line').val(execCmd[0].cmd + " " + cmdText.join(" "));
-                        } else if(arr.length < 10) {
-                            output(execCmd[0].cmd + ": " + arr.join(" "));
+            if(execStr != undefined) {
+                term.echo(execStr);
+            }
+        } else {
+            term.echo("Command '" + cmdText[0] + "' not found");
+        }
+    }, {
+        keydown: function(event, term) {
+            if (event.keyCode == 9) {
+                // tab completion
+                var cmdText = term.get_command().split(/\s+/); 
+        
+                var execCmd = commands.filter(function(cmd) {
+                    return cmd.cmd.indexOf(cmdText[0]) == 0;
+                });
+
+                if(execCmd.length > 1) {
+                    term.echo(execCmd.map(function(cmd) {
+                        return cmd.cmd;
+                    }).join(" "));
+                } else if(execCmd.length == 1) {
+                    if(cmdText.length == 1) {
+                        term.set_command(execCmd[0].cmd + " ");
+                    }
+
+                    cmdText.shift();
+                    var compl = execCmd[0].complete(cmdText);
+
+                    if(compl != undefined) {
+                        function proc_completes(arr) {
+                            if(arr.length == 1) {
+                                cmdText[cmdText.length - 1] = arr[0];
+
+                                term.set_command(execCmd[0].cmd + " " + cmdText.join(" "));
+                            } else if(arr.length < 10) {
+                                term.echo(execCmd[0].cmd + ": " + arr.join(" "));
+                            } else {
+                                arr.forEach(function(c) {
+                                    term.echo(c);
+                                });
+                            }
+                        }
+
+                        if(typeof compl.then === 'function') {
+                            compl.then(proc_completes);
                         } else {
-                            arr.forEach(function(c) {
-                                output(c);
-                            });
+                            proc_completes(compl);
                         }
                     }
-
-                    if(typeof compl.then === 'function') {
-                        compl.then(proc_completes);
-                    } else {
-                        proc_completes(compl);
-                    }
+                } else {
+                    term.echo("Command '" + cmdText[0] + "' not found");
                 }
-            } else {
-                output("Command '" + cmdText[0] + "' not found");
+
+                // Tells the terminal to not handle the tab key
+                return false;
             }
-
-            return e.preventDefault();
-        } else if(e.keyCode == 13) {
-            // execute command!
-            var cmdText = $('#cmd_line').val().split(/\s+/);
-    
-            var execCmd = commands.filter(function(cmd) {
-                return cmd.cmd.indexOf(cmdText[0]) == 0;
-            });
-
-            if(execCmd.length > 1) {
-                output("Disambiguate: " + execCmd.map(function(cmd) {
-                    return cmd.cmd;
-                }).join(" "));
-            } else if(execCmd.length == 1) {
-                $('#cmd_line').val('');
-                output(cmdText.join(' '));
-
-                cmdText.shift();
-                execCmd[0].execute(cmdText);
-            } else {
-                output("Command '" + cmdText[0] + "' not found");
-            }
-
-            return e.preventDefault();
         }
-
-        return true;
     });
 
     log("Welcome to Novodb. Enjoy your debugging experience!");

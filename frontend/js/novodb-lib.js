@@ -215,8 +215,5 @@ function log(txt) {
 }
 
 function output(txt) {
-    var log_pre = $('#log_view');
-    log_pre.append(txt);
-    log_pre.append('\n');
-    log_pre.scrollTop( log_pre.prop("scrollHeight") );    
+    $('#footer_terminal').terminal().echo(txt);
 }

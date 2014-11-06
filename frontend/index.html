@@ -8,7 +8,7 @@
     <meta name="author" content="Mikhail Sosonkin">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/autocomplete.css">
+    <link rel="stylesheet" href="css/jquery.terminal.css">
     <style>
         body {
             padding-top: 100px;
@@ -20,7 +20,6 @@
         }
 
         .footer {
-            background-color: #606060;
             position: fixed;
             bottom: 0px;
             left: 0px;
@@ -40,38 +39,13 @@
             font-weight: bold;
         }
 
-        #log_view {
-            color: greenyellow;
-            background-color: inherit;
-            left: 0px;
-            right: 0px;
-            margin-top: 0px;
-            height: 85%;
-            border: 0px;
-            font-family: "Courier New", monospace;
-            font-size: 10px;
-        }
-
-        #cmd_line {
-            color: inherit;
-            color: greenyellow;
-            background-color: inherit;
-            font-family: "Courier New", monospace;
-            font-size: 10px;
-            height: 100%;
-            width: 100%;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            border: 0px;
-        }
-
         #main_view {
             overflow: scroll;
             margin-bottom: 100px;
         }
     </style>
     <script src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.terminal-0.8.8.js"></script>
     <script src="js/angular.js"></script>
     <script src="js/bootstrap.js"></script>
     <script src="js/ui-bootstrap-tpls-0.9.0.js"></script>
@@ -264,12 +238,7 @@
     </div>
 </div>
 
-<div class="footer" style="height: 100px;">
-    <pre id="log_view"></pre>
-
-    <div class="footer" style="height: 25px; overflow: hidden;">
-        <input id="cmd_line" type="text">
-    </div>
+<div class="footer" id="footer_terminal" style="height: 150px;">
 </div>
 
 </body>
