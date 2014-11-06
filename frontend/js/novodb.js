@@ -357,6 +357,8 @@ $( document ).ready(function() {
                 // Tells the terminal to not handle the tab key
                 return false;
             }
+
+            return true;
         }
     });
 
