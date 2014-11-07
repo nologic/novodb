@@ -1,0 +1,12 @@
+<div class="col-md-4 column">
+    <h2>
+        Breakpoints
+    </h2>
+    <p>
+        {{bp_output}}
+    </p>
+    <p>
+        <input type="text" name="input" ng-model="breakpoint_symbol" required ng-trim="true">
+        <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
+    </p>
+</div>

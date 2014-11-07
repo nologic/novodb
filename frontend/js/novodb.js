@@ -1,3 +1,15 @@
+if (!String.prototype.startsWith) {
+  Object.defineProperty(String.prototype, 'startsWith', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function (searchString, position) {
+      position = position || 0;
+      return this.lastIndexOf(searchString, position) === position;
+    }
+  });
+}
+
 function load_js_file(filename){
     var fileref = document.createElement('script');
 
@@ -23,23 +35,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 	function($scope, $http, $compile) {
         var session = create_ndb_session($http);
 
-        $scope.targetExe = function(path) {
-            session.load(path, [], function() {
-                $scope.listSymbols();
-            });
-        };
-
-        $scope.attachTarget = function(pid) {
-            pid = pid.split(" ");
-            pid.shift();
-
-            session.attach(pid[0], function() {
-                $scope.listSymbols();
-                $scope.instantiatePlugin('Regview');
-                log("Attaced to " + pid[0]);
-            });
-        };
-
 		$scope.launchTarget = function() {
             session.launch();
 		};
@@ -47,12 +42,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 		$scope.getThreads = function() {
 			session.getThreads(function(resp) {
 				$scope.thread_list = JSON.stringify(resp);
-			});
-		};
-
-		$scope.setBreakpoint = function(session_id, symbol) {
-            session.setBreakpoint(symbol, function(data) {
-				$scope.bp_output = JSON.stringify(data);
 			});
 		};
 
@@ -98,18 +87,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             });
         };
 
-        $scope.onSelectPart = function($item, $model, $label) {
-            $scope.attachAutocomplete = $item.pid + " " + $item.path;
-
-            session.attach($item.pid, function() {
-                $scope.listSymbols();
-                $scope.getThreads();
-                $scope.instantiatePlugin('Regview');
-                $scope.instantiatePlugin('Controller');
-                log("Attaced to " + $item.pid);
-            });
-        };
-
         $scope.plugins = [];
         $scope.instantiatePlugin = function(pluginName, params) {
             $scope.plugins.push({
@@ -117,16 +94,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 session: session,
                 params: params
             });
-        };
-
-        $scope.get_attach_data = function(partial) {
-            if(partial != undefined) {
-                if (partial.indexOf('l') == 0) {
-                    
-                }
-            }
-
-            return ['load', 'attach'];
         };
 
         setInterval(function() {
@@ -240,13 +207,15 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                         }
                     }).then(function (data) {
                         return data.data.files.map(function (file) {
-                            return prefix + file.file;
+                            return prefix + file.file + (file.dir == "1"?"/":"");
                         });
                     });
                 }
             },
             execute: function(params) {
-                output("Executing! load");
+                session.load(params[0], [], function() {
+                    log("Loaded " + params[0]);
+                });
             }
         });
 	}
@@ -275,94 +244,5 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             }, true); //look deep into object
         }
     };
-});
-
-var commands = [];
-
-function register_command(cmd) {
-    commands.push(cmd);
-}
-
-$( document ).ready(function() {
-    $('#footer_terminal').terminal(function (command, term) {
-        // execute command!
-        var cmdText = $.terminal.splitCommand(command);
-
-        var execCmd = commands.filter(function(cmd) {
-            return cmd.cmd == cmdText.name;
-        });
-
-        if(execCmd.length > 1) {
-            term.echo("Disambiguate: " + execCmd.map(function(cmd) {
-                return cmd.cmd;
-            }).join(" "));
-        } else if(execCmd.length == 1) {
-            var execStr = execCmd[0].execute(cmdText.args);
-
-            if(execStr != undefined) {
-                term.echo(execStr);
-            }
-        } else {
-            term.echo("Command '" + cmdText.name + "' not found");
-        }
-    }, {
-        keydown: function(event, term) {
-            if (event.keyCode == 9) {
-                // tab completion
-                var cmdText = $.terminal.splitCommand(term.get_command()); 
-        
-                var execCmd = commands.filter(function(cmd) {
-                    return cmd.cmd.indexOf(cmdText.name) == 0;
-                });
-
-                if(execCmd.length > 1) {
-                    term.echo(execCmd.map(function(cmd) {
-                        return cmd.cmd;
-                    }).join(" "));
-                } else if(execCmd.length == 1) {
-                    if(cmdText.args.length == 0) {
-                        term.set_command(execCmd[0].cmd + " ");
-                    }
-
-                    var compl = execCmd[0].complete(cmdText.args);
-
-                    if(compl != undefined) {
-                        function proc_completes(arr) {
-                            if(cmdText.args.length == 0){
-                                // print out the "help"
-                                term.echo(execCmd[0].cmd + ": " + arr.join(" "));
-                            } else if(arr.length == 1) {
-                                cmdText.args[cmdText.args.length - 1] = arr[0];
-
-                                term.set_command(execCmd[0].cmd + " " + cmdText.args.join(" "));
-                            } else if(arr.length < 10) {
-                                term.echo(execCmd[0].cmd + ":");
-                                term.echo(arr.join(" "));
-                            } else {
-                                arr.forEach(function(c) {
-                                    term.echo(" " + c);
-                                });
-                            }
-                        }
-
-                        if(typeof compl.then === 'function') {
-                            compl.then(proc_completes);
-                        } else {
-                            proc_completes(compl);
-                        }
-                    }
-                } else {
-                    term.echo("Command '" + cmdText.name + "' not found");
-                }
-
-                // Tells the terminal to not handle the tab key
-                return false;
-            }
-
-            //return true;
-        }
-    });
-
-    log("Welcome to Novodb. Enjoy your debugging experience!");
 });
 

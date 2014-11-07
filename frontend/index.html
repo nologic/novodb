@@ -51,6 +51,7 @@
     <script src="js/ui-bootstrap-tpls-0.9.0.js"></script>
     <script src="js/novodb-lib.js"></script>
     <script src="js/novodb.js"></script>
+    <script type="text/javascript" src="js/novodb-jq.js"></script>
     <script src="plugins/common.js"></script>
 </head>
 
@@ -141,32 +142,16 @@
             <button type="button" class="btn btn-default" ng-click="instantiatePlugin('Insview')">Disasm</button>
             <button type="button" class="btn btn-default" ng-click="">Modules</button>
             <button type="button" class="btn btn-default" ng-click="">Symbols</button>
-            <button type="button" class="btn btn-default" ng-click="">Breakpoints</button>
+            <button type="button" class="btn btn-default" ng-click="instantiatePlugin('Breakpoint')">Breakpoints</button>
             <button type="button" class="btn btn-default" ng-click="instantiatePlugin('Regview')">Register</button>
         </div>
     </div>
 </nav>
 
-
-<script type="text/ng-template" id="autocomplete_template">
-    <a>
-        <i>{{ match.model.pid }}</i>
-        <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
-    </a>
-</script>
-
 <div class="container" id="main_view">
     <div class="row clearfix">
         <div class="col-md-8 column">
             <div class="form-group">
-                <input class="form-control"
-                       type="text" placeholder="start debugging"
-                       ng-model="attachAutocomplete"
-                       typeahead="path as proc.proc_name for proc in get_attach_data($viewValue) | limitTo:10"
-                       typeahead-min-length='1'
-                       typeahead-on-select='onSelectPart($item, $model, $label)'
-                       typeahead-template-url="autocomplete_template">
-
                 <button class="btn btn-default" ng-click="targetExe(attachAutocomplete)">Load EXE</button>
                 <button class="btn btn-default" ng-click="launchTarget()">Launch</button>
                 <button class="btn btn-default" ng-click="attachTarget(attachAutocomplete)">Attach</button>
@@ -219,18 +204,7 @@
                 <button class="btn btn-default" ng-click="getFrames(thread_ind)">Get Threads</button>
             </p>
         </div>
-        <div class="col-md-4 column">
-            <h2>
-                Breakpoints
-            </h2>
-            <p>
-                {{bp_output}}
-            </p>
-            <p>
-                <input type="text" name="input" ng-model="breakpoint_symbol" required ng-trim="true">
-                <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
-            </p>
-        </div>-->
+        -->
 
         <div class="row clearfix" ndb-plugins-container="plugins">
 

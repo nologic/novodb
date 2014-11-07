@@ -52,11 +52,14 @@ namespace novo {
                 
             for(directory_iterator dir_itr(ppath); dir_itr != directory_iterator() && count < maxcount; dir_itr++) {
                 boost::property_tree::ptree dirent;
-                string look_path = dir_itr->path().filename().string();
+                
+                path p_look_path = dir_itr->path();
+                string look_path = p_look_path.filename().string();
                 
                 if(look_path.find(startwith) == 0) {
                     count++;
                     dirent.put("file", look_path);
+                    dirent.put("dir", to_string(is_directory(p_look_path)));
                     
                     dirlist.push_back(make_pair("", dirent));
                 }
