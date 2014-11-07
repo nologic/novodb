@@ -122,30 +122,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         $scope.get_attach_data = function(partial) {
             if(partial != undefined) {
                 if (partial.indexOf('l') == 0) {
-                    // load by path
-                    var splitPartial = partial.split(' ');
-
-                    splitPartial.shift();
-
-                    if(splitPartial.length == 0) {
-                        return [];
-                    }
-
-                    return $http.get('util://ls', {
-                        method: "GET",
-                        params: {
-                            path: splitPartial[0],
-                            maxcount: 100
-                        }
-                    }).then(function (data) {
-                        console.info(JSON.stringify(data, null, "\t"));
-
-                        return data.data.files.map(function (file) {
-                            return {
-                                proc_name: splitPartial[0] + (splitPartial[0] !== '/'?"/":"") + file.file
-                            }
-                        });
-                    });
+                    
                 }
             }
 
@@ -240,7 +217,32 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             description: "Load an executable",
             complete: function(params) {
                 if(params.length == 0) {
-                    return ["[path]"];
+                    return ["[path start / | .]"];
+                } else {
+                    // load by path
+                    var slashIndex = params[0].lastIndexOf('/');
+                    var prefix = "";
+                    var postfix = "";
+
+                    if(slashIndex < 0) {
+                        return;
+                    } 
+                    
+                    postfix = params[0].substring(slashIndex + 1, params[0].length);
+                    prefix = params[0].substring(0, slashIndex + 1);
+                    
+                    return $http.get('util://ls', {
+                        method: "GET",
+                        params: {
+                            path: prefix,
+                            startwith: postfix,
+                            maxcount: 20
+                        }
+                    }).then(function (data) {
+                        return data.data.files.map(function (file) {
+                            return prefix + file.file;
+                        });
+                    });
                 }
             },
             execute: function(params) {
@@ -284,10 +286,10 @@ function register_command(cmd) {
 $( document ).ready(function() {
     $('#footer_terminal').terminal(function (command, term) {
         // execute command!
-        var cmdText = command.split(/\s+/);
+        var cmdText = $.terminal.splitCommand(command);
 
         var execCmd = commands.filter(function(cmd) {
-            return cmd.cmd.indexOf(cmdText[0]) == 0;
+            return cmd.cmd == cmdText.name;
         });
 
         if(execCmd.length > 1) {
@@ -295,26 +297,22 @@ $( document ).ready(function() {
                 return cmd.cmd;
             }).join(" "));
         } else if(execCmd.length == 1) {
-            $('#cmd_line').val('');
-            term.echo(cmdText.join(' '));
-
-            cmdText.shift();
-            var execStr = execCmd[0].execute(cmdText);
+            var execStr = execCmd[0].execute(cmdText.args);
 
             if(execStr != undefined) {
                 term.echo(execStr);
             }
         } else {
-            term.echo("Command '" + cmdText[0] + "' not found");
+            term.echo("Command '" + cmdText.name + "' not found");
         }
     }, {
         keydown: function(event, term) {
             if (event.keyCode == 9) {
                 // tab completion
-                var cmdText = term.get_command().split(/\s+/); 
+                var cmdText = $.terminal.splitCommand(term.get_command()); 
         
                 var execCmd = commands.filter(function(cmd) {
-                    return cmd.cmd.indexOf(cmdText[0]) == 0;
+                    return cmd.cmd.indexOf(cmdText.name) == 0;
                 });
 
                 if(execCmd.length > 1) {
@@ -322,24 +320,27 @@ $( document ).ready(function() {
                         return cmd.cmd;
                     }).join(" "));
                 } else if(execCmd.length == 1) {
-                    if(cmdText.length == 1) {
+                    if(cmdText.args.length == 0) {
                         term.set_command(execCmd[0].cmd + " ");
                     }
 
-                    cmdText.shift();
-                    var compl = execCmd[0].complete(cmdText);
+                    var compl = execCmd[0].complete(cmdText.args);
 
                     if(compl != undefined) {
                         function proc_completes(arr) {
-                            if(arr.length == 1) {
-                                cmdText[cmdText.length - 1] = arr[0];
-
-                                term.set_command(execCmd[0].cmd + " " + cmdText.join(" "));
-                            } else if(arr.length < 10) {
+                            if(cmdText.args.length == 0){
+                                // print out the "help"
                                 term.echo(execCmd[0].cmd + ": " + arr.join(" "));
+                            } else if(arr.length == 1) {
+                                cmdText.args[cmdText.args.length - 1] = arr[0];
+
+                                term.set_command(execCmd[0].cmd + " " + cmdText.args.join(" "));
+                            } else if(arr.length < 10) {
+                                term.echo(execCmd[0].cmd + ":");
+                                term.echo(arr.join(" "));
                             } else {
                                 arr.forEach(function(c) {
-                                    term.echo(c);
+                                    term.echo(" " + c);
                                 });
                             }
                         }
@@ -351,14 +352,14 @@ $( document ).ready(function() {
                         }
                     }
                 } else {
-                    term.echo("Command '" + cmdText[0] + "' not found");
+                    term.echo("Command '" + cmdText.name + "' not found");
                 }
 
                 // Tells the terminal to not handle the tab key
                 return false;
             }
 
-            return true;
+            //return true;
         }
     });
 

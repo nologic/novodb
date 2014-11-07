@@ -21,12 +21,21 @@ namespace novo {
     UtilSchemeHandler::UtilSchemeHandler() {
         BOOST_LOG_TRIVIAL(trace) << "UtilSchemeHandler initializing";
         
-        req_router.register_path({"ls"}, {}, [] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"ls"}, {
+            RequestConstraint::exists({"startwith"}),
+            RequestConstraint::exists({"path"}),
+            RequestConstraint::has_int("maxcount")
+        }, [] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace boost::filesystem;
             
+            string startwith;
             string path_str = req.at("path");
             int maxcount = stoi(req.at("maxcount"));
+            
+            if(req.find("startwith") != std::end(req)) {
+                startwith = req.at("startwith");
+            }
             
             path ppath(path_str);
             
@@ -41,16 +50,16 @@ namespace novo {
             int count = 0;
             boost::property_tree::ptree dirlist;
                 
-            for(directory_iterator dir_itr(ppath); dir_itr != directory_iterator(); dir_itr++, count++) {
-                if(count >= maxcount) {
-                    break;
-                }
-                    
+            for(directory_iterator dir_itr(ppath); dir_itr != directory_iterator() && count < maxcount; dir_itr++) {
                 boost::property_tree::ptree dirent;
+                string look_path = dir_itr->path().filename().string();
+                
+                if(look_path.find(startwith) == 0) {
+                    count++;
+                    dirent.put("file", look_path);
                     
-                dirent.put("file", dir_itr->path().filename().string());
-                    
-                dirlist.push_back(make_pair("", dirent));
+                    dirlist.push_back(make_pair("", dirent));
+                }
             }
                 
             output.add_child("files", dirlist);
