@@ -46,6 +46,7 @@ function create_ndb_session($http) {
 
             f_success(resp);
         }, function (resp) {
+            log("failed: " + resp);
             if (f_fail == undefined) {
                 f_fail = default_err;
             }

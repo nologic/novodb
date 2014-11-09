@@ -19,11 +19,12 @@
 
 void DbgResourceHandler::GetResponseHeaders( CefRefPtr<CefResponse> response, int64& response_length, CefString& redirectUrl) {
     response->SetStatus(this->response.get_status());
-    response->SetMimeType(CefString("application/json"));
     response->SetStatusText(CefString(this->response.get_message()));
+
     response_length = out_data.size();
-    
-    return;
+    if(response_length > 0) {
+        response->SetMimeType(CefString("application/json"));
+    }
 }
 
 bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback) {
@@ -57,15 +58,16 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
             proc_func();
         }
         
-    } catch(RequestConstraint::Valid not_valid){
+    } catch(RequestConstraint::Valid& not_valid){
         // request is not valid, this should not happen unless of
         // a programmer fail therefore accepting performance overhead
         
         this->response = ActionResponse::error(not_valid);
-        std::cout << not_valid << std::endl;
+        callback->Continue();
     } catch (bool not_found) {
         // 'not_found' should only be false but shouldn't happen unless a typo occurs.
         this->response = ActionResponse::error(404, "Handler not found");
+        callback->Continue();
     }
     
     BOOST_LOG_TRIVIAL(trace) << this->response.get_status() << " " << this->response.get_message() << " (" << request->GetURL().ToString() << ")";

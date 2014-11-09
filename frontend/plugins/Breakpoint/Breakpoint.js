@@ -9,7 +9,7 @@ load_plugin(function() {
         function ($scope, $http, $compile) {
             _instance.set_session($scope.$parent.session);
 
-            $scope.setBreakpoint = function(session_id, symbol) {
+            $scope.setBreakpoint = function(symbol) {
                 session.setBreakpoint(symbol, function(data) {
                     $scope.bp_output = JSON.stringify(data);
                 });

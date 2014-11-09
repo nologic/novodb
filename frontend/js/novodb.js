@@ -36,7 +36,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         var session = create_ndb_session($http);
 
 		$scope.launchTarget = function() {
-            session.launch();
+            session.launch(log, log);
 		};
 
 		$scope.getThreads = function() {
@@ -96,11 +96,11 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             });
         };
 
-        setInterval(function() {
+        /*setInterval(function() {
             if($scope.session_id !== undefined) {
                 $scope.procState($scope.session_id);
             }
-        }, 1000);
+        }, 1000);*/
 
         $http.get("util://list/ui_plugins", {
             method: "GET"
@@ -181,10 +181,9 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
         register_command({
             cmd: "load",
-            description: "Load an executable",
             complete: function(params) {
                 if(params.length == 0) {
-                    return ["[path start / | .]"];
+                    return ["[path start / | .] (Load an executable)"];
                 } else {
                     // load by path
                     var slashIndex = params[0].lastIndexOf('/');
@@ -216,6 +215,17 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 session.load(params[0], [], function() {
                     log("Loaded " + params[0]);
                 });
+            }
+        });
+
+        register_command({
+            cmd: "state",
+            complete: function(params) {
+                return ["(Get session state)"]
+            },
+
+            execute: function(params) {
+                session.getProcState(log, log);
             }
         });
 	}
