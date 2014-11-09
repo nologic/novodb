@@ -35,10 +35,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 	function($scope, $http, $compile) {
         var session = create_ndb_session($http);
 
-		$scope.launchTarget = function() {
-            session.launch(log, log);
-		};
-
 		$scope.getThreads = function() {
 			session.getThreads(function(resp) {
 				$scope.thread_list = JSON.stringify(resp);
@@ -183,7 +179,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             cmd: "load",
             complete: function(params) {
                 if(params.length == 0) {
-                    return ["[path start / | .] (Load an executable)"];
+                    return ["[path start (/ or .) [run to symbol - default entry point]] (Load an executable)"];
                 } else {
                     // load by path
                     var slashIndex = params[0].lastIndexOf('/');
@@ -214,6 +210,19 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             execute: function(params) {
                 session.load(params[0], [], function() {
                     log("Loaded " + params[0]);
+
+                    if(params[1] != undefined) {
+                        session.setBreakpoint(params[1], function(data) {
+                            log("breakpoint set, launching");
+                            session.launch(function(data) {
+                                log("Process launched");
+                            }, function(data) {
+                                log("Process launch failed");
+                            });
+                        }, function(data) {
+                            log("failed to set breakpoint on " + params[1])
+                        });
+                    }
                 });
             }
         });
@@ -226,6 +235,17 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
             execute: function(params) {
                 session.getProcState(log, log);
+            }
+        });
+
+        register_command({
+            cmd: "launch",
+            complete: function(params) {
+                return ["[run to symbol (opt)] (Launch loaded executable)"]
+            },
+
+            execute: function(params) {
+                session.launch(log, log);
             }
         });
 	}

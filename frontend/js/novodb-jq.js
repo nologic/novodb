@@ -118,54 +118,5 @@ $( document ).ready(function() {
         }
     });
 
-    function loadXMLDoc() {
-        var xmlhttp = new XMLHttpRequest();
-
-        xmlhttp.onreadystatechange = function() {
-            console.info(xmlhttp.readyState, "xmlhttp", xmlhttp);
-
-            if (xmlhttp.readyState == 4 ) {
-               if(xmlhttp.status == 200){
-                   log("Worked")
-               }
-               else if(xmlhttp.status == 400) {
-                  alert('There was an error 400')
-               }
-               else {
-                   alert('something else other than 200 was returned')
-               }
-            }
-        }
-
-        xmlhttp.onload = function(e) {
-            console.log("onload", e);
-          
-        };
-
-        xmlhttp.ontimeout = function(e) {
-            console.log("ontimeout", e);
-        };
-
-        xmlhttp.onerror = function(e) {
-            console.log("onerror", e);
-        };
-
-        xmlhttp.addEventListener("error", function(args) {
-            console.info("failed!", args, xmlhttp);
-        }, false);
-
-        xmlhttp.open("GET", "dbg-llvm://ajax_info.txt", true);
-        xmlhttp.send();
-    }
-
-    register_command({
-            cmd: "test",
-            complete: function(params) {
-                return ["(Get session state)"]
-            },
-
-            execute: loadXMLDoc
-        });
-
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
