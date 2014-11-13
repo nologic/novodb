@@ -21,7 +21,7 @@ function load_js_file(filename){
     }
 }
 
-var novo = angular.module('novodb', ['ui.bootstrap']);
+window.novo = angular.module('novodb', ['ui.bootstrap']);
 
 novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, $filterProvider, $provide) {
     novo.controllerProvider = $controllerProvider;
@@ -245,7 +245,24 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             },
 
             execute: function(params) {
-                session.launch(log, log);
+                if(params[0] != undefined) {
+                    session.setBreakpoint(params[1], function(data) {
+                        log("breakpoint set, launching");
+                        session.launch(function(data) {
+                            log("Process launched");
+                        }, function(data) {
+                            log("Process launch failed");
+                        });
+                    }, function(data) {
+                        log("failed to set breakpoint on " + params[1])
+                    });
+                } else {
+                    session.launch(function(data) {
+                        log("Process launched");
+                    }, function(data) {
+                        log("Process launch failed");
+                    });
+                }
             }
         });
 	}

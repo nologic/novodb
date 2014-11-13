@@ -3,6 +3,8 @@ load_plugin(function() {
     var session = undefined;
     var pluginName = "Memview";
 
+    var displayRows = "20";
+
     function MemView() {}
 
     MemView.prototype.attach_ui = make_ui_func(pluginName, ['$scope', '$http', '$compile',
@@ -22,6 +24,10 @@ load_plugin(function() {
             $scope.$watch(session.get_stepCount, function(newVal) {
                 $scope.readMemory($scope.read_mem_addr);
             });
+
+            $scope.rows = _.range(displayRows); // initialize rows
+
+            var mem_container = $('#view_container');
         }
     ]);
 
