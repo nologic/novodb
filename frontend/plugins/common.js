@@ -1,4 +1,4 @@
-function make_ui_func(pluginName, controllerArray) {
+/*function make_ui_func(pluginName, controllerArray) {
     return function(angular_module) {
         angular_module.compileProvider.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
             return {
@@ -7,6 +7,16 @@ function make_ui_func(pluginName, controllerArray) {
         }]);
 
         angular_module.controllerProvider.register("ndbPlugin" + pluginName, controllerArray);
+    }
+}*/
+
+function make_ui_func(pluginName, controllerArray) {
+    return function(angular_module) {
+        angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
+            return {
+                templateUrl: 'plugins/' + pluginName + '/plugin.html'
+            };
+        }]).controller("ndbPlugin" + pluginName, controllerArray);
     }
 }
 
@@ -19,7 +29,7 @@ function load_plugin(plugin_spec) {
 
     plugin_spec.attach_ui(novo);
 
-    log("loaded plugin: " + plugin_spec.get_plugin_name());
+    console.info("loaded plugin: " + plugin_spec.get_plugin_name());
 }
 
 var EVENT = {

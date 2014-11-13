@@ -98,7 +98,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             }
         }, 1000);*/
 
-        $http.get("util://list/ui_plugins", {
+        /*$http.get("util://list/ui_plugins", {
             method: "GET"
         }).then(function (resp) {
             console.info("plugins", resp);
@@ -110,7 +110,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             console.info("fail plugins: ", resp);
 
             log("Failed to load UI plugins");
-        });
+        });*/
 
         register_command({
             cmd: "attach", 
