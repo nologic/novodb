@@ -10,6 +10,10 @@ if (!String.prototype.startsWith) {
   });
 }
 
+String.prototype.replaceAt = function(index, character) {
+    return this.substr(0, index) + character + this.substr(index+character.length);
+}
+
 function load_js_file(filename){
     var fileref = document.createElement('script');
 
@@ -283,6 +287,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     log("Instantiating: " + d);
 
                     var s = scope.$new(); //create a new scope
+                    
                     angular.extend(s, d); //copy data onto it
 
                     var template = '<div class="col-md-4 column" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';

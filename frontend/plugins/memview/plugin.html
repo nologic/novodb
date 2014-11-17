@@ -1,40 +1,18 @@
-<style type="txt/css" href="memview.css">
-.mem_addrs {
-    position: relative;
-    margin-right: 85px;
-    background-color: red;
-}
-
-#right {
-    float: right;
-    position: relative;
-    text-align: left;
-    width: 80px;
-    background-color: yellow;
-}
-</style>
-
 <h2>
     Memory
 </h2>
-<p class="memory_view">
-    {{memory_output.block}}
-</p>
 <p>
     <input type="text" name="input" ng-model="read_mem_addr" required ng-trim="true">
     <button class="btn btn-default" ng-click="readMemory(read_mem_addr)">Read Memory</button>
 </p>
 
-<div id="view_container" class="mem_container" style="border: 1px"> 
+<div class="mem_container">
 	<div class="mem_addrs">
-		<div ng-repeat="row in rows" class="address">{{row}}</div>
 	</div>
 
-	<div class="mem_bytes">
-		<div ng-repeat="row in rows" class="byte">{{row}}</div>
+	<div class="mem_bytes" tabindex="1">
 	</div>
 
 	<div class="mem_interpret">
-		<div ng-repeat="row in rows" class="byte_view">{{row}}</div>
 	</div>
 </div>

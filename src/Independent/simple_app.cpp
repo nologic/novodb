@@ -152,6 +152,8 @@ void SimpleApp::OnContextInitialized() {
         url = command_line->GetSwitchValue("novo-ui-base");
         
         if(!command_line->HasSwitch("no-preprocess")) {
+            // Insert the plugins to the main page.
+            //  Should detect change of plugins and use caching.
             url = pre_process_url(url);
             append_file = false;
         }

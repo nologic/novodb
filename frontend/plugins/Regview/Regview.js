@@ -24,7 +24,7 @@ load_plugin(function() {
             $scope.configRegisters = function(val, index) {
                 // preconfigured user selected list of registers.
                 var chosen = {
-                    eax: true, rax: true
+                    eax: true, rax: true, rip: true
                 };
 
                 return val.name in chosen;
