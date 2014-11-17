@@ -162,6 +162,14 @@ function create_ndb_session($http) {
         f_fail("Not yet implemented");
     };
 
+    NdbSession.prototype.writeByte = function(address, byte, f_success, f_fail) {
+        url_get_passthrough("dbg-llvm://write/byte", {
+            session: session_id,
+            address: address,
+            'byte': byte
+        }, extract_data(f_success), f_fail);
+    };
+
     NdbSession.prototype.readRegisters = function(frame, thread, f_success, f_fail) {
         url_get_passthrough("dbg-llvm://list/registers", {
             session: session_id,

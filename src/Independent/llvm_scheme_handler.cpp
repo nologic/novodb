@@ -482,6 +482,31 @@ namespace novo {
             }
         });
         
+        req_router.register_path({"write", "byte"}, {
+            RequestConstraint::has_int("session", session_bounds),
+            RequestConstraint::exists({"address"}),
+            RequestConstraint::has_int("byte", 0, 0xFF)
+        }, [this] ACTION_CALLBACK(req, output) {
+            using namespace std;
+            using namespace lldb;
+            using namespace boost::property_tree;
+            
+            int session_id = stoi(req.at("session"));
+            addr_t addr = stoull(req.at("address"), 0, 16);
+            long writebyte = stol(req.at("byte"));
+            
+            unsigned char byte = (unsigned char) writebyte;
+
+            LldbProcessSession& session = this->sessions[session_id];
+            SBError error;
+            
+            if(session.process.WriteMemory(addr, &byte, 1, error) != 1) {
+                return ActionResponse::error(string(error.GetCString()));
+            }
+            
+            return ActionResponse::no_error();
+        });
+        
         req_router.register_path({"event", "listen"}, {
             RequestConstraint::has_int("session", session_bounds)
         }, [this] ACTION_CALLBACK(req, output) {

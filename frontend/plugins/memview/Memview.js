@@ -22,7 +22,7 @@ load_plugin(function() {
                 
                 $scope.readMemory = function (_address) {
                     session.readMemory(_address, 4096, function (data) {
-                        $scope.read_base = _address;
+                        $scope.read_base = parseInt(_address, 16);
                         $scope.memory_output = data;
 
                         // maybe not the best way to do this, but for now will do.
@@ -133,6 +133,8 @@ load_plugin(function() {
                     });
 
                     byte_container.keypress(function(e) {
+                        log(e.keyCode);
+
                         if(e.keyCode >= 48 && e.keyCode <= 70) {
                             // a hex number
                             var newval = String.fromCharCode(e.keyCode);
@@ -148,6 +150,7 @@ load_plugin(function() {
                             }
 
                             inedit.html(inedit.html().replaceAt(eoff, newval));
+                            session.writeByte(($scope.read_base + _offset).toString(16), parseInt(inedit.html(), 16).toString(), log, log);
                             intr_container.find(".hex_byte_edit").html(interpret_char(inedit.html()));
                             eoff += 1;
 
