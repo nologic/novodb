@@ -133,11 +133,11 @@ load_plugin(function() {
                     });
 
                     byte_container.keypress(function(e) {
-                        log(e.keyCode);
+                        var kc = e.keyCode;
 
-                        if(e.keyCode >= 48 && e.keyCode <= 70) {
+                        if((kc >= 48 && kc <= 57) || (kc >= 97 && kc <= 102)) {
                             // a hex number
-                            var newval = String.fromCharCode(e.keyCode);
+                            var newval = String.fromCharCode(kc);
                             var inedit = $scope.base_container.find('.hex_byte_edit.hex_byte');
                             var _offset = parseInt(inedit.attr('offset'));
 
@@ -150,7 +150,7 @@ load_plugin(function() {
                             }
 
                             inedit.html(inedit.html().replaceAt(eoff, newval));
-                            session.writeByte(($scope.read_base + _offset).toString(16), parseInt(inedit.html(), 16).toString(), log, log);
+                            session.writeByte(($scope.read_base + _offset).toString(16), parseInt(inedit.html(), 16).toString(), undefined, log);
                             intr_container.find(".hex_byte_edit").html(interpret_char(inedit.html()));
                             eoff += 1;
 

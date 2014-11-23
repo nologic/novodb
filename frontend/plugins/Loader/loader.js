@@ -38,6 +38,7 @@ load_plugin(function() {
                         $('#controls_bar').show();
 
                         $scope.base_container.remove();
+                        session.getProcState();
 
                         log("Attaced to " + proc.pid + ":" + proc.name);
                     });

@@ -24,12 +24,16 @@ function create_ndb_session($http) {
 
     function extract_data(func) {
         return function(resp){
-            if(typeof(func) == "function") {
+            if(func == undefined) {
+                return;
+            } else if(typeof(func) == "function") {
                 return func(resp.data);
             } else {
                 // we actually have an array of functions to exec.
                 func.forEach(function(f) {
-                    f(resp.data);
+                    if(f != undefined) {
+                        f(resp.data);
+                    }
                 });
             }
         }
@@ -76,7 +80,7 @@ function create_ndb_session($http) {
         url_get_passthrough("dbg-llvm://create/target/attach", {
             pid: proc_pid
         }, extract_data([function(sdata) {
-            session_id = sdata.session;
+            session_id = sdata.session;            
         },
         f_success]), f_fail);
     };

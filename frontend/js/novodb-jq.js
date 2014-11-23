@@ -5,10 +5,7 @@ function register_command(cmd) {
 }
 
 $( document ).ready(function() {
-    console.info("ready: " + JSON.stringify(commands));
-
     $('#footer_terminal').terminal(function (command, term) {
-        console.info("exec: " + JSON.stringify(commands));
         // execute command!
         var cmdText = $.terminal.splitCommand(command);
 

@@ -17,7 +17,9 @@ load_plugin(function() {
             };
 
             $scope.$watch(session.get_currentPc, function(newVal) {
-                $scope.readInstructions(newVal.value);
+                if(newVal != undefined) {
+                    $scope.readInstructions(newVal.value);
+                }
             });
         }
     ]);

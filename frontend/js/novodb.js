@@ -35,8 +35,8 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
     novo.provide            = $provide;
 
     // Register routes with the $routeProvider
-}).controller("dbg", ['$scope', '$http', '$compile',
-	function($scope, $http, $compile) {
+}).controller("dbg", ['$scope', '$http', '$compile', '$timeout',
+	function($scope, $http, $compile, $timeout) {
         var session = create_ndb_session($http);
 
 		$scope.getThreads = function() {
@@ -48,30 +48,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 		$scope.getModules = function() {
 			session.getModules(function(data) {
 				$scope.module_output = data;
-			});
-		};
-
-		$scope.readMemory = function(_address) {
-			session.readMemory(_address, 4096, function(data) {
-				$scope.memory_output = JSON.stringify(data, null, "\t");
-			});
-		};
-
-		$scope.procState = function() {
-			session.getProcState(function(data) {
-                $scope.proc_state = data;
-			});
-		};
-
-		$scope.readRegisters = function() {
-            session.readRegisters(0, 0, function(data) {
-				$scope.register_output = data;
-			});
-		};
-
-		$scope.readInstructions = function(_address) {
-			session.readInstructions(_address, 4096, function(data) {
-                $scope.inst_output = data;
 			});
 		};
 
@@ -89,13 +65,13 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
         $scope.plugins = [];
         $scope.instantiatePlugin = function(pluginName, params) {
-            $scope.plugins.push({
-                name: pluginName,
-                session: session,
-                params: params
+            $timeout(function() {
+                $scope.plugins.push({
+                    name: pluginName,
+                    session: session,
+                    params: params
+                });
             });
-
-            $scope.$digest();
         };
 
         register_command({
@@ -122,6 +98,20 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         $scope.jQueryLoaded = function() {
             $scope.instantiatePlugin('Loader');
         }
+
+        // watch state
+        var lastState = undefined;
+        $scope.$watch(session.get_procState, function(new_state) {
+            if(lastState == undefined && new_state.state != 0) {
+                // we just loaded or attached;
+                lastState = new_state;
+                log(lastState);
+
+                $scope.instantiatePlugin('Regview');
+                $scope.instantiatePlugin('Memview');
+                $scope.instantiatePlugin('Insview');
+            }
+        });
 	}
 ]).directive("ndbPluginsContainer", function($compile) {
     return {
@@ -137,7 +127,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                         return;
                     }
 
-                    log("Instantiating: " + d);
+                    log("Instantiating: " + d.name);
 
                     var s = scope.$new(); //create a new scope
                     
