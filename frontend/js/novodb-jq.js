@@ -5,7 +5,10 @@ function register_command(cmd) {
 }
 
 $( document ).ready(function() {
+    console.info("ready: " + JSON.stringify(commands));
+
     $('#footer_terminal').terminal(function (command, term) {
+        console.info("exec: " + JSON.stringify(commands));
         // execute command!
         var cmdText = $.terminal.splitCommand(command);
 
@@ -56,8 +59,9 @@ $( document ).ready(function() {
             }
 
             if (event.keyCode == 9) {
+                console.info(JSON.stringify(commands));
                 // tab completion
-                var cmdText = $.terminal.splitCommand(term.get_command()); 
+                var cmdText = $.terminal.splitCommand(term.get_command());
         
                 var execCmd = commands.filter(function(cmd) {
                     return cmd.cmd.indexOf(cmdText.name) == 0;
@@ -117,6 +121,8 @@ $( document ).ready(function() {
             }
         }
     });
+
+    angular.element('#dbg').scope().jQueryLoaded();
 
     log("Welcome to Novodb. Enjoy your debugging experience!");
 });
