@@ -152,7 +152,7 @@
         </ul>-->
     </div>
 
-    <div class="btn-toolbar" role="toolbar">
+    <div id="controls_bar" class="btn-toolbar" role="toolbar" style="display: none;">
         <div class="btn-group">
             <button type="button" class="btn btn-default" ng-click="instantiatePlugin('Memview')">Memory</button>
             <button type="button" class="btn btn-default" ng-click="">Stack</button>
@@ -168,16 +168,6 @@
 </nav>
 
 <div class="container" id="main_view">
-    <!--<div class="row clearfix">
-        <div class="col-md-8 column">
-            <div class="form-group">
-                <button class="btn btn-default" ng-click="targetExe(attachAutocomplete)">Load EXE</button>
-                <button class="btn btn-default" ng-click="launchTarget()">Launch</button>
-                <button class="btn btn-default" ng-click="attachTarget(attachAutocomplete)">Attach</button>
-            </div>
-        </div>
-    </div>-->
-
     <div class="row clearfix">
         <!--
         <div class="col-md-4 column">

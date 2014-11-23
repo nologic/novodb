@@ -1,0 +1,17 @@
+.process_view {
+	padding:4px;
+}
+
+.process_view td {
+	padding-right: 4px;
+	padding-left: 4px;
+}
+
+.process_view tr:hover {
+	background-color: lightgray;
+}
+
+.process_view th {
+	padding-right: 4px;
+	padding-left: 4px;
+}

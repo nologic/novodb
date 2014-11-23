@@ -96,26 +96,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             });
         };
 
-        /*setInterval(function() {
-            if($scope.session_id !== undefined) {
-                $scope.procState($scope.session_id);
-            }
-        }, 1000);*/
-
-        /*$http.get("util://list/ui_plugins", {
-            method: "GET"
-        }).then(function (resp) {
-            console.info("plugins", resp);
-
-            resp.data.plugins.forEach(function(p) {
-                load_js_file("plugins/" + p.name + "/" + p.name + ".js");
-            });
-        }, function (resp) {
-            console.info("fail plugins: ", resp);
-
-            log("Failed to load UI plugins");
-        });*/
-
         register_command({
             cmd: "attach", 
             description: "Attach to a process",
@@ -140,6 +120,8 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             execute: function(params) {
                 function attach_pid(pid) {
                     session.attach(pid, function() {
+                        $('#controls_bar').show();
+
                         $scope.listSymbols();
                         $scope.getThreads();
                         $scope.instantiatePlugin('Regview');
@@ -219,6 +201,8 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                         session.setBreakpoint(params[1], function(data) {
                             log("breakpoint set, launching");
                             session.launch(function(data) {
+                                $('#controls_bar').show();
+
                                 log("Process launched");
                             }, function(data) {
                                 log("Process launch failed");
@@ -269,6 +253,8 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 }
             }
         });
+
+        $scope.instantiatePlugin('Loader');
 	}
 ]).directive("ndbPluginsContainer", function($compile) {
     return {
