@@ -1,10 +1,10 @@
-<h2>
-    Memory
-</h2>
-<p>
-    <input type="text" name="input" ng-model="read_mem_addr" required ng-trim="true">
-    <button class="btn btn-default" ng-click="readMemory(read_mem_addr)">Read Memory</button>
-</p>
+<input type="text" 
+	   name="input" 
+	   ng-model="read_mem_addr" 
+	   required 
+	   ng-trim="true" 
+	   ng-change="readMemory(read_mem_addr)"
+	   style="width: 100%">
 
 <div class="mem_container">
 	<div class="mem_addrs">

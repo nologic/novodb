@@ -193,7 +193,6 @@
 		271A4F8319CB6F120089495F /* libboost_thread-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 271A4F8219CB6F120089495F /* libboost_thread-mt.a */; };
 		273823DA19C47C7B00559F61 /* request_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 273823D819C47C7B00559F61 /* request_router.cpp */; };
 		273823E219C4E64400559F61 /* libcppnetlib-uri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 273823E119C4E64400559F61 /* libcppnetlib-uri.a */; };
-		2739889919E4326F0010C12F /* util_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2739889719E4326F0010C12F /* util_scheme_handler.cpp */; };
 		2739889B19E448A80010C12F /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2739889A19E448A80010C12F /* libboost_filesystem-mt.a */; };
 		2757502019BB19F700784C39 /* simple_app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501C19BB19F700784C39 /* simple_app.cpp */; };
 		2757502119BB19F700784C39 /* simple_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501E19BB19F700784C39 /* simple_handler.cpp */; };
@@ -202,17 +201,22 @@
 		2757509F19BB32A800784C39 /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A019BB32FA00784C39 /* Chromium Embedded Framework.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A419BB738D00784C39 /* Novodb Helper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */; };
-		2768F45519D7C7E300BEC791 /* llvm_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */; };
 		2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
 		2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219C19DB5BCC00592CA8 /* platform_support.cpp */; };
 		278421A119DCE8B500592CA8 /* frontend in Resources */ = {isa = PBXBuildFile; fileRef = 278421A019DCE8B500592CA8 /* frontend */; };
 		27936AB119BA3C7B00EC4B6F /* novodb-help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */; };
+		27DD9DCC1A3390E900227D0B /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCB1A3390E900227D0B /* Module.cpp */; };
+		27DD9DCD1A3390E900227D0B /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCB1A3390E900227D0B /* Module.cpp */; };
+		27DD9DD01A33993400227D0B /* util_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCF1A33993400227D0B /* util_module.cpp */; };
+		27DD9DD11A33993400227D0B /* util_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCF1A33993400227D0B /* util_module.cpp */; };
+		27DD9DD31A33A4A800227D0B /* lldb_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD21A33A4A800227D0B /* lldb_module.cpp */; };
+		27DD9DD41A33A4A800227D0B /* lldb_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD21A33A4A800227D0B /* lldb_module.cpp */; };
+		27DD9DD71A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */; };
+		27DD9DD81A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */; };
 		27E6B1BE19EB6A8600681256 /* simple_app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501C19BB19F700784C39 /* simple_app.cpp */; };
 		27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501E19BB19F700784C39 /* simple_handler.cpp */; };
 		27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 271775AE19C0B30100051986 /* dbg_handler.cpp */; };
 		27E6B1C419EB6A8600681256 /* request_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 273823D819C47C7B00559F61 /* request_router.cpp */; };
-		27E6B1C619EB6A8600681256 /* llvm_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */; };
-		27E6B1C819EB6A8600681256 /* util_scheme_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2739889719E4326F0010C12F /* util_scheme_handler.cpp */; };
 		27E6B1CA19EB6A8600681256 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
 		27E6B1CD19EB6B7000681256 /* LLDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2717759E19BBD79000051986 /* LLDB.framework */; };
 		27E6B1CE19EB6B8A00681256 /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2739889A19E448A80010C12F /* libboost_filesystem-mt.a */; };
@@ -464,8 +468,6 @@
 		273823D819C47C7B00559F61 /* request_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = request_router.cpp; path = Independent/request_router.cpp; sourceTree = "<group>"; };
 		273823D919C47C7B00559F61 /* request_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = request_router.h; path = Independent/request_router.h; sourceTree = "<group>"; };
 		273823E119C4E64400559F61 /* libcppnetlib-uri.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcppnetlib-uri.a"; path = "libs/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a"; sourceTree = "<group>"; };
-		2739889719E4326F0010C12F /* util_scheme_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = util_scheme_handler.cpp; path = Independent/util_scheme_handler.cpp; sourceTree = "<group>"; };
-		2739889819E4326F0010C12F /* util_scheme_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util_scheme_handler.h; path = Independent/util_scheme_handler.h; sourceTree = "<group>"; };
 		2739889A19E448A80010C12F /* libboost_filesystem-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_filesystem-mt.a"; path = "../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_filesystem-mt.a"; sourceTree = "<group>"; };
 		273988A019EB57E00010C12F /* UnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		2757501C19BB19F700784C39 /* simple_app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simple_app.cpp; path = Independent/simple_app.cpp; sourceTree = "<group>"; };
@@ -475,8 +477,6 @@
 		2757502219BB1A3100784C39 /* simple_handler_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = simple_handler_mac.mm; path = Mac/simple_handler_mac.mm; sourceTree = "<group>"; };
 		2757502419BB1D4600784C39 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = Independent/util.h; sourceTree = "<group>"; };
 		2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "libs/cef_binary_3.1750.1738_macosx64/framework/Release/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
-		2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = llvm_scheme_handler.cpp; path = Independent/llvm_scheme_handler.cpp; sourceTree = "<group>"; };
-		2768F45419D7C7E300BEC791 /* llvm_scheme_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = llvm_scheme_handler.h; path = Independent/llvm_scheme_handler.h; sourceTree = "<group>"; };
 		2784219919D8946900592CA8 /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_serialize.cpp; path = Independent/json_serialize.cpp; sourceTree = "<group>"; };
 		2784219A19D8946900592CA8 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/json_serialize.h; sourceTree = "<group>"; };
 		2784219C19DB5BCC00592CA8 /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = Mac/platform_support.cpp; sourceTree = "<group>"; };
@@ -485,6 +485,12 @@
 		27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Novodb Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27936AAE19B9F3E400EC4B6F /* Novodb Helper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Novodb Helper-Info.plist"; path = "/Users/mike/GitHub/Novodb/src/Mac/Resources/Novodb Helper-Info.plist"; sourceTree = "<absolute>"; };
 		27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "novodb-help.cpp"; path = "Mac/novodb-help.cpp"; sourceTree = "<group>"; };
+		27DD9DCA1A336B5F00227D0B /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Module.h; path = Independent/Module.h; sourceTree = "<group>"; };
+		27DD9DCB1A3390E900227D0B /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Module.cpp; path = Independent/Module.cpp; sourceTree = "<group>"; };
+		27DD9DCF1A33993400227D0B /* util_module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = util_module.cpp; path = Independent/modules/util_module.cpp; sourceTree = "<group>"; };
+		27DD9DD21A33A4A800227D0B /* lldb_module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lldb_module.cpp; path = Independent/modules/lldb_module.cpp; sourceTree = "<group>"; };
+		27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lldb_module_commands1.cpp; path = Independent/modules/lldb_module_commands1.cpp; sourceTree = "<group>"; };
+		27DD9DD91A33B46500227D0B /* lldb_module_commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lldb_module_commands.h; path = Independent/modules/lldb_module_commands.h; sourceTree = "<group>"; };
 		27E6B1BA19EB59AC00681256 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = libs/gtest.framework; sourceTree = "<group>"; };
 		27E6B1D719EB71DE00681256 /* test_units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_units.cpp; sourceTree = "<group>"; };
 		27E6B1DF19EB7DE000681256 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = libs/gtest.framework/libgtest_main.a; sourceTree = "<group>"; };
@@ -765,6 +771,17 @@
 			path = libs/cef_binary_3.1750.1738_macosx64/libcef_dll/wrapper;
 			sourceTree = "<group>";
 		};
+		27DD9DCE1A3397B000227D0B /* modules */ = {
+			isa = PBXGroup;
+			children = (
+				27DD9DD91A33B46500227D0B /* lldb_module_commands.h */,
+				27DD9DD21A33A4A800227D0B /* lldb_module.cpp */,
+				27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */,
+				27DD9DCF1A33993400227D0B /* util_module.cpp */,
+			);
+			name = modules;
+			sourceTree = "<group>";
+		};
 		27E6B1BC19EB5AA000681256 /* unit_tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -827,6 +844,7 @@
 		E78D96711638A18900DE580E /* Novodb */ = {
 			isa = PBXGroup;
 			children = (
+				27DD9DCE1A3397B000227D0B /* modules */,
 				2757502419BB1D4600784C39 /* util.h */,
 				2757501C19BB19F700784C39 /* simple_app.cpp */,
 				2757501D19BB19F700784C39 /* simple_app.h */,
@@ -836,13 +854,11 @@
 				271775AF19C0B30100051986 /* dbg_handler.h */,
 				273823D819C47C7B00559F61 /* request_router.cpp */,
 				273823D919C47C7B00559F61 /* request_router.h */,
-				2768F45319D7C7E300BEC791 /* llvm_scheme_handler.cpp */,
-				2768F45419D7C7E300BEC791 /* llvm_scheme_handler.h */,
-				2739889719E4326F0010C12F /* util_scheme_handler.cpp */,
-				2739889819E4326F0010C12F /* util_scheme_handler.h */,
 				2784219919D8946900592CA8 /* json_serialize.cpp */,
 				2784219A19D8946900592CA8 /* json_serialize.h */,
 				2784219F19DB5C2D00592CA8 /* platform_support.h */,
+				27DD9DCA1A336B5F00227D0B /* Module.h */,
+				27DD9DCB1A3390E900227D0B /* Module.cpp */,
 				E78D96721638A18900DE580E /* Supporting Files */,
 			);
 			name = Novodb;
@@ -1394,14 +1410,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				27E6B1D519EB6CD800681256 /* simple_handler_mac.mm in Sources */,
+				27DD9DCD1A3390E900227D0B /* Module.cpp in Sources */,
 				27E6B1D619EB6CD800681256 /* platform_support.cpp in Sources */,
 				27E6B1BE19EB6A8600681256 /* simple_app.cpp in Sources */,
 				27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */,
 				27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */,
 				27E6B1E819EC6DAD00681256 /* validation_tests.cpp in Sources */,
+				27DD9DD81A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
+				27DD9DD41A33A4A800227D0B /* lldb_module.cpp in Sources */,
+				27DD9DD11A33993400227D0B /* util_module.cpp in Sources */,
 				27E6B1C419EB6A8600681256 /* request_router.cpp in Sources */,
-				27E6B1C619EB6A8600681256 /* llvm_scheme_handler.cpp in Sources */,
-				27E6B1C819EB6A8600681256 /* util_scheme_handler.cpp in Sources */,
 				27E6B1CA19EB6A8600681256 /* json_serialize.cpp in Sources */,
 				27E6B1D819EB71DE00681256 /* test_units.cpp in Sources */,
 			);
@@ -1419,14 +1437,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2739889919E4326F0010C12F /* util_scheme_handler.cpp in Sources */,
 				2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */,
 				2757502319BB1A3100784C39 /* simple_handler_mac.mm in Sources */,
-				2768F45519D7C7E300BEC791 /* llvm_scheme_handler.cpp in Sources */,
 				2757502119BB19F700784C39 /* simple_handler.cpp in Sources */,
+				27DD9DD01A33993400227D0B /* util_module.cpp in Sources */,
 				273823DA19C47C7B00559F61 /* request_router.cpp in Sources */,
+				27DD9DCC1A3390E900227D0B /* Module.cpp in Sources */,
 				2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */,
+				27DD9DD71A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
 				E78D96A61638BA0B00DE580E /* main.mm in Sources */,
+				27DD9DD31A33A4A800227D0B /* lldb_module.cpp in Sources */,
 				271775B019C0B30100051986 /* dbg_handler.cpp in Sources */,
 				2757502019BB19F700784C39 /* simple_app.cpp in Sources */,
 			);

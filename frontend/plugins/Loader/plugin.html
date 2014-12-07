@@ -1,22 +1,26 @@
-<h2>
-    Process Listing
-</h2>
-<p>
-    <input type="text" name="input" ng-model="proc_filter" required ng-trim="true">
-    <button class="btn btn-default" ng-click="load_processes()">Refresh</button>
-</p>
+<div class="row" style="padding-top: 4px">
+	<div class="col-xs-1">
+		<label for="proc_filter">Search</label>
+	</div>
+	<div class="col-xs-6">
+    	<input id="proc_filter" type="text" name="input" ng-model="proc_filter" required ng-trim="true" style="width:80%; height:100%">
+    	<span class="glyphicon glyphicon-refresh" aria-hidden="true" ng-click="load_processes()"></span>
+    </div>
+<div>
 
-<div class="proc_container">
-	<table class="process_view">
-		<tr>
-			<th>PID</th>
-			<th>Process</th>
-			<th>Path</th>
-		</tr>
-		<tr ng-repeat="proc in processes | filter:proc_filter" ng-dblclick="attach(proc)">
-			<td>{{ proc.pid }}</td>
-			<td>{{ proc.name }}</td>
-			<td>{{ proc.path }}</th>
-		</tr>
-	</table>
+<div class="row">
+	<div class="proc_container col-xs-12">
+		<table class="process_view">
+			<tr>
+				<th>PID</th>
+				<th>Process</th>
+				<th>Path</th>
+			</tr>
+			<tr ng-repeat="proc in processes | filter:proc_filter" ng-dblclick="attach(proc)">
+				<td>{{ proc.pid }}</td>
+				<td>{{ proc.name }}</td>
+				<td>{{ proc.path }}</td>
+			</tr>
+		</table>
+	</div>
 </div>

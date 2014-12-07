@@ -3,52 +3,19 @@
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>Novodb</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Novodb">
     <meta name="author" content="Mikhail Sosonkin">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/jquery.terminal.css">
-    <style>
-        body {
-            padding-top: 100px;
-            padding-bottom: 150px
-        }
 
-        .memory_view {
-            font-family: monospace;
-            font-size: x-small;
-        }
-
-        .footer {
-            height: 150px;
-            position: fixed;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            margin-bottom: 0px;
-            overflow: scroll;
-        }
-
-        .operative_text {
-            font-family: "Courier New", monospace;
-            font-size: 10px;
-        }
-
-        .operative_header {
-            font-family: "Courier New", monospace;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        #main_view {
-            overflow: scroll;
-            margin-bottom: 100px;
-        }
-    </style>
+	<link href='css/normalize.css' rel='stylesheet' type='text/css' />
+	<link href='css/simple.css' rel='stylesheet' type='text/css' />
+	<link href='css/ventus.css' rel='stylesheet' type='text/css' />
+    <link href='css/novodb.css' rel='stylesheet' type='text/css' />
 
     <script type="text/javascript" src="js/underscore.js"></script>
-    <script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.terminal-0.8.8.js"></script>
     <script type="text/javascript" src="js/angular.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
@@ -56,6 +23,9 @@
     <script type="text/javascript" src="js/novodb-lib.js"></script>
     <script type="text/javascript" src="js/novodb.js"></script>
     <script type="text/javascript" src="js/novodb-jq.js"></script>
+	<script type="text/javascript" src="js/modernizr.js"></script>
+	<script type="text/javascript" src="js/handlebars.js"></script>
+	<script type="text/javascript" src="js/ventus.js"></script>
     <script type="text/javascript" src="plugins/common.js"></script>
 
     <!-- insert plugins here -->
@@ -66,8 +36,8 @@
 </head>
 
 <body id="dbg" ng-controller="dbg">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="z-index:99999">
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
             <span class="sr-only">Toggle navigation</span>
@@ -78,9 +48,6 @@
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <!--<ul class="nav navbar-nav">-->
-            <div>
-                {{proc_state.description}} ({{proc_state.session}})
-            </div>
             <!--<li class="active">
                 <a href="#">Link</a>
             </li>
@@ -159,9 +126,22 @@
     </div>
 </nav>
 
-<div class="container" id="main_view">
-    <div class="row clearfix">
-        <!--
+<div id="wm-container"></div>
+
+<div class="container" style="overflow: auto;">
+    <div id="plugins_container" ndb-plugins-container="plugins">
+    </div>
+</div>
+
+<div class="footer" id="footer_terminal">
+</div>
+
+</body>
+</html>
+
+
+
+<!--
         <div class="col-md-4 column">
             <button class="btn btn-default" ng-click="getModules()">Get Modules</button>
             <input type="text" ng-model="module_search" ng-trim="true">
@@ -206,15 +186,3 @@
             </p>
         </div>
         -->
-
-        <div class="row clearfix" ndb-plugins-container="plugins">
-
-        </div>
-    </div>
-</div>
-
-<div class="footer" id="footer_terminal">
-</div>
-
-</body>
-</html>

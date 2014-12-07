@@ -27,6 +27,7 @@ $( document ).ready(function() {
             term.echo("Command '" + cmdText.name + "' not found");
         }
     }, {
+        greetings: "[[i;red;]Welcome to Novodb. Enjoy your debugging experience!]",
         keydown: function(event, term) {
             function longest_start(arr, hint) {
                 if(hint == undefined) {
@@ -56,7 +57,6 @@ $( document ).ready(function() {
             }
 
             if (event.keyCode == 9) {
-                console.info(JSON.stringify(commands));
                 // tab completion
                 var cmdText = $.terminal.splitCommand(term.get_command());
         
@@ -96,7 +96,7 @@ $( document ).ready(function() {
                                 });
                             }
 
-                            if(apply_guess) {
+                            if(apply_guess && arr.length > 0) {
                                 cmdText.args[cmdText.args.length - 1] = longest_start(arr);
 
                                 term.set_command(execCmd[0].cmd + " " + cmdText.args.join(" "));
@@ -120,6 +120,4 @@ $( document ).ready(function() {
     });
 
     angular.element('#dbg').scope().jQueryLoaded();
-
-    log("Welcome to Novodb. Enjoy your debugging experience!");
 });

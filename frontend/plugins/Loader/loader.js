@@ -18,6 +18,7 @@ load_plugin(function() {
             function ($scope, $http, $compile) {
                 _instance.set_session($scope.$parent.session);
                 
+
                 $scope.load_processes = function() {
                     $http.get('util://list/proc').then(function (data) {
                         $scope.processes = data.data.processes.map(function(proc) {
@@ -134,9 +135,13 @@ load_plugin(function() {
                                     maxcount: 20
                                 }
                             }).then(function (data) {
-                                return data.data.files.map(function (file) {
-                                    return prefix + file.file + (file.dir == "1"?"/":"");
-                                });
+                                if('files' in data.data) {
+                                    return data.data.files.map(function (file) {
+                                        return prefix + file.file + (file.dir == "1"?"/":"");
+                                    });
+                                } else {
+                                    return [];
+                                }
                             });
                         }
                     },

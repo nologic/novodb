@@ -133,7 +133,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     
                     angular.extend(s, d); //copy data onto it
 
-                    var template = '<div class="col-md-4 column" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
+                    var template = '<div class="novodb-plugin" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
                     elem.append($compile(template)(s)); // compile template & append
                 }
             }, true); //look deep into object

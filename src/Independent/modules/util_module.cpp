@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Mikhail Sosonkin. All rights reserved.
 //
 
-#include "util_scheme_handler.h"
 #include "platform_support.h"
 
 #include <utility>
@@ -17,8 +16,28 @@
 #include <boost/log/trivial.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+#include "Module.h"
+
 namespace novo {
-    UtilSchemeHandler::UtilSchemeHandler() {
+    class util_module : public ModuleInterface {
+        virtual std::string getName() {
+            return "util";
+        }
+        
+        virtual void registerRouter(RequestRouter& req_router);
+        
+        virtual CefRefPtr<SessionState> createSession() {
+            return CefRefPtr<SessionState>(new SessionState());
+        }
+    };
+    
+    void util_module_main() {
+        util_module module;
+        
+        register_module(module);
+    }
+    
+    void util_module::registerRouter(RequestRouter& req_router) {
         BOOST_LOG_TRIVIAL(trace) << "UtilSchemeHandler initializing";
         
         req_router.register_path({"ls"}, {
@@ -64,13 +83,15 @@ namespace novo {
                     dirlist.push_back(make_pair("", dirent));
                 }
             }
-                
-            output.add_child("files", dirlist);
+            
+            if(dirlist.size() > 0) {
+                output.add_child("files", dirlist);
+            }
             
             return ActionResponse::no_error();
         });
 
-        req_router.register_path({"list", "proc"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "proc"}, {}, [] ACTION_CALLBACK(req, output) {
             using namespace boost::property_tree;
             
             ptree proc_items;
@@ -80,7 +101,6 @@ namespace novo {
                 ptree proc_item;
                 
                 proc_item.put("pid", std::to_string(std::get<0>(proc_tuple)));
-                proc_item.put("debuggable", std::to_string(std::get<1>(proc_tuple)));
                 proc_item.put("path", std::get<2>(proc_tuple));
                 
                 proc_items.push_back(make_pair("", proc_item));
@@ -91,7 +111,7 @@ namespace novo {
             return ActionResponse::no_error();
         });
         
-        req_router.register_path({"list", "ui_plugins"}, {}, [this] ACTION_CALLBACK(req, output) {
+        req_router.register_path({"list", "ui_plugins"}, {}, [] ACTION_CALLBACK(req, output) {
             using namespace std;
             using namespace boost::filesystem;
             

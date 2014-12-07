@@ -23,8 +23,6 @@
 #include "include/cef_base.h"
 #include "include/cef_app.h"
 
-#define ACTION_CALLBACK(req, output) (const ActionRequest& req, boost::property_tree::ptree& output)
-
 class ActionResponse {
 public:
     ActionResponse(const ActionResponse& other) : status_code(other.status_code), msg(other.msg) {
@@ -162,6 +160,7 @@ public:
     
     RequestRouter() {}
     
+    void reguster_path(handler_entry& entry);
     void register_path(const std::vector<std::string>& path, const RequestConstraint::constraint_list& constraints, path_handler handler, bool blocking = false);
     void unregister_path(const std::string& path);
     std::tuple<path_handler, bool> find_handler(const ActionRequest& req);

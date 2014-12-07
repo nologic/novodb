@@ -1,17 +1,12 @@
 //
-//  util_scheme_hander.h
+//  Module.cpp
 //  Novodb
 //
-//  Created by mike on 10/7/14.
+//  Created by mike on 12/6/14.
 //  Copyright (c) 2014 Mikhail Sosonkin. All rights reserved.
 //
 
-#ifndef __Novodb__util_scheme_hander__
-#define __Novodb__util_scheme_hander__
-
-#include <stdio.h>
-#include <iostream>
-#include <sstream>
+#include "Module.h"
 
 #include "include/cef_base.h"
 #include "include/cef_browser.h"
@@ -21,10 +16,11 @@
 #include "dbg_handler.h"
 
 namespace novo {
-    
-    class UtilSchemeHandler : public CefSchemeHandlerFactory {
+    class ModuleSchemeHandler : public CefSchemeHandlerFactory {
     public:
-        UtilSchemeHandler();
+        ModuleSchemeHandler(ModuleInterface& module) {
+            module.registerRouter(this->req_router);
+        }
         
         virtual CefRefPtr<CefResourceHandler> Create(CefRefPtr<CefBrowser> browser,
                                                      CefRefPtr<CefFrame> frame,
@@ -38,16 +34,13 @@ namespace novo {
         
     private:
         RequestRouter req_router;
-
-        IMPLEMENT_REFCOUNTING(LlbdSchemeHandler)
-    };
-    
-    static void install_util_scheme() {
-        CefRefPtr<CefSchemeHandlerFactory> handler(new UtilSchemeHandler());
         
-        CefRegisterSchemeHandlerFactory("util", CefString(), handler);
-    }
-    
-} // namespace novo
+        IMPLEMENT_REFCOUNTING(ModuleSchemeHandler)
+    };
 
-#endif /* defined(__Novodb__util_scheme_hander__) */
+    void register_module(ModuleInterface& module) {
+        CefRefPtr<CefSchemeHandlerFactory> handler(new ModuleSchemeHandler(module));
+        
+        CefRegisterSchemeHandlerFactory(module.getName(), CefString(), handler);
+    }
+}
