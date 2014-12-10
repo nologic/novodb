@@ -40,6 +40,7 @@ namespace novo {
     };
  
     void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession>& sessions);
+    void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>& sessions);
 }
 
 #endif /* defined(__Novodb__lldb_module_commands1__) */

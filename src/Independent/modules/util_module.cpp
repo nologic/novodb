@@ -37,6 +37,10 @@ namespace novo {
         register_module(module);
     }
     
+    void util_module_unload() {
+        
+    }
+    
     void util_module::registerRouter(RequestRouter& req_router) {
         BOOST_LOG_TRIVIAL(trace) << "UtilSchemeHandler initializing";
         

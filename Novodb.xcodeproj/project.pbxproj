@@ -213,6 +213,10 @@
 		27DD9DD41A33A4A800227D0B /* lldb_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD21A33A4A800227D0B /* lldb_module.cpp */; };
 		27DD9DD71A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */; };
 		27DD9DD81A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */; };
+		27DD9DDE1A35341F00227D0B /* libyara.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27DD9DDD1A35341F00227D0B /* libyara.a */; };
+		27DD9DE01A353B0100227D0B /* lldb_module_memops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DDF1A353B0100227D0B /* lldb_module_memops.cpp */; };
+		27DD9DE11A353B0100227D0B /* lldb_module_memops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DDF1A353B0100227D0B /* lldb_module_memops.cpp */; };
+		27DD9DE41A36743600227D0B /* libyara.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27DD9DE31A36743600227D0B /* libyara.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		27E6B1BE19EB6A8600681256 /* simple_app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501C19BB19F700784C39 /* simple_app.cpp */; };
 		27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501E19BB19F700784C39 /* simple_handler.cpp */; };
 		27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 271775AE19C0B30100051986 /* dbg_handler.cpp */; };
@@ -274,8 +278,9 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 12;
 			files = (
+				27DD9DE41A36743600227D0B /* libyara.3.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,6 +496,9 @@
 		27DD9DD21A33A4A800227D0B /* lldb_module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lldb_module.cpp; path = Independent/modules/lldb_module.cpp; sourceTree = "<group>"; };
 		27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lldb_module_commands1.cpp; path = Independent/modules/lldb_module_commands1.cpp; sourceTree = "<group>"; };
 		27DD9DD91A33B46500227D0B /* lldb_module_commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lldb_module_commands.h; path = Independent/modules/lldb_module_commands.h; sourceTree = "<group>"; };
+		27DD9DDD1A35341F00227D0B /* libyara.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyara.a; path = libs/yara/libyara.a; sourceTree = "<group>"; };
+		27DD9DDF1A353B0100227D0B /* lldb_module_memops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lldb_module_memops.cpp; path = Independent/modules/lldb_module_memops.cpp; sourceTree = "<group>"; };
+		27DD9DE31A36743600227D0B /* libyara.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libyara.3.dylib; path = libs/dynamic_mac/libyara.3.dylib; sourceTree = "<group>"; };
 		27E6B1BA19EB59AC00681256 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = libs/gtest.framework; sourceTree = "<group>"; };
 		27E6B1D719EB71DE00681256 /* test_units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_units.cpp; sourceTree = "<group>"; };
 		27E6B1DF19EB7DE000681256 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = libs/gtest.framework/libgtest_main.a; sourceTree = "<group>"; };
@@ -546,6 +554,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27DD9DDE1A35341F00227D0B /* libyara.a in Frameworks */,
 				2739889B19E448A80010C12F /* libboost_filesystem-mt.a in Frameworks */,
 				271A4F8319CB6F120089495F /* libboost_thread-mt.a in Frameworks */,
 				271A4F7D19CB6D6B0089495F /* libboost_log-mt.a in Frameworks */,
@@ -778,6 +787,7 @@
 				27DD9DD21A33A4A800227D0B /* lldb_module.cpp */,
 				27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */,
 				27DD9DCF1A33993400227D0B /* util_module.cpp */,
+				27DD9DDF1A353B0100227D0B /* lldb_module_memops.cpp */,
 			);
 			name = modules;
 			sourceTree = "<group>";
@@ -795,6 +805,7 @@
 		E78D965C1638A18900DE580E = {
 			isa = PBXGroup;
 			children = (
+				27DD9DE31A36743600227D0B /* libyara.3.dylib */,
 				278421A019DCE8B500592CA8 /* frontend */,
 				271775C219C0F0DE00051986 /* libcef_dll_wrapper */,
 				E78D96711638A18900DE580E /* Novodb */,
@@ -888,6 +899,7 @@
 				271A4F7B19CB6D6B0089495F /* libboost_log-mt.a */,
 				271A4F7C19CB6D6B0089495F /* libboost_system-mt.a */,
 				273823E119C4E64400559F61 /* libcppnetlib-uri.a */,
+				27DD9DDD1A35341F00227D0B /* libyara.a */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1063,6 +1075,7 @@
 				271775A119BBD93600051986 /* ShellScript */,
 				275750A319BB6E8500784C39 /* ShellScript */,
 				275750A519BBC66700784C39 /* ShellScript */,
+				27DD9DE51A367B5D00227D0B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1265,6 +1278,20 @@
 			shellPath = /bin/sh;
 			shellScript = "exec tools/change_mach_o_flags_from_xcode.sh\nexit 1";
 		};
+		27DD9DE51A367B5D00227D0B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec install_name_tool -change \"/usr/local/lib/libyara.3.dylib\" \"@executable_path/../SharedSupport/libyara.3.dylib\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nexit 1";
+		};
 		27E6B1E419EC112500681256 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1419,6 +1446,7 @@
 				27DD9DD81A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
 				27DD9DD41A33A4A800227D0B /* lldb_module.cpp in Sources */,
 				27DD9DD11A33993400227D0B /* util_module.cpp in Sources */,
+				27DD9DE11A353B0100227D0B /* lldb_module_memops.cpp in Sources */,
 				27E6B1C419EB6A8600681256 /* request_router.cpp in Sources */,
 				27E6B1CA19EB6A8600681256 /* json_serialize.cpp in Sources */,
 				27E6B1D819EB71DE00681256 /* test_units.cpp in Sources */,
@@ -1447,6 +1475,7 @@
 				27DD9DD71A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
 				E78D96A61638BA0B00DE580E /* main.mm in Sources */,
 				27DD9DD31A33A4A800227D0B /* lldb_module.cpp in Sources */,
+				27DD9DE01A353B0100227D0B /* lldb_module_memops.cpp in Sources */,
 				271775B019C0B30100051986 /* dbg_handler.cpp in Sources */,
 				2757502019BB19F700784C39 /* simple_app.cpp in Sources */,
 			);
@@ -1632,6 +1661,7 @@
 					"$(PROJECT_DIR)/libs/cpp-netlib-0.11.0-final/libs/network/src",
 					/usr/local/Cellar/boost/1.55.0_1/lib,
 					"$(PROJECT_DIR)/libs/gtest.framework",
+					"$(PROJECT_DIR)/libs/yara/3.0.0/lib",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -1679,6 +1709,7 @@
 					"$(PROJECT_DIR)/libs/cpp-netlib-0.11.0-final/libs/network/src",
 					/usr/local/Cellar/boost/1.55.0_1/lib,
 					"$(PROJECT_DIR)/libs/gtest.framework",
+					"$(PROJECT_DIR)/libs/yara/3.0.0/lib",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -1811,6 +1842,7 @@
 					/Users/mike/GitHub/Novodb/libs/LLDB.framework/Headers,
 					/Users/mike/cef/llvm/include/,
 					"/Users/mike/cef/cfe-3.5.0.src/include",
+					"$(SRCROOT)/libs/yara/include",
 				);
 				INFOPLIST_FILE = "src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
@@ -1819,8 +1851,11 @@
 					"$(PROJECT_DIR)/libs/boost-1.55.0_1",
 					"$(PROJECT_DIR)/libs/cpp-netlib-0.11.0-final/libs/network/src",
 					/usr/local/Cellar/boost/1.55.0_1/lib,
+					"$(PROJECT_DIR)/libs/yara/3.0.0/lib",
+					"$(PROJECT_DIR)/libs/yara",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
+				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PRODUCT_NAME = Novodb;
 				SDKROOT = "";
 				WRAPPER_EXTENSION = app;
@@ -1849,6 +1884,7 @@
 					/Users/mike/GitHub/Novodb/libs/LLDB.framework/Headers,
 					/Users/mike/cef/llvm/include/,
 					"/Users/mike/cef/cfe-3.5.0.src/include",
+					"$(SRCROOT)/libs/yara/include",
 				);
 				INFOPLIST_FILE = "src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
@@ -1857,8 +1893,11 @@
 					"$(PROJECT_DIR)/libs/boost-1.55.0_1",
 					"$(PROJECT_DIR)/libs/cpp-netlib-0.11.0-final/libs/network/src",
 					/usr/local/Cellar/boost/1.55.0_1/lib,
+					"$(PROJECT_DIR)/libs/yara/3.0.0/lib",
+					"$(PROJECT_DIR)/libs/yara",
 				);
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
+				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PRODUCT_NAME = Novodb;
 				SDKROOT = "";
 				WRAPPER_EXTENSION = app;

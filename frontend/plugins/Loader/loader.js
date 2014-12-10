@@ -170,7 +170,7 @@ load_plugin(function() {
                 register_command({
                     cmd: "state",
                     complete: function(params) {
-                        return ["(Get session state)"]
+                        return ["(Get session state)"];
                     },
 
                     execute: function(params) {
@@ -203,6 +203,33 @@ load_plugin(function() {
                                 log("Process launch failed");
                             });
                         }
+                    }
+                });
+
+                register_command({
+                    cmd: "search",
+                    complete: function(params) {
+                        return ["[address] [length] [Yara]"];
+                    },
+
+                    execute: function(params) {
+                        params[2] = "rule ExampleRule\n" +
+                                    "{\n" +
+                                    "   strings:\n" +
+                                    "     $str = { " + params[2] + " }\n" +
+                                    "   condition:\n" + 
+                                    "     $str\n" +
+                                    "}";
+                        session.yaraSearch(params[0], params[1], params[2], function(matches) {
+                            if("matches" in matches) {
+                                matches.matches.map(function(match) {
+                                    log(toHexString(parseInt(match.base) + parseInt(match.offset)) + 
+                                        " (" + match.identifier + ") " + match.string);
+                                });
+                            } else {
+                                log("no matches");
+                            }
+                        }, log);
                     }
                 });
             }

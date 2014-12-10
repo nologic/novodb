@@ -162,6 +162,15 @@ function create_ndb_session($http) {
         }, extract_data(f_success), f_fail);
     };
 
+    NdbSession.prototype.yaraSearch = function(address, length, pattern, f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://search/memory/yara", {
+            session: session_id,
+            address: address,
+            length: length,
+            pattern: pattern
+        }, extract_data(f_success), f_fail);
+    };
+
     NdbSession.prototype.writeMemory = function(address, count, f_success, f_fail) {
         f_fail("Not yet implemented");
     };

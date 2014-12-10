@@ -8,6 +8,8 @@
 
 #include "lldb_module_commands.h"
 
+#include "yara.h"
+
 namespace novo {
     
     class lldb_module : public ModuleInterface {
@@ -17,6 +19,7 @@ namespace novo {
         
         virtual void registerRouter(RequestRouter& req_router) {
             register_commands(req_router, this->sessions);
+            register_memops(req_router, this->sessions);
         }
         
         virtual CefRefPtr<SessionState> createSession() {
@@ -31,7 +34,12 @@ namespace novo {
     
     void lldb_module_main() {
         lldb::SBDebugger::Initialize();
+        yr_initialize();
         
         register_module(_lldb_module);
+    }
+    
+    void lldb_module_unload() {
+        yr_finalize();
     }
 }
