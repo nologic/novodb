@@ -16,23 +16,36 @@
 #include <iostream>
 #include <sstream>
 
-void RequestRouter::register_path(const std::vector<std::string>& path, const RequestConstraint::constraint_list& constraints, path_handler handler, bool blocking) {
-    handler_entry entry(RequestPath(path), constraints, handler, blocking);
+namespace novo {
+
+std::atomic<uint32_t> ActionResponse::uniq_id = {0};
+    
+void RequestRouter::register_path(const std::vector<std::string>& path, const RequestConstraint::constraint_list& constraints,
+                                  path_handler handler, handler_type type) {
+    handler_entry entry(RequestPath(path), constraints, handler, type);
     
     prefix_list.push_back(entry);
     
     BOOST_LOG_TRIVIAL(info) << "registered " << std::get<0>(entry).toString();
 }
 
-void RequestRouter::unregister_path(const std::string& path) {
-    RequestPath r_path(RequestPath::make_path("dbg://" + path));
-    
-    std::remove_if(std::begin(prefix_list), std::end(prefix_list), [&r_path](RequestRouter::handler_entry pair){
-        return std::get<0>(pair) == r_path;
+void RequestRouter::unregister_path(const RequestPath& path) {
+    auto found_pair = std::find_if(std::begin(prefix_list), std::end(prefix_list), [&path](const handler_entry& pair){
+        auto check_path = std::get<0>(pair);
+        
+        return path == check_path;
     });
+    
+    if(found_pair != std::end(prefix_list)) {
+        prefix_list.erase(found_pair);
+    
+        BOOST_LOG_TRIVIAL(info) << "Unregistered path " << path.toString();
+    } else {
+        BOOST_LOG_TRIVIAL(info) << "Unregister path not found " << path.toString();
+    }
 }
 
-std::tuple<RequestRouter::path_handler, bool> RequestRouter::find_handler(const ActionRequest& req) {
+std::tuple<path_handler, handler_type> RequestRouter::find_handler(const ActionRequest& req) {
     using namespace std;
     
     BOOST_LOG_TRIVIAL(info) << "Request path " << req.get_path().toString();
@@ -79,7 +92,7 @@ RequestPath RequestPath::make_path(const boost::network::uri::uri& url) {
 
 // ActionRequest class
 
-ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request) : request(_request) {
+ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request, chunk_stage _stage) : request(_request), stage(_stage) {
     using namespace boost::network::uri;
     using namespace boost;
     using namespace std;
@@ -97,8 +110,6 @@ ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request) : request(_request)
     for_each(query_params.begin(), query_params.end(), [this](const string& param) {
         vector<uri::string_type> param_parts;
         split(param_parts, param, is_any_of("="));
-        
-        std::cerr << param_parts[0] << " = " << param_parts[1] << std::endl;
         
         if(param_parts.size() > 1) {
             (*this)[param_parts[0]] = boost::network::uri::decoded(param_parts[1]);
@@ -164,4 +175,6 @@ namespace RequestConstraint {
         
         return Valid();
     }
+}
+
 }

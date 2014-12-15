@@ -1,0 +1,40 @@
+body {
+    padding-top: 90px;
+    padding-bottom: 150px
+}
+
+.memory_view {
+    font-family: monospace;
+    font-size: x-small;
+}
+
+.footer {
+    height: 150px;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
+    overflow: scroll;
+    z-index: 99999
+}
+
+.operative_text {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+}
+
+.operative_header {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

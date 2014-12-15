@@ -10,77 +10,239 @@
 #include "yara.h"
 
 #include <cstdlib>
+#include <memory>
+#include <queue>
 
 namespace novo {
+    using namespace std;
+    using namespace lldb;
+    using namespace boost::property_tree;
 
-    // stealing from yara.c for now.
-    void print_string(
-                      uint8_t* data,
-                      int length)
-    {
-        char* str = (char*) (data);
-        
-        for (int i = 0; i < length; i++)
-        {
-            if (str[i] >= 32 && str[i] <= 126)
-                printf("%c", str[i]);
-            else
-                printf("\\x%02X", (uint8_t) str[i]);
+    namespace memops {
+    
+    std::string yr_error_retstr(int v) {
+        switch(v) {
+            case ERROR_INSUFICIENT_MEMORY:          return "ERROR_INSUFICIENT_MEMORY";
+            case ERROR_COULD_NOT_ATTACH_TO_PROCESS: return "ERROR_COULD_NOT_ATTACH_TO_PROCESS";
+            case ERROR_COULD_NOT_OPEN_FILE:         return "ERROR_COULD_NOT_OPEN_FILE";
+            case ERROR_COULD_NOT_MAP_FILE:          return "ERROR_COULD_NOT_MAP_FILE";
+            case ERROR_INVALID_FILE:                return "ERROR_INVALID_FILE";
+            case ERROR_CORRUPT_FILE:                return "ERROR_CORRUPT_FILE";
+            case ERROR_UNSUPPORTED_FILE_VERSION:    return "ERROR_UNSUPPORTED_FILE_VERSION";
+            case ERROR_INVALID_REGULAR_EXPRESSION:  return "ERROR_INVALID_REGULAR_EXPRESSION";
+            case ERROR_INVALID_HEX_STRING:          return "ERROR_INVALID_HEX_STRING";
+            case ERROR_SYNTAX_ERROR:                return "ERROR_SYNTAX_ERROR";
+            case ERROR_LOOP_NESTING_LIMIT_EXCEEDED: return "ERROR_LOOP_NESTING_LIMIT_EXCEEDED";
+            case ERROR_DUPLICATED_LOOP_IDENTIFIER:  return "ERROR_DUPLICATED_LOOP_IDENTIFIER";
+            case ERROR_DUPLICATED_IDENTIFIER:       return "ERROR_DUPLICATED_IDENTIFIER";
+            case ERROR_DUPLICATED_TAG_IDENTIFIER:   return "ERROR_DUPLICATED_TAG_IDENTIFIER";
+            case ERROR_DUPLICATED_META_IDENTIFIER:  return "ERROR_DUPLICATED_META_IDENTIFIER";
+            case ERROR_DUPLICATED_STRING_IDENTIFIER: return "ERROR_DUPLICATED_STRING_IDENTIFIER";
+            case ERROR_UNREFERENCED_STRING:         return "ERROR_UNREFERENCED_STRING";
+            case ERROR_UNDEFINED_STRING:            return "ERROR_UNDEFINED_STRING";
+            case ERROR_UNDEFINED_IDENTIFIER:        return "ERROR_UNDEFINED_IDENTIFIER";
+            case ERROR_MISPLACED_ANONYMOUS_STRING:  return "ERROR_MISPLACED_ANONYMOUS_STRING";
+            case ERROR_INCLUDES_CIRCULAR_REFERENCE: return "ERROR_INCLUDES_CIRCULAR_REFERENCE";
+            case ERROR_INCLUDE_DEPTH_EXCEEDED:      return "ERROR_INCLUDE_DEPTH_EXCEEDED";
+            case ERROR_WRONG_TYPE:                  return "ERROR_WRONG_TYPE";
+            case ERROR_EXEC_STACK_OVERFLOW:         return "ERROR_EXEC_STACK_OVERFLOW";
+            case ERROR_SCAN_TIMEOUT:                return "ERROR_SCAN_TIMEOUT";
+            case ERROR_TOO_MANY_SCAN_THREADS:       return "ERROR_TOO_MANY_SCAN_THREADS";
+            case ERROR_CALLBACK_ERROR:              return "ERROR_CALLBACK_ERROR";
+            case ERROR_INVALID_ARGUMENT:            return "ERROR_INVALID_ARGUMENT";
+            case ERROR_TOO_MANY_MATCHES:            return "ERROR_TOO_MANY_MATCHES";
+            case ERROR_INTERNAL_FATAL_ERROR:        return "ERROR_INTERNAL_FATAL_ERROR";
+            case ERROR_NESTED_FOR_OF_LOOP:          return "ERROR_NESTED_FOR_OF_LOOP";
+            case ERROR_INVALID_FIELD_NAME:          return "ERROR_INVALID_FIELD_NAME";
+            case ERROR_UNKNOWN_MODULE:              return "ERROR_UNKNOWN_MODULE";
+            case ERROR_NOT_A_STRUCTURE:             return "ERROR_NOT_A_STRUCTURE";
+            case ERROR_NOT_INDEXABLE:               return "ERROR_NOT_INDEXABLE";
+            case ERROR_NOT_A_FUNCTION:              return "ERROR_NOT_A_FUNCTION";
+            case ERROR_INVALID_FORMAT:              return "ERROR_INVALID_FORMAT";
+            case ERROR_TOO_MANY_ARGUMENTS:          return "ERROR_TOO_MANY_ARGUMENTS";
+            case ERROR_WRONG_ARGUMENTS:             return "ERROR_WRONG_ARGUMENTS";
+            case ERROR_WRONG_RETURN_TYPE:           return "ERROR_WRONG_RETURN_TYPE";
+            case ERROR_DUPLICATED_STRUCTURE_MEMBER: return "ERROR_DUPLICATED_STRUCTURE_MEMBER";
         }
         
-        printf("\n");
+        return "unknown";
+    }
+        
+    enum chunked_done_code {
+        DONE_NOT, DONE_SUCCESS, DONE_FAIL
+    };
+    
+    typedef std::function< int (int message, void* message_data) > match_callback;
+    
+    // a function which converts the call back to a lambda call.
+    int match_callback_function(int message, void* message_data, void* user_data) {
+        match_callback cb = *(match_callback*)user_data;
+    
+        return cb(message, message_data);
     }
     
-    
-    void print_hex_string(
-                          uint8_t* data,
-                          int length)
-    {
-        for (int i = 0; i < min(32, length); i++)
-            printf("%02X ", (uint8_t) data[i]);
-        
-        if (length > 32)
-            printf("...");
-        
-        printf("\n");
+    void callback_function(int error_level, const char* file_name, int line_number, const char* message) {
+        std::cout << "error: " << line_number << " " << message << std::endl;
     }
     
-typedef std::function< int (int message, void* message_data) > match_callback;
-    
-// a function which converts the call back to a lambda call.
-int match_callback_function(int message, void* message_data, void* user_data) {
-    match_callback cb = *(match_callback*)user_data;
-    
-    return cb(message, message_data);
-}
-    
-void callback_function(int error_level, const char* file_name, int line_number, const char* message) {
-    std::cout << "error: " << line_number << " " << message << std::endl;
-}
-    
-void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>& sessions) {
-    auto session_bounds = [&sessions](int sid) { return sid >= 0 && sid < sessions.size(); };
-    
-    req_router.register_path({"read", "memory"}, {
-        RequestConstraint::has_int("session", session_bounds),
-        RequestConstraint::exists({"address"}),
-        RequestConstraint::has_int("count")
-    }, [&sessions] ACTION_CALLBACK(req, output) {
-        using namespace std;
-        using namespace lldb;
-        using namespace boost::property_tree;
+    ActionResponse search_memory_yara(LldbProcessSession& session, addr_t addr, size_t get_bytes, string pattern, boost::property_tree::ptree& output) {
+        // first: set up rules (compile)
+        YR_RULES* compiled_rules;
+        YR_COMPILER* compiler;
         
-        int session_id = stoi(req.at("session"));
-        addr_t addr = stoull(req.at("address"), 0, 16);
-        size_t get_bytes = stol(req.at("count"));
+        if(yr_compiler_create(&compiler) != ERROR_SUCCESS) {
+            return ActionResponse::error("Unable to create Yara compiler");
+        }
         
-        LldbProcessSession& session = sessions[session_id];
+        yr_compiler_set_callback(compiler, callback_function);
+        
+        int comp_error = yr_compiler_add_string(compiler, pattern.c_str(), nullptr);
+        if(comp_error > 0) {
+            yr_compiler_destroy(compiler);
+            
+            return ActionResponse::error("Errors compiling the pattern. Errors: " + to_string(comp_error));
+        }
+        
+        if(yr_compiler_get_rules(compiler, &compiled_rules) != ERROR_SUCCESS) {
+            yr_compiler_destroy(compiler);
+            
+            return ActionResponse::error("Errors extracting compiled rules");
+        }
+        
+        // initialize chunking setup.
+        shared_ptr<queue<ptree>> out_q(new queue<ptree>());
+        shared_ptr<atomic<chunked_done_code>> done_code(new atomic<chunked_done_code>(DONE_NOT));
+        
+        // protect the queue
+        shared_ptr<std::mutex> q_mutex(new std::mutex());
+        
+        auto output_func = [out_q, done_code, q_mutex] ACTION_CALLBACK(out_req, out_output) {
+            ptree out_items;
+            
+            while(!out_q->empty()) {
+                // let's empty out this queue
+                std::lock_guard<std::mutex> lock(*q_mutex);
+                
+                out_items.push_back(make_pair("", out_q->front()));
+                
+                out_q->pop();
+            }
+            
+            out_output.put_child("output", out_items);
+            
+            if(*done_code != DONE_NOT) {
+                return ActionResponse::no_error_remove();
+            }
+            
+            return ActionResponse::no_error();
+        };
+        
+        auto run_func = [&session, addr, get_bytes, pattern, compiler, compiled_rules, out_q, done_code, q_mutex]() {
+            SBError error;
+        
+            // first: read the memory
+            size_t read_bytes;
+            uint8_t* data = (uint8_t*)malloc(get_bytes);
+        
+            if(data == nullptr) {
+                //return ActionResponse::error("Unable to allocate memory");
+                done_code->store(DONE_FAIL);
+            }
+        
+            if( (read_bytes = session.process.ReadMemory(addr, data, get_bytes, error)) <= 0) {
+                free(data);
+            
+                //return ActionResponse::error(string(error.GetCString()));
+                done_code->store(DONE_FAIL);
+            }
+        
+            // third: scan read memory
+            ptree matches;
+        
+            match_callback cb = [addr, &matches, out_q, q_mutex](int message, void* message_data) {
+                // one or the other depending on message
+                YR_RULE* rule = (YR_RULE*)message_data;
+                
+                if(message == CALLBACK_MSG_RULE_MATCHING){
+                    ptree match_obj;
+                    YR_STRING* yr_string;
+                    
+                    yr_rule_strings_foreach(rule, yr_string)
+                    {
+                        YR_MATCH* match;
+                    
+                        yr_string_matches_foreach(yr_string, match)
+                        {
+                            basic_string<uint8_t> matchdata(match->data, match->length);
+                            stringstream os;
+                        
+                            os << hex << setfill('0');  // set the stream to hex with 0 fill
+                        
+                            std::for_each(std::begin(matchdata), std::end(matchdata), [&os] (int i) {
+                                os << setw(2) << i;
+                            });
+                            
+                            match_obj.put("base", to_string(addr));
+                            match_obj.put("offset", to_string(match->offset));
+                            match_obj.put("identifier", string(yr_string->identifier));
+                            match_obj.put("string", os.str());
+                            
+                            { // protected output
+                                std::lock_guard<std::mutex> lock(*q_mutex);
+                                out_q->push(match_obj);
+                            }
+                        }
+                    }
+                }
+            
+                return CALLBACK_CONTINUE;
+            };
+        
+            int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&cb, 0);
+        
+            { // protected output.
+                std::lock_guard<std::mutex> lock(*q_mutex);
+            
+                ptree final_obj;
+                final_obj.put("code", to_string(scan_ret));
+                final_obj.put("code_str", yr_error_retstr(scan_ret));
+                out_q->push(final_obj);
+            }
+            
+            // finally: do the cleanup.
+            free(data);
+            yr_rules_destroy(compiled_rules);
+            yr_compiler_destroy(compiler);
+            
+            done_code->store(DONE_SUCCESS);
+        };
+        
+        return ActionResponse::chunked_response(output_func, run_func);
+    }
+    
+    // implementation of /write/byte
+    ActionResponse write_byte(LldbProcessSession& session, addr_t addr, long writebyte) {
+        SBError error;
+        
+        unsigned char byte = (unsigned char) writebyte;
+        
+        if(session.process.WriteMemory(addr, &byte, 1, error) != 1) {
+            return ActionResponse::error(string(error.GetCString()));
+        }
+        
+        return ActionResponse::no_error();
+    }
+    
+    // implementation of /read/memory
+    ActionResponse read_memory(LldbProcessSession& session, addr_t addr, size_t get_bytes, boost::property_tree::ptree& output) {
         SBError error;
         
         size_t read_bytes;
         array<unsigned char, 4096> mem_arr;
         
-        if( (read_bytes = session.process.ReadMemory(addr, mem_arr.data(), min(mem_arr.size(), get_bytes), error)) != 0) {
+        read_bytes = session.process.ReadMemory(addr, mem_arr.data(), min(mem_arr.size(), get_bytes), error);
+        
+        if( read_bytes != 0) {
             stringstream os;
             
             os << hex << setfill('0');  // set the stream to hex with 0 fill
@@ -95,8 +257,31 @@ void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>&
             
             return ActionResponse::no_error();
         } else {
-            return ActionResponse::error(string(error.GetCString()));
+            if(error.IsValid() && error.GetCString()) {
+                return ActionResponse::error(string(error.GetCString()));
+            } else {
+                return ActionResponse::error("Memory unreadable: " + to_string(error.GetError()));
+            }
         }
+    }
+        
+    } // namespace memops
+    
+void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>& sessions) {
+    auto session_bounds = [&sessions](int sid) {
+        return sid >= 0 && sid < sessions.size();
+    };
+    
+    req_router.register_path({"read", "memory"}, {
+        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::exists({"address"}),
+        RequestConstraint::has_int("count")
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        int session_id = stoi(req.at("session"));
+        addr_t addr = stoull(req.at("address"), 0, 16);
+        size_t get_bytes = stol(req.at("count"));
+        
+        return memops::read_memory(sessions[session_id], addr, get_bytes, output);
     });
     
     req_router.register_path({"search", "memory", "yara"}, {
@@ -105,158 +290,24 @@ void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>&
         RequestConstraint::has_int("length"),
         RequestConstraint::exists({"pattern"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
-        using namespace std;
-        using namespace lldb;
-        using namespace boost::property_tree;
-        
         int session_id = stoi(req.at("session"));
         addr_t addr = stoull(req.at("address"), 0, 16);
         size_t get_bytes = stol(req.at("length"));
         string pattern = req.at("pattern");
         
-        LldbProcessSession& session = sessions[session_id];
-        SBError error;
-        
-        // first: read the memory
-        size_t read_bytes;
-        uint8_t* data = (uint8_t*)malloc(get_bytes);
-        
-        if(data == nullptr) {
-            return ActionResponse::error("Unable to allocate memory");
-        }
-        
-        if( (read_bytes = session.process.ReadMemory(addr, data, get_bytes, error)) <= 0) {
-            free(data);
-            return ActionResponse::error(string(error.GetCString()));
-        }
-        
-        // second: set up rules (compile)
-        YR_RULES* compiled_rules;
-        YR_COMPILER* compiler;
-        
-        if(yr_compiler_create(&compiler) != ERROR_SUCCESS) {
-            free(data);
-            return ActionResponse::error("Unable to create Yara compiler");
-        }
-        
-        yr_compiler_set_callback(compiler, callback_function);
-        
-        int comp_error = yr_compiler_add_string(compiler, pattern.c_str(), nullptr);
-        if(comp_error > 0) {
-            free(data);
-            yr_compiler_destroy(compiler);
-            
-            cout << "errors: " << comp_error << endl;
-            
-            return ActionResponse::error("Errors compiling the pattern");
-        }
-        
-        if(yr_compiler_get_rules(compiler, &compiled_rules) != ERROR_SUCCESS) {
-            free(data);
-            yr_compiler_destroy(compiler);
-            
-            return ActionResponse::error("Errors extracting compiled rules");
-        }
-        
-        // third: scan read memory
-        ptree matches;
-        
-        match_callback cb = [addr, &matches](int message, void* message_data) {
-            // one or the other depending on message
-            YR_RULE* rule = (YR_RULE*)message_data;
-            YR_MODULE_IMPORT* import = (YR_MODULE_IMPORT*)message_data;
-            
-            switch(message) {
-                case CALLBACK_MSG_RULE_MATCHING: {
-                    ptree match_obj;
-                    YR_STRING* yr_string;
-                    
-                    yr_rule_strings_foreach(rule, yr_string)
-                    {
-                        YR_MATCH* match;
-                        
-                        yr_string_matches_foreach(yr_string, match)
-                        {
-                            basic_string<uint8_t> matchdata(match->data, match->length);
-                            stringstream os;
-                            
-                            os << hex << setfill('0');  // set the stream to hex with 0 fill
-                            
-                            std::for_each(std::begin(matchdata), std::end(matchdata), [&os] (int i) {
-                                os << setw(2) << i;
-                            });
-
-                            match_obj.put("base", to_string(addr));
-                            match_obj.put("offset", to_string(match->offset));
-                            match_obj.put("identifier", string(yr_string->identifier));
-                            match_obj.put("string", os.str());
-
-                            matches.push_back(make_pair("", match_obj));
-                        }
-                    }
-                    
-                    break;
-                }
-                    
-                case CALLBACK_MSG_RULE_NOT_MATCHING: {
-                    break;
-                }
-                    
-                case CALLBACK_MSG_SCAN_FINISHED: {
-                    // cool!
-                    break;
-                }
-                    
-                case CALLBACK_MSG_IMPORT_MODULE: {
-                    break;
-                }
-            }
-            
-            return CALLBACK_CONTINUE;
-        };
-        
-        int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&cb, 0);
-        
-        if(scan_ret != ERROR_SUCCESS) {
-            // handle scan errors;
-        }
-        
-        if(!matches.empty()) {
-            output.put_child("matches", matches);
-        }
-        
-        // finally: do the cleanup.
-        free(data);
-        yr_rules_destroy(compiled_rules);
-        yr_compiler_destroy(compiler);
-        
-        
-        return ActionResponse::no_error();
-    });
+        return memops::search_memory_yara(sessions[session_id], addr, get_bytes, pattern, output);
+    }, CHUNKED_NONBLOCKING);
     
     req_router.register_path({"write", "byte"}, {
         RequestConstraint::has_int("session", session_bounds),
         RequestConstraint::exists({"address"}),
         RequestConstraint::has_int("byte", 0, 0xFF)
     }, [&sessions] ACTION_CALLBACK(req, output) {
-        using namespace std;
-        using namespace lldb;
-        using namespace boost::property_tree;
-        
         int session_id = stoi(req.at("session"));
         addr_t addr = stoull(req.at("address"), 0, 16);
         long writebyte = stol(req.at("byte"));
         
-        unsigned char byte = (unsigned char) writebyte;
-        
-        LldbProcessSession& session = sessions[session_id];
-        SBError error;
-        
-        if(session.process.WriteMemory(addr, &byte, 1, error) != 1) {
-            return ActionResponse::error(string(error.GetCString()));
-        }
-        
-        return ActionResponse::no_error();
+        return memops::write_byte(sessions[session_id], addr, writebyte);
     });
 }
 

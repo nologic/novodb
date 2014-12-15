@@ -171,6 +171,11 @@ function create_ndb_session($http) {
         }, extract_data(f_success), f_fail);
     };
 
+    NdbSession.prototype.yaraSearchResults = function(path, f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://" + path, {
+        }, extract_data(f_success), f_fail);
+    };
+
     NdbSession.prototype.writeMemory = function(address, count, f_success, f_fail) {
         f_fail("Not yet implemented");
     };
@@ -226,12 +231,11 @@ function create_ndb_session($http) {
 }
 
 function log(txt) {
-    console.info(txt);
-
     if(typeof txt === 'object') {
         txt = JSON.stringify(txt, null, '\t');
     }
 
+    console.info(txt);
     output(txt);
 }
 

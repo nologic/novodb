@@ -82,7 +82,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         output.put("session", to_string(sessions.size() - 1));
         
         return ActionResponse::no_error();
-    }, true);
+    }, PLAIN_NONBLOCK);
     
     req_router.register_path({"create", "target", "attach"}, {
         RequestConstraint::has_int("pid")
@@ -121,7 +121,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         } else {
             return ActionResponse::error("Failed to attach");
         }
-    }, true);
+    }, PLAIN_NONBLOCK);
     
     req_router.register_path({"create", "target", "remote"}, {}, [] ACTION_CALLBACK(req, output) {
         return ActionResponse::error(501, "Not Implemented");
@@ -176,7 +176,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         } else {
             return ActionResponse::error(string("Process Invalid"));
         }
-    }, true);
+    }, PLAIN_NONBLOCK);
     
     req_router.register_path({"list", "symbols"}, {
         RequestConstraint::has_int("session", session_bounds),
@@ -460,7 +460,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         } else {
             return ActionResponse::error(string("Unable to wait for event"));
         }
-    }, true);
+    }, PLAIN_NONBLOCK);
     
     req_router.register_path({"read", "instructions"}, {
         RequestConstraint::has_int("session", session_bounds),

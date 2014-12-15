@@ -11,6 +11,9 @@
 
 #include "include/cef_request.h"
 
+using namespace std;
+using namespace novo;
+
 TEST(RouterConstraints, IntKey) {
     CefRefPtr<CefRequest> request1 = CefRequest::Create();
     request1->SetMethod(CefString("GET"));

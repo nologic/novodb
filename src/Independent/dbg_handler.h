@@ -14,12 +14,14 @@
 
 #include "request_router.h"
 
+using namespace novo;
+
 class DbgResourceHandler : public CefResourceHandler {
 public:
     DbgResourceHandler(RequestRouter& _router) : router(_router),
                                                  bytes_sent(0),
-                                                 response(ActionResponse::no_error()) {
-        
+                                                 response(ActionResponse::no_error()),
+                                                 is_frozen(false) {
     }
 
     ~DbgResourceHandler() {
@@ -39,9 +41,13 @@ public:
     virtual bool ReadResponse( void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefCallback> callback) OVERRIDE;
 
 private:
+    void freeze_output();
+    
+private:
     ActionResponse response;
     std::string out_data;
     boost::property_tree::ptree output;
+    bool is_frozen;
     
     int bytes_sent;
     RequestRouter& router;
