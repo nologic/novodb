@@ -133,8 +133,49 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     
                     angular.extend(s, d); //copy data onto it
 
-                    var template = '<div class="novodb-plugin" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '"></div>';
-                    elem.append($compile(template)(s)); // compile template & append
+                    s.moveUp = function() {
+                        var prev = compiled.prev();
+                        
+                        if(prev != undefined) {
+                            compiled.insertBefore(prev);
+                        }
+                    }
+
+                    s.moveDown = function() {
+                        var next = compiled.next();
+
+                        if(next != undefined) {
+                            compiled.insertBefore(prev);
+                        }
+                    }
+
+                    s.closePlugin = function() {
+                        compiled.remove();
+                    }
+
+                    s.moveLeft = function() {
+                        console.info("moveup");
+                    }
+
+                    s.moveRight = function() {
+                        console.info("moveup");
+                    }
+
+                    var template = 
+                        '<div class="plugin-outer">' +
+                        '  <div class="plugin-toolbar noselect">' + 
+                        '    <span class="blue">' + d.name + '</span>' +
+                        '    <span ng-click="moveUp()" class="glyphicon glyphicon-circle-arrow-up blue" aria-hidden="true"></span>' +
+                        '    <span ng-click="moveDown()" class="glyphicon glyphicon-circle-arrow-down blue" aria-hidden="true"></span>' +
+                        '    <span ng-click="closePlugin()" class="glyphicon glyphicon-remove-circle red" aria-hidden="true"></span>' +
+                        '  </div>' +
+                        '  <div class="plugin-container" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '">' + 
+                        '  </div>' +
+                        '</div>'
+
+                    var compiled = $compile(template)(s);
+
+                    elem.append(compiled); // compile template & append
                 }
             }, true); //look deep into object
         }

@@ -1,5 +1,8 @@
+
+
 body {
-    padding-top: 90px;
+    padding-left: 50px;
+    padding-top: 0px;
     padding-bottom: 150px
 }
 
@@ -37,4 +40,76 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.plugin-outer {
+    border: 0px;
+    margin: 4px;
+    background-color: #F0FAFF;
+    border: 2px solid;
+    border-radius: 8px;
+    border-color: #EBF0E6;
+    padding: 2px;
+    padding-left: 4px;
+    padding-left: 4px;
+}
+
+.plugins_container {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.plugin-container {
+}
+
+.plugin-toolbar {
+    height: 16px;
+    float: right;
+}
+
+.blue {
+    color: lightblue;
+}
+
+.red {
+    color: red;
+}
+
+.sidenavbar {
+    background-color: #222;
+    top: 40px;
+    width: 50px;
+    height: 70%;
+    float: left;
+    position: fixed;
+    left: -1px;
+    border-color: #080808;
+    border-width: 1px;
+    border: 0px;
+    border-style: dashed;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    z-index: 99999;
+}
+
+.sidenavbar_item {
+    padding: 4px;
+    text-align: center;
+    width: 100%;
+}
+
+.logo {
+    top: 0px;
+    left: 0px;
+    width: 50px;
+    height: 45px;
+    float: left;
+    position: fixed;
+    font-family: "Courier New";
+    vertical-align: center;
+    font-size: 12px;
+    font-weight: lighter;
+    text-decoration: underline;
 }

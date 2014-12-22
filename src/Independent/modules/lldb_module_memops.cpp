@@ -69,7 +69,7 @@ namespace novo {
     }
         
     enum chunked_done_code {
-        DONE_NOT, DONE_SUCCESS, DONE_FAIL
+        DONE_NOT, DONE_SUCCESS, DONE_FAIL, DONE_MEMORY_UNREADABLE, DONE_ALLOCATION_ERROR
     };
     
     typedef std::function< int (int message, void* message_data) > match_callback;
@@ -112,6 +112,7 @@ namespace novo {
         // initialize chunking setup.
         shared_ptr<queue<ptree>> out_q(new queue<ptree>());
         shared_ptr<atomic<chunked_done_code>> done_code(new atomic<chunked_done_code>(DONE_NOT));
+        shared_ptr<atomic<int64_t>> last_offset(new atomic<int64_t>(0));
         
         // protect the queue
         shared_ptr<std::mutex> q_mutex(new std::mutex());
@@ -137,76 +138,87 @@ namespace novo {
             return ActionResponse::no_error();
         };
         
-        auto run_func = [&session, addr, get_bytes, pattern, compiler, compiled_rules, out_q, done_code, q_mutex]() {
-            SBError error;
-        
-            // first: read the memory
-            size_t read_bytes;
-            uint8_t* data = (uint8_t*)malloc(get_bytes);
-        
-            if(data == nullptr) {
-                //return ActionResponse::error("Unable to allocate memory");
-                done_code->store(DONE_FAIL);
-            }
-        
-            if( (read_bytes = session.process.ReadMemory(addr, data, get_bytes, error)) <= 0) {
-                free(data);
+        // this function is called when a match is found.
+        match_callback match_cb = [addr, out_q, q_mutex, last_offset](int message, void* message_data) {
+            // one or the other depending on message
+            YR_RULE* rule = (YR_RULE*)message_data;
             
-                //return ActionResponse::error(string(error.GetCString()));
-                done_code->store(DONE_FAIL);
-            }
-        
-            // third: scan read memory
-            ptree matches;
-        
-            match_callback cb = [addr, &matches, out_q, q_mutex](int message, void* message_data) {
-                // one or the other depending on message
-                YR_RULE* rule = (YR_RULE*)message_data;
+            if(message == CALLBACK_MSG_RULE_MATCHING){
+                ptree match_obj;
+                YR_STRING* yr_string;
                 
-                if(message == CALLBACK_MSG_RULE_MATCHING){
-                    ptree match_obj;
-                    YR_STRING* yr_string;
+                yr_rule_strings_foreach(rule, yr_string)
+                {
+                    YR_MATCH* match;
                     
-                    yr_rule_strings_foreach(rule, yr_string)
+                    yr_string_matches_foreach(yr_string, match)
                     {
-                        YR_MATCH* match;
-                    
-                        yr_string_matches_foreach(yr_string, match)
-                        {
-                            basic_string<uint8_t> matchdata(match->data, match->length);
-                            stringstream os;
+                        basic_string<uint8_t> matchdata(match->data, match->length);
+                        stringstream os;
                         
-                            os << hex << setfill('0');  // set the stream to hex with 0 fill
+                        os << hex << setfill('0');  // set the stream to hex with 0 fill
                         
-                            std::for_each(std::begin(matchdata), std::end(matchdata), [&os] (int i) {
-                                os << setw(2) << i;
-                            });
-                            
-                            match_obj.put("base", to_string(addr));
-                            match_obj.put("offset", to_string(match->offset));
-                            match_obj.put("identifier", string(yr_string->identifier));
-                            match_obj.put("string", os.str());
-                            
-                            { // protected output
-                                std::lock_guard<std::mutex> lock(*q_mutex);
-                                out_q->push(match_obj);
-                            }
+                        std::for_each(std::begin(matchdata), std::end(matchdata), [&os] (int i) {
+                            os << setw(2) << i;
+                        });
+                        
+                        *last_offset = match->offset;
+                        
+                        match_obj.put("base", to_string(addr));
+                        match_obj.put("offset", to_string(match->offset));
+                        match_obj.put("identifier", string(yr_string->identifier));
+                        match_obj.put("string", os.str());
+                        
+                        { // protected output
+                            std::lock_guard<std::mutex> lock(*q_mutex);
+                            out_q->push(match_obj);
                         }
                     }
                 }
+            }
             
-                return CALLBACK_CONTINUE;
-            };
+            return CALLBACK_CONTINUE;
+        };
         
-            int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&cb, 0);
+        auto run_func = [&session, addr, get_bytes, pattern, compiler, compiled_rules, out_q, done_code, q_mutex, match_cb, last_offset]() {
+            size_t to_read = get_bytes;
+            size_t total_scanned = 0;
+            size_t read_chunk = 1024*1024*1024; // 10MB at a time.
+            SBError error;
         
-            { // protected output.
-                std::lock_guard<std::mutex> lock(*q_mutex);
+            size_t allocated = min(to_read, read_chunk);
+            uint8_t* data = (uint8_t*)malloc(allocated);
             
-                ptree final_obj;
-                final_obj.put("code", to_string(scan_ret));
-                final_obj.put("code_str", yr_error_retstr(scan_ret));
-                out_q->push(final_obj);
+            if(data == nullptr) {
+                done_code->store(DONE_ALLOCATION_ERROR);
+
+                return;
+            }
+
+            while(to_read > 0 && *done_code == DONE_NOT) {
+                // first: read the memory
+                size_t read_bytes;
+                size_t read_cycle = min(allocated, to_read);
+        
+                if( (read_bytes = session.process.ReadMemory(addr + total_scanned, data, read_cycle, error)) <= 0) {
+                    done_code->store(DONE_MEMORY_UNREADABLE);
+                } else {
+                    // second: scan read memory
+                    int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&match_cb, 0);
+        
+                    // where do we resume in the next window
+                    to_read -= read_bytes;
+                    total_scanned += read_bytes;
+
+                    { // protected output.
+                        std::lock_guard<std::mutex> lock(*q_mutex);
+            
+                        ptree final_obj;
+                        final_obj.put("code", to_string(scan_ret));
+                        final_obj.put("code_str", yr_error_retstr(scan_ret));
+                        out_q->push(final_obj);
+                    }
+                }
             }
             
             // finally: do the cleanup.
@@ -214,7 +226,9 @@ namespace novo {
             yr_rules_destroy(compiled_rules);
             yr_compiler_destroy(compiler);
             
-            done_code->store(DONE_SUCCESS);
+            if(*done_code != DONE_NOT) {
+                done_code->store(DONE_SUCCESS);
+            }
         };
         
         return ActionResponse::chunked_response(output_func, run_func);

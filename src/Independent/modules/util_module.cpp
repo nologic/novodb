@@ -105,7 +105,7 @@ namespace novo {
                 ptree proc_item;
                 
                 proc_item.put("pid", std::to_string(std::get<0>(proc_tuple)));
-                proc_item.put("path", std::get<2>(proc_tuple));
+                proc_item.put("path", std::get<1>(proc_tuple));
                 
                 proc_items.push_back(make_pair("", proc_item));
             }

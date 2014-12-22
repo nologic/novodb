@@ -1,11 +1,16 @@
 .process_view {
 	padding:4px;
+	width: 100%;
 }
 
 .process_view td {
 	cursor: default;
 	padding-right: 4px;
 	padding-left: 4px;
+
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .process_view tr:hover {
@@ -15,4 +20,9 @@
 .process_view th {
 	padding-right: 4px;
 	padding-left: 4px;
+}
+
+.proc_container {
+	max-height: 400px;
+	overflow: auto;
 }

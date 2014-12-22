@@ -36,9 +36,7 @@ load_plugin(function() {
                 $scope.attach = function(proc) {
                     log("Attaching to " + proc.pid + ":" + proc.name + " ...");
                     session.attach(proc.pid, function() {
-                        $('#controls_bar').show();
-
-                        $scope.base_container.remove();
+                        $scope.$parent.closePlugin();
                         session.getProcState();
 
                         log("Attaced to " + proc.pid + ":" + proc.name);
@@ -203,41 +201,6 @@ load_plugin(function() {
                                 log("Process launch failed");
                             });
                         }
-                    }
-                });
-
-                register_command({
-                    cmd: "search",
-                    complete: function(params) {
-                        return ["[address] [length] [Yara]"];
-                    },
-
-                    execute: function(params) {
-                        params[2] = "rule ExampleRule\n" +
-                                    "{\n" +
-                                    "   strings:\n" +
-                                    "     $str = { " + params[2] + " }\n" +
-                                    "   condition:\n" + 
-                                    "     $str\n" +
-                                    "}";
-                        session.yaraSearch(params[0], params[1], params[2], function(matches) {
-                            var retriever = setInterval(function() {
-                                session.yaraSearchResults(matches.output_path, function(data) {
-                                    if(data.output != "") {
-                                        data.output.forEach(function(match) {
-                                            if('code' in match) {
-                                                log("search complete (" + match.code_str + ")");
-                                            } else {
-                                                log(toHexString(parseInt(match.base) + parseInt(match.offset)) + 
-                                                    " (" + match.identifier + ") " + match.string);
-                                            }
-                                        });
-                                    }
-                                }, function(data) {
-                                    clearInterval(retriever);
-                                });
-                            }, 1000);
-                        }, log);
                     }
                 });
             }

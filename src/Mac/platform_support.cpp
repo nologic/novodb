@@ -14,6 +14,7 @@
 #include <sys/sysctl.h>
 #include <pwd.h>
 #include <libproc.h>
+#include <unistd.h>
 
 typedef struct kinfo_proc kinfo_proc;
 
@@ -107,10 +108,10 @@ static int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
     return err;
 }
 
-std::vector<std::tuple<int, bool, std::string>> get_process_listing() {
+std::vector<std::tuple<int, std::string>> get_process_listing() {
     using namespace std;
     
-    vector<tuple<int, bool, string>> proc_vec;
+    vector<tuple<int, string>> proc_vec;
     kinfo_proc *procList;
     size_t procCount = 0;
     char pathbuf[PROC_PIDPATHINFO_MAXSIZE];
@@ -122,12 +123,16 @@ std::vector<std::tuple<int, bool, std::string>> get_process_listing() {
             
             int ret = proc_pidpath (pid, pathbuf, sizeof(pathbuf));
             if ( ret <= 0 ) {
-                proc_vec.push_back(make_tuple(pid, (bool)allow_dbg, string("[no path]")));
+                proc_vec.push_back(make_tuple(pid, string("[no path]")));
             } else {
-                proc_vec.push_back(make_tuple(pid, (bool)allow_dbg, string(pathbuf)));
+                proc_vec.push_back(make_tuple(pid, string(pathbuf)));
             }
         }
     }
     
     return proc_vec;
+}
+
+int get_page_size() {
+    return getpagesize();
 }

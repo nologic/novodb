@@ -1,0 +1,32 @@
+<input type="text" 
+	   name="input" 
+	   ng-model="base_addr" 
+	   required 
+	   ng-trim="true" 
+	   >
+
+<input type="text" 
+	   name="input" 
+	   ng-model="search_length" 
+	   required 
+	   ng-trim="true" 
+	   >
+
+<input type="text" 
+	   name="input" 
+	   ng-model="search_pattern" 
+	   required 
+	   ng-trim="true" 
+	   >
+
+<button ng-click="yara_search(base_addr, search_length, search_pattern)">Search</button>
+
+<div class="search_results">
+	<table>
+		<tr ng-repeat="entry in search_results">
+			<td>{{ entryAddr(entry) }}</td>
+			<td>{{ entry.identifier }}</td>
+			<td>{{ entry.string }}</td>
+		</tr>
+	</table>
+</div>

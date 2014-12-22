@@ -5,6 +5,10 @@ function register_command(cmd) {
 }
 
 $( document ).ready(function() {
+    $('[data-toggle-tp="tooltip"]').tooltip({
+        animated: 'fade',
+    });
+
     $('#footer_terminal').terminal(function (command, term) {
         // execute command!
         var cmdText = $.terminal.splitCommand(command);
