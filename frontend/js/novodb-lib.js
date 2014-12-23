@@ -80,7 +80,10 @@ function create_ndb_session($http) {
         url_get_passthrough("dbg-lldb://create/target/attach", {
             pid: proc_pid
         }, extract_data([function(sdata) {
-            session_id = sdata.session;            
+            session_id = sdata.session;
+            selectedThread = {
+                tid: sdata.current_tid
+            };
         },
         f_success]), f_fail);
     };
@@ -206,20 +209,23 @@ function create_ndb_session($http) {
     };
 
     // EIP commands
-    NdbSession.prototype.step = function(thread, f_success, f_fail) {
+    NdbSession.prototype.step = function(tid, f_success, f_fail) {
+        if(tid == undefined) {
+            tid = selectedThread.tid;
+        }
+
         url_get_passthrough("dbg-lldb://cmd/step", {
             session: session_id,
-            thread: thread
+            tid: tid
         }, extract_data([function(data) {
             // returned from step.
             stepCount += 1;
         }, f_success]), f_fail);
     };
 
-    NdbSession.prototype.resume = function(thread, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://cmd/resume", {
-            session: session_id,
-            thread: thread
+    NdbSession.prototype.continue_proc = function(f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://cmd/continue", {
+            session: session_id
         }, extract_data(f_success), f_fail);
     };
     // // end backend functions.

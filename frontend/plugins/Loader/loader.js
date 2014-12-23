@@ -177,6 +177,17 @@ load_plugin(function() {
                 });
 
                 register_command({
+                    cmd: "threads",
+                    complete: function(params) {
+                        return ["(Get list of threads)"];
+                    },
+
+                    execute: function(params) {
+                        session.getThreads(log, log);
+                    }
+                });
+
+                register_command({
                     cmd: "launch",
                     complete: function(params) {
                         return ["[run to symbol (opt)] (Launch loaded executable)"]

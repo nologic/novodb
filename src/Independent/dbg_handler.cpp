@@ -18,6 +18,8 @@
 #include "include/cef_url.h"
 #include "lldb/API/LLDB.h"
 
+std::atomic<uint32> DbgResourceHandler::request_counter(0);
+
 void DbgResourceHandler::freeze_output() {
     std::stringstream ss;
     boost::property_tree::write_json(ss, this->output, false);
@@ -36,10 +38,12 @@ void DbgResourceHandler::GetResponseHeaders( CefRefPtr<CefResponse> response, in
     if(response_length > 0) {
         response->SetMimeType(CefString("application/json"));
     }
+    
+    BOOST_LOG_TRIVIAL(trace) << request_id << " " << this->response.get_status() << " " << this->response.get_message();
 }
 
 bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback) {
-    BOOST_LOG_TRIVIAL(trace) << "Entering request " << request->GetURL().ToString();
+    BOOST_LOG_TRIVIAL(trace) << request_id << " " << "Entering request " << request->GetURL().ToString();
     
     ActionRequest a_req(request);
     
@@ -102,7 +106,7 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
         callback->Continue();
     }
     
-    BOOST_LOG_TRIVIAL(trace) << this->response.get_status() << " " << this->response.get_message() << " (" << request->GetURL().ToString() << ")";
+    BOOST_LOG_TRIVIAL(trace) << request_id << " " << "Request Processed (" << request->GetURL().ToString() << ")";
 
     return true;
 }
@@ -110,28 +114,21 @@ bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPt
 bool DbgResourceHandler::ReadResponse( void* data_out, int bytes_to_read, int& bytes_read, CefRefPtr<CefCallback> callback) {
     using namespace std;
     
-    cout << " bytes_sent: " << bytes_sent << endl;
-    
     int read_count = min((int)(out_data.size() - bytes_sent), bytes_to_read);
     
     if(read_count <= 0) {
         bytes_read = 0;
         callback->Continue();
         
-        cout << "response end: " << false << endl;
         return false;
     }
     
-    printf("bytes_sent %d, read_count %d \n", bytes_sent, read_count);
-    printf("bytes_sent %lu, read_count %lu \n", ((bytes_sent * sizeof(string::value_type))), read_count * sizeof(string::value_type));
     memcpy(data_out, (out_data.data() + (bytes_sent * sizeof(string::value_type))), read_count * sizeof(string::value_type));
     
     bytes_read = read_count;
     bytes_sent += read_count;
     
     callback->Continue();
-
-    cout << "response end: " << true << " bytes sent: " << bytes_sent << endl;
     
     return true;
 }

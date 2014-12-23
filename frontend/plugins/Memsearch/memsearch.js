@@ -88,15 +88,14 @@ load_plugin(function() {
                                             if('code' in match) {
                                                 log("search complete (" + match.code_str + ")");
                                             } else {
-                                                log(toHexString(parseInt(match.base) + parseInt(match.offset)) + 
-                                                    " (" + match.identifier + ") " + match.string);
+                                                log($scope.entryAddr(match) + ": " + $scope.stringDisplay(match));
                                             }
                                         });
                                     }
                                 }, function(data) {
                                     clearInterval(retriever);
                                 });
-                            }, 1000);
+                            }, 100);
                         }, log);
                     }
                 });

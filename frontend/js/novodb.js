@@ -39,6 +39,22 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 	function($scope, $http, $compile, $timeout) {
         var session = create_ndb_session($http);
 
+        $scope.step = function () {
+            session.step(undefined, function(data){
+                dispatch_event(EVENT.ipchange);
+            });
+        };
+
+        $scope.stepOver = function () {
+            log("this one doesn't work")
+        };
+
+        $scope.continue_proc = function () {
+            session.continue_proc(function(data){
+                dispatch_event(EVENT.ipchange);
+            });
+        };
+
 		$scope.getThreads = function() {
 			session.getThreads(function(resp) {
 				$scope.thread_list = JSON.stringify(resp);

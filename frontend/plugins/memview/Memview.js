@@ -21,6 +21,10 @@ load_plugin(function() {
                 _instance.set_session($scope.$parent.session);
                 
                 $scope.readMemory = function (_address) {
+                    if(_address == undefined || _address === "") {
+                        return;
+                    }
+
                     session.readMemory(_address, 4096, function (data) {
                         $scope.read_base = parseInt(_address, 16);
                         $scope.memory_output = data;

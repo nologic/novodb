@@ -14,6 +14,8 @@
 
 #include "request_router.h"
 
+#include <atomic>
+
 using namespace novo;
 
 class DbgResourceHandler : public CefResourceHandler {
@@ -21,7 +23,8 @@ public:
     DbgResourceHandler(RequestRouter& _router) : router(_router),
                                                  bytes_sent(0),
                                                  response(ActionResponse::no_error()),
-                                                 is_frozen(false) {
+                                                 is_frozen(false),
+                                                 request_id(request_counter.fetch_add(1)){
     }
 
     ~DbgResourceHandler() {
@@ -51,6 +54,9 @@ private:
     
     int bytes_sent;
     RequestRouter& router;
+    
+    const uint32 request_id;
+    static std::atomic<uint32> request_counter;
     
     IMPLEMENT_REFCOUNTING(DbgResourceHandler)
 };

@@ -4,6 +4,7 @@
 
 .search_results {
     overflow: auto;
+    max-height: 200px;
 }
 
 .search_results div {
