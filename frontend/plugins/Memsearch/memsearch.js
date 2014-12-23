@@ -28,30 +28,41 @@ load_plugin(function() {
                     return toHexString(parseInt(entry.base) + parseInt(entry.offset));
                 }
 
+                $scope.stringDisplay = function(entry) {
+                    return entry.string.match(/.{1,2}/g).join(' ');
+                }
+
+                $scope.searching = false;
+
                 $scope.yara_search = function(base_addr, search_length) {
+                    if($scope.searching) {
+                        log("Search in progress. Please wait.");
+                        return;
+                    }
+
                     search_pattern = editor.getSession().getValue();
 
-                    log(search_pattern);
                     $scope.search_results = [];
 
                     session.yaraSearch(base_addr, search_length, search_pattern, function (matches) {
                         var retriever = setInterval(function() {
+                            $scope.searching = true;
                             session.yaraSearchResults(matches.output_path, function(data) {
                                 if(data.output != "") {
                                     data.output.forEach(function(match) {
                                         if('code' in match) {
-                                            log("search complete (" + match.code_str + ")");
+                                            $scope.searching = false;
+                                            log("search complete (" + $scope.search_results.length + " matches)");
                                         } else {
                                             $scope.search_results.push(match);
-                                            log(match);
                                         }
                                     });
                                 }
                             }, function(data) {
-                                log("End Search!!!");
+                                $scope.searching = false;
                                 clearInterval(retriever);
                             });
-                        }, 1000);
+                        }, 100);
                     }, log);
                 };
 

@@ -219,6 +219,7 @@ namespace novo {
                         out_q->push(final_obj);
                     }
                 }
+                
             }
             
             // finally: do the cleanup.
@@ -226,7 +227,7 @@ namespace novo {
             yr_rules_destroy(compiled_rules);
             yr_compiler_destroy(compiler);
             
-            if(*done_code != DONE_NOT) {
+            if(*done_code == DONE_NOT) {
                 done_code->store(DONE_SUCCESS);
             }
         };

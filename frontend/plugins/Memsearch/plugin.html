@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container memseach_container">
 	<form>
 		<div class="form-group">
 			Start Address:
@@ -21,14 +21,12 @@ rule ExampleRule {
 	</pre>
 	</div>
 
-	<div class="search_results">
-		<table>
-			<tr ng-repeat="entry in search_results">
-				<td>{{ entryAddr(entry) }}</td>
-				<td>{{ entry.identifier }}</td>
-				<td>{{ entry.string }}</td>
-			</tr>
-		</table>
+	<div class="search_results operative_text">
+			<div ng-repeat="entry in search_results">
+				<span>{{ entryAddr(entry) }}</span>
+				<span>{{ entry.identifier }}</span>
+				<span>{{ stringDisplay(entry) }}</span>
+			</div>
 	</div>
 
 </div>
