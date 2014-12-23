@@ -20,19 +20,18 @@ load_plugin(function() {
                 
                 $scope.search_results = [];
 
+                var editor = ace.edit("yara_editor");
+                editor.setTheme("ace/theme/xcode");
+                editor.getSession().setMode("ace/mode/w");
+
                 $scope.entryAddr = function(entry) {
                     return toHexString(parseInt(entry.base) + parseInt(entry.offset));
                 }
 
-                $scope.yara_search = function(base_addr, search_length, search_pattern) {
-                    search_pattern = "rule ExampleRule\n" +
-                                    "{\n" +
-                                    "   strings:\n" +
-                                    "     $str = { " + search_pattern + " }\n" +
-                                    "   condition:\n" + 
-                                    "     $str\n" +
-                                    "}";
+                $scope.yara_search = function(base_addr, search_length) {
+                    search_pattern = editor.getSession().getValue();
 
+                    log(search_pattern);
                     $scope.search_results = [];
 
                     session.yaraSearch(base_addr, search_length, search_pattern, function (matches) {
@@ -49,6 +48,7 @@ load_plugin(function() {
                                     });
                                 }
                             }, function(data) {
+                                log("End Search!!!");
                                 clearInterval(retriever);
                             });
                         }, 1000);

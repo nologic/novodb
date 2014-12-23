@@ -27,6 +27,7 @@
 	<script type="text/javascript" src="js/modernizr.js"></script>
 	<script type="text/javascript" src="js/handlebars.js"></script>
 	<script type="text/javascript" src="js/ventus.js"></script>
+    <script type="text/javascript" src="js/ace-src-min-noconflict/ace.js"></script>
     <script type="text/javascript" src="plugins/common.js"></script>
 
     <!-- insert plugins here -->
@@ -52,7 +53,10 @@
           </button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="componentsMenu">
             <li role="presentation">
-                <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Memview')">Memory</a>
+                <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Memview')">Memory View</a>
+            </li>
+            <li role="presentation">
+                <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Memsearch')">Memory Search</a>
             </li>
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Insview')">Disassembly</a>
