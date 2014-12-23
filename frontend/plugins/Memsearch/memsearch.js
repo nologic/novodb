@@ -44,7 +44,7 @@ load_plugin(function() {
 
                     $scope.search_results = [];
 
-                    session.yaraSearch(base_addr, search_length, search_pattern, function (matches) {
+                    session.yaraSearch(base_addr, search_length, search_pattern, 256, function (matches) {
                         var retriever = setInterval(function() {
                             $scope.searching = true;
                             session.yaraSearchResults(matches.output_path, function(data) {
@@ -80,7 +80,7 @@ load_plugin(function() {
                                     "   condition:\n" + 
                                     "     $str\n" +
                                     "}";
-                        session.yaraSearch(params[0], params[1], params[2], function(matches) {
+                        session.yaraSearch(params[0], params[1], params[2], 256, function(matches) {
                             var retriever = setInterval(function() {
                                 session.yaraSearchResults(matches.output_path, function(data) {
                                     if(data.output != "") {

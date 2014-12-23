@@ -85,7 +85,8 @@ namespace novo {
         std::cout << "error: " << line_number << " " << message << std::endl;
     }
     
-    ActionResponse search_memory_yara(LldbProcessSession& session, addr_t addr, size_t get_bytes, string pattern, boost::property_tree::ptree& output) {
+    ActionResponse search_memory_yara(LldbProcessSession& session, addr_t addr, size_t get_bytes, string pattern,
+                                      int max_matches, boost::property_tree::ptree& output) {
         // first: set up rules (compile)
         YR_RULES* compiled_rules;
         YR_COMPILER* compiler;
@@ -117,16 +118,28 @@ namespace novo {
         // protect the queue
         shared_ptr<std::mutex> q_mutex(new std::mutex());
         
+        shared_ptr<int> total_matches(new int(0));
+        
         auto output_func = [out_q, done_code, q_mutex] ACTION_CALLBACK(out_req, out_output) {
-            ptree out_items;
+            int max_records = 256;
             
-            while(!out_q->empty()) {
+            if(out_req.count("max_records") > 0) {
+                if((std::stringstream(out_req.at("max_records")) >> max_records).fail()) {
+                    return ActionResponse::error("max_records has to be an int");
+                }
+            }
+            
+            ptree out_items;
+            int count = 0;
+            
+            while(!out_q->empty() && count < max_records) {
                 // let's empty out this queue
                 std::lock_guard<std::mutex> lock(*q_mutex);
                 
                 out_items.push_back(make_pair("", out_q->front()));
                 
                 out_q->pop();
+                count++;
             }
             
             out_output.put_child("output", out_items);
@@ -139,7 +152,7 @@ namespace novo {
         };
         
         // this function is called when a match is found.
-        match_callback match_cb = [addr, out_q, q_mutex, last_offset](int message, void* message_data) {
+        match_callback match_cb = [addr, out_q, q_mutex, last_offset, max_matches, total_matches](int message, void* message_data) {
             // one or the other depending on message
             YR_RULE* rule = (YR_RULE*)message_data;
             
@@ -175,6 +188,12 @@ namespace novo {
                         }
                     }
                 }
+                
+                (*total_matches)++;
+            }
+            
+            if(*total_matches >= max_matches) {
+                return CALLBACK_ABORT;
             }
             
             return CALLBACK_CONTINUE;
@@ -303,14 +322,16 @@ void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>&
         RequestConstraint::has_int("session", session_bounds),
         RequestConstraint::exists({"address"}),
         RequestConstraint::has_int("length"),
-        RequestConstraint::exists({"pattern"})
+        RequestConstraint::exists({"pattern"}),
+        RequestConstraint::has_int({"max_matches"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
         int session_id = stoi(req.at("session"));
         addr_t addr = stoull(req.at("address"), 0, 16);
         size_t get_bytes = stol(req.at("length"));
         string pattern = req.at("pattern");
+        int max_matches = stoi(req.at("max_matches"));
         
-        return memops::search_memory_yara(sessions[session_id], addr, get_bytes, pattern, output);
+        return memops::search_memory_yara(sessions[session_id], addr, get_bytes, pattern, max_matches, output);
     }, CHUNKED_NONBLOCKING);
     
     req_router.register_path({"write", "byte"}, {

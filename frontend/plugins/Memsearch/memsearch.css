@@ -2,6 +2,10 @@
     max-height: 400px;
 }
 
+.search_results {
+    overflow: auto;
+}
+
 .search_results div {
     width: 100%;
 }
