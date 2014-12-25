@@ -18,4 +18,7 @@ int get_page_size();
 
 // on mac this is in the .mm file.
 std::string app_path();
+
+// externally pause a process.
+int pause_process(int pid);
 #endif

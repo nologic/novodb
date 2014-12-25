@@ -228,6 +228,18 @@ function create_ndb_session($http) {
             session: session_id
         }, extract_data(f_success), f_fail);
     };
+
+    NdbSession.prototype.stop_proc = function(f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://cmd/stop", {
+            session: session_id
+        }, extract_data(f_success), f_fail);
+    };
+
+    NdbSession.prototype.detach = function(f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://cmd/detach", {
+            session: session_id
+        }, extract_data(f_success), f_fail);
+    };
     // // end backend functions.
 
     // Front end functions

@@ -188,6 +188,17 @@ load_plugin(function() {
                 });
 
                 register_command({
+                    cmd: "stop",
+                    complete: function(params) {
+                        return ["(stop running process)"];
+                    },
+
+                    execute: function(params) {
+                        session.stop_proc(log, log);
+                    }
+                });
+
+                register_command({
                     cmd: "launch",
                     complete: function(params) {
                         return ["[run to symbol (opt)] (Launch loaded executable)"]

@@ -109,14 +109,14 @@
 
     <div class="sidenavbar_item" data-toggle-tp="tooltip" data-placement="right" title="Detatch Process">
         <button class="btn btn-default dropdown-toggle" type="button" 
-                  data-toggle="dropdown" aria-expanded="true">
+                  data-toggle="dropdown" aria-expanded="true" ng-click="detach()">
             <span class="glyphicon glyphicon-eject"></span>
         </button>
     </div>
 
-    <div class="sidenavbar_item" style="bottom: 0px; position: absolute;">
-        <button class="btn btn-default" 
-                type="button" id="componentsMenu" 
+    <div class="sidenavbar_item" style="bottom: 0px; position: absolute;" data-toggle-tp="tooltip" 
+         data-placement="right" title="Help">
+        <button class="btn btn-default" type="button" id="componentsMenu" 
                 aria-expanded="true">
             <span class="glyphicon glyphicon-question-sign"></span>
         </button>

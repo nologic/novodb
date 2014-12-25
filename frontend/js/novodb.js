@@ -55,6 +55,10 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             });
         };
 
+        $scope.detach = function() {
+            session.detach(log, log);
+        }
+
 		$scope.getThreads = function() {
 			session.getThreads(function(resp) {
 				$scope.thread_list = JSON.stringify(resp);

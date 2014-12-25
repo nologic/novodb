@@ -41,10 +41,8 @@ namespace novo {
         }
     }
     
-void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession>& sessions) {
+void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
     BOOST_LOG_TRIVIAL(trace) << "Llbd Plugin initializing";
-    
-    auto session_bounds = [&sessions](int sid) { return sid >= 0 && sid < sessions.size(); };
     
     req_router.register_path({"version"}, {}, [] ACTION_CALLBACK(req, output) {
         using namespace std;
@@ -77,9 +75,10 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
             return ActionResponse::error("Target invalid");
         }
         
-        sessions.push_back(LldbProcessSession(target));
+        LldbProcessSession new_session(target);
+        string new_id = sessions.add_session(new_session);
         
-        output.put("session", to_string(sessions.size() - 1));
+        output.put("session", new_id);
         
         return ActionResponse::no_error();
     }, PLAIN_NONBLOCK);
@@ -113,9 +112,9 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         LldbProcessSession session(target.Attach(attach_info, error));
         
         if(error.Success()) {
-            sessions.push_back(session);
+            string new_id = sessions.add_session(session);
             
-            output.put("session", to_string(sessions.size() - 1));
+            output.put("session", new_id);
             output.put("current_tid", std::to_string(session.process.GetSelectedThread().GetThreadID()));
             
             return ActionResponse::no_error();
@@ -129,7 +128,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"breakpoint", "set"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::exists({"symbol"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
@@ -137,9 +136,9 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         
         string bp_symbol(req.at("symbol"));
         
-        int session_id = stoi(req.at("session"));
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
-        LldbProcessSession& session = sessions[session_id];
         SBTarget& target = session.target;
         
         SBBreakpoint bp = target.BreakpointCreateByName(bp_symbol.c_str());
@@ -154,14 +153,13 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"launch"}, {
-        RequestConstraint::has_int("session", session_bounds)
+        RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         
-        int session_id = stoi(req.at("session"));
-        
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         SBLaunchInfo launch_info(NULL);
         SBError error;
@@ -180,17 +178,17 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     }, PLAIN_NONBLOCK);
     
     req_router.register_path({"list", "symbols"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::has_int("module")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
         int module_index = stoi(req.at("module"));
         
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         SBModule module = session.target.GetModuleAtIndex(module_index);
         auto symbols = module.GetNumSymbols();
@@ -213,15 +211,14 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"list", "modules"}, {
-        RequestConstraint::has_int("session", session_bounds)
+        RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
-        
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         auto mod_count = session.target.GetNumModules();
         
@@ -266,7 +263,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"list", "registers"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::has_int("thread"),
         RequestConstraint::has_int("frame")
     }, [&sessions] ACTION_CALLBACK(req, output) {
@@ -274,11 +271,11 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
         int thread_ind = stoi(req.at("thread"));
         int frame_ind  = stoi(req.at("frame"));
         
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         SBFrame frame = session.process.GetThreadAtIndex(thread_ind).GetFrameAtIndex(frame_ind);
         
@@ -336,33 +333,39 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"proc", "state"}, {
-        RequestConstraint::has_int("session", session_bounds)
+        RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         
-        int session_id = stoi(req.at("session"));
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
-        LldbProcessSession& session = sessions[session_id];
-        StateType state = session.process.GetState();
+        if(session.is_running) {
+            StateType state = lldb::eStateRunning;
+            
+            output.put("state", to_string(state));
+            output.put("description", state_type_to_str(state));
+        } else {
+            StateType state = session.process.GetState();
         
-        output.put("state", to_string(state));
-        output.put("description", state_type_to_str(state));
-        output.put("thread", to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("state", to_string(state));
+            output.put("description", state_type_to_str(state));
+            output.put("thread", to_string(session.process.GetSelectedThread().GetThreadID()));
+        }
         
         return ActionResponse::no_error();
     });
     
     req_router.register_path({"list", "threads"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
-        
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         auto num_threads = session.process.GetNumThreads();
         auto cur_thread = session.process.GetSelectedThread();
@@ -400,17 +403,18 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"list", "frames"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::has_int("thread")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
         int thread_ind = stoi(req.at("thread"));
         
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
         SBThread thread = session.process.GetThreadAtIndex(thread_ind);
         
         ptree frames_pt;
@@ -434,15 +438,14 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"event", "listen"}, {
-        RequestConstraint::has_int("session", session_bounds)
+        RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
-        
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         SBListener listen = session.target.GetDebugger().GetListener();
         SBEvent event;
@@ -465,7 +468,7 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     }, PLAIN_NONBLOCK);
     
     req_router.register_path({"read", "instructions"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::exists({"address"}),
         RequestConstraint::has_int("count")
     }, [&sessions] ACTION_CALLBACK(req, output) {
@@ -473,11 +476,11 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
         addr_t addr = stoull(req.at("address"), 0, 16);
         size_t count = stol(req.at("count"));
         
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         //array<unsigned char, 4096> mem_arr;
         
         SBInstructionList insts = session.target.ReadInstructions(session.target.ResolveLoadAddress(addr), (uint32_t)count);
@@ -511,17 +514,18 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"cmd", "step"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::has_int("tid")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
         tid_t tid = stoi(req.at("tid"));
         
-        LldbProcessSession& session = sessions[session_id];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
         SBThread thread = session.process.GetThreadByID(tid);
         
         if(thread.IsValid()) {
@@ -534,17 +538,18 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
     });
     
     req_router.register_path({"cmd", "continue"}, {
-        RequestConstraint::has_int("session", session_bounds)
+        RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int session_id = stoi(req.at("session"));
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
-        LldbProcessSession& session = sessions[session_id];
-        
+        session.is_running = true;
         SBError error = session.process.Continue();
+        session.is_running = false;
         
         if(error.Fail()) {
             ActionResponse::error(error.GetCString());
@@ -553,14 +558,59 @@ void register_commands(RequestRouter& req_router, std::vector<LldbProcessSession
         return ActionResponse::no_error();
     }, PLAIN_NONBLOCK);
     
-    req_router.register_path({"log", "start"}, {
-        RequestConstraint::has_int("session", session_bounds)
+    req_router.register_path({"cmd", "stop"}, {
+        RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        LldbProcessSession& session = sessions[stoi(req.at("session"))];
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        if(session.is_running) {
+            pause_process((int)session.process.GetProcessID());
+        } else {
+            SBError error = session.process.Stop();
+        
+            if(error.Fail()) {
+                ActionResponse::error(error.GetCString());
+            }
+        }
+        
+        return ActionResponse::no_error();
+    });
+    
+    req_router.register_path({"cmd", "detach"}, {
+        RequestConstraint::has_int("session")
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace lldb;
+        using namespace boost::property_tree;
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        SBError error = session.process.Detach();
+        
+        if(error.Fail()) {
+            ActionResponse::error(error.GetCString());
+        } else {
+            sessions.erase(session_id);
+        }
+        
+        return ActionResponse::no_error();
+    });
+    
+    req_router.register_path({"log", "start"}, {
+        RequestConstraint::has_int("session")
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace lldb;
+        using namespace boost::property_tree;
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
         
         SBDebugger debugger = session.target.GetDebugger();
         

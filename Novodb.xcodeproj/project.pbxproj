@@ -790,8 +790,8 @@
 				27DD9DD91A33B46500227D0B /* lldb_module_commands.h */,
 				27DD9DD21A33A4A800227D0B /* lldb_module.cpp */,
 				27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */,
-				27DD9DCF1A33993400227D0B /* util_module.cpp */,
 				27DD9DDF1A353B0100227D0B /* lldb_module_memops.cpp */,
+				27DD9DCF1A33993400227D0B /* util_module.cpp */,
 			);
 			name = modules;
 			sourceTree = "<group>";

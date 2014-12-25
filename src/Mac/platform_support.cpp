@@ -16,6 +16,8 @@
 #include <libproc.h>
 #include <unistd.h>
 
+#include <signal.h>
+
 typedef struct kinfo_proc kinfo_proc;
 
 // Taken from: http://stackoverflow.com/questions/18820199/unable-to-detect-application-running-with-another-user-via-switch-user/18821357#18821357
@@ -135,4 +137,8 @@ std::vector<std::tuple<int, std::string>> get_process_listing() {
 
 int get_page_size() {
     return getpagesize();
+}
+
+int pause_process(int pid) {
+    return kill(pid, SIGSTOP);
 }

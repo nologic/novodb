@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Mikhail Sosonkin. All rights reserved.
 //
 
+#include <map>
+
 #include "lldb_module_commands.h"
 
 #include "yara.h"
@@ -18,8 +20,8 @@ namespace novo {
         }
         
         virtual void registerRouter(RequestRouter& req_router) {
-            register_commands(req_router, this->sessions);
-            register_memops(req_router, this->sessions);
+            register_commands(req_router, sessions);
+            register_memops(req_router, sessions);
         }
         
         virtual CefRefPtr<SessionState> createSession() {
@@ -27,7 +29,7 @@ namespace novo {
         }
         
     private:
-        std::vector<LldbProcessSession> sessions;
+        LldbSessionMap sessions;
     };
     
     lldb_module _lldb_module;

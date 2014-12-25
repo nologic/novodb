@@ -301,49 +301,51 @@ namespace novo {
         
     } // namespace memops
     
-void register_memops(RequestRouter& req_router, std::vector<LldbProcessSession>& sessions) {
-    auto session_bounds = [&sessions](int sid) {
-        return sid >= 0 && sid < sessions.size();
-    };
-    
+void register_memops(RequestRouter& req_router, LldbSessionMap& sessions) {
     req_router.register_path({"read", "memory"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::exists({"address"}),
         RequestConstraint::has_int("count")
     }, [&sessions] ACTION_CALLBACK(req, output) {
-        int session_id = stoi(req.at("session"));
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
         addr_t addr = stoull(req.at("address"), 0, 16);
         size_t get_bytes = stol(req.at("count"));
         
-        return memops::read_memory(sessions[session_id], addr, get_bytes, output);
+        return memops::read_memory(session, addr, get_bytes, output);
     });
     
     req_router.register_path({"search", "memory", "yara"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::exists({"address"}),
         RequestConstraint::has_int("length"),
         RequestConstraint::exists({"pattern"}),
         RequestConstraint::has_int({"max_matches"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
-        int session_id = stoi(req.at("session"));
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
         addr_t addr = stoull(req.at("address"), 0, 16);
         size_t get_bytes = stol(req.at("length"));
         string pattern = req.at("pattern");
         int max_matches = stoi(req.at("max_matches"));
         
-        return memops::search_memory_yara(sessions[session_id], addr, get_bytes, pattern, max_matches, output);
+        return memops::search_memory_yara(session, addr, get_bytes, pattern, max_matches, output);
     }, CHUNKED_NONBLOCKING);
     
     req_router.register_path({"write", "byte"}, {
-        RequestConstraint::has_int("session", session_bounds),
+        RequestConstraint::has_int("session"),
         RequestConstraint::exists({"address"}),
         RequestConstraint::has_int("byte", 0, 0xFF)
     }, [&sessions] ACTION_CALLBACK(req, output) {
-        int session_id = stoi(req.at("session"));
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
         addr_t addr = stoull(req.at("address"), 0, 16);
         long writebyte = stol(req.at("byte"));
         
-        return memops::write_byte(sessions[session_id], addr, writebyte);
+        return memops::write_byte(session, addr, writebyte);
     });
 }
 
