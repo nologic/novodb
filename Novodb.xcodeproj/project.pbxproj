@@ -203,6 +203,10 @@
 		2757509F19BB32A800784C39 /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A019BB32FA00784C39 /* Chromium Embedded Framework.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A419BB738D00784C39 /* Novodb Helper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */; };
+		27578AB91A521B0B0053CB9B /* enum_to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27578AB71A521B0B0053CB9B /* enum_to_string.cpp */; };
+		27578ABA1A521B0B0053CB9B /* enum_to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27578AB71A521B0B0053CB9B /* enum_to_string.cpp */; };
+		2779B8C41A589B6D00D0C648 /* libboost_regex-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2779B8C31A589B6D00D0C648 /* libboost_regex-mt.a */; };
+		2779B8C51A589B8400D0C648 /* libboost_regex-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2779B8C31A589B6D00D0C648 /* libboost_regex-mt.a */; };
 		2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
 		2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219C19DB5BCC00592CA8 /* platform_support.cpp */; };
 		278421A119DCE8B500592CA8 /* frontend in Resources */ = {isa = PBXBuildFile; fileRef = 278421A019DCE8B500592CA8 /* frontend */; };
@@ -485,6 +489,9 @@
 		2757502219BB1A3100784C39 /* simple_handler_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = simple_handler_mac.mm; path = Mac/simple_handler_mac.mm; sourceTree = "<group>"; };
 		2757502419BB1D4600784C39 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = Independent/util.h; sourceTree = "<group>"; };
 		2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "libs/cef_binary_3.1750.1738_macosx64/framework/Release/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
+		27578AB71A521B0B0053CB9B /* enum_to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enum_to_string.cpp; path = Independent/enum_to_string.cpp; sourceTree = "<group>"; };
+		27578AB81A521B0B0053CB9B /* enum_to_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enum_to_string.h; path = Independent/enum_to_string.h; sourceTree = "<group>"; };
+		2779B8C31A589B6D00D0C648 /* libboost_regex-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_regex-mt.a"; path = "../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_regex-mt.a"; sourceTree = "<group>"; };
 		2784219919D8946900592CA8 /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_serialize.cpp; path = Independent/json_serialize.cpp; sourceTree = "<group>"; };
 		2784219A19D8946900592CA8 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/json_serialize.h; sourceTree = "<group>"; };
 		2784219C19DB5BCC00592CA8 /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = Mac/platform_support.cpp; sourceTree = "<group>"; };
@@ -531,6 +538,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2779B8C51A589B8400D0C648 /* libboost_regex-mt.a in Frameworks */,
 				27545F931A3E6FCD00A894C4 /* libyara.a in Frameworks */,
 				27E6B1E119EB7DF700681256 /* gtest.framework in Frameworks */,
 				27E6B1E019EB7DE000681256 /* libgtest_main.a in Frameworks */,
@@ -558,6 +566,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2779B8C41A589B6D00D0C648 /* libboost_regex-mt.a in Frameworks */,
 				27DD9DDE1A35341F00227D0B /* libyara.a in Frameworks */,
 				2739889B19E448A80010C12F /* libboost_filesystem-mt.a in Frameworks */,
 				271A4F8319CB6F120089495F /* libboost_thread-mt.a in Frameworks */,
@@ -835,6 +844,7 @@
 		E78D966A1638A18900DE580E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2779B8C31A589B6D00D0C648 /* libboost_regex-mt.a */,
 				27E6B1DF19EB7DE000681256 /* libgtest_main.a */,
 				27E6B1BA19EB59AC00681256 /* gtest.framework */,
 				2739889A19E448A80010C12F /* libboost_filesystem-mt.a */,
@@ -875,6 +885,8 @@
 				2784219F19DB5C2D00592CA8 /* platform_support.h */,
 				27DD9DCA1A336B5F00227D0B /* Module.h */,
 				27DD9DCB1A3390E900227D0B /* Module.cpp */,
+				27578AB71A521B0B0053CB9B /* enum_to_string.cpp */,
+				27578AB81A521B0B0053CB9B /* enum_to_string.h */,
 				E78D96721638A18900DE580E /* Supporting Files */,
 			);
 			name = Novodb;
@@ -1456,6 +1468,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27578ABA1A521B0B0053CB9B /* enum_to_string.cpp in Sources */,
 				27E6B1D519EB6CD800681256 /* simple_handler_mac.mm in Sources */,
 				27DD9DCD1A3390E900227D0B /* Module.cpp in Sources */,
 				27E6B1D619EB6CD800681256 /* platform_support.cpp in Sources */,
@@ -1494,6 +1507,7 @@
 				27DD9DCC1A3390E900227D0B /* Module.cpp in Sources */,
 				2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */,
 				27DD9DD71A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
+				27578AB91A521B0B0053CB9B /* enum_to_string.cpp in Sources */,
 				E78D96A61638BA0B00DE580E /* main.mm in Sources */,
 				27DD9DD31A33A4A800227D0B /* lldb_module.cpp in Sources */,
 				27DD9DE01A353B0100227D0B /* lldb_module_memops.cpp in Sources */,

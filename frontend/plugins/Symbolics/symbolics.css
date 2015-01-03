@@ -1,0 +1,24 @@
+.symbolics_plugin {
+	max-height: 400px;
+}
+
+.symbolics_plugin .list_mod:hover {
+	background-color: lightgrey;
+}
+
+.symbolics_plugin .list_mod {
+	cursor: default;
+	display: block;
+}
+
+.symbolics_plugin .mod_list_container {
+	height: 300px; 
+	width: 30%; 
+	overflow: scroll;
+	overflow-x: hidden;
+	display: block;
+}
+
+.symbolics_plugin .modSelected {
+	color: red;
+}

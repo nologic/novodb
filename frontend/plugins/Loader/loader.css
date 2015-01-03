@@ -1,29 +1,22 @@
-.process_view {
+.loader_plugin .process_view {
 	padding:4px;
 	width: 100%;
 }
 
-.process_view td {
+.loader_plugin .process_view td {
 	cursor: default;
 	padding-right: 4px;
 	padding-left: 4px;
 
-	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-.process_view tr:hover {
+.loader_plugin .process_view tr:hover {
 	background-color: lightgray;
 }
 
-.process_view th {
+.loader_plugin .process_view th {
 	padding-right: 4px;
 	padding-left: 4px;
-}
-
-.proc_container {
-	max-height: 400px;
-	min-height: 400px;
-	overflow: auto;
 }

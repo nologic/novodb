@@ -7,6 +7,7 @@
 //
 
 #include "json_serialize.h"
+#include "enum_to_string.h"
 
 #include <sstream>
 
@@ -22,28 +23,25 @@ std::string addr_to_string(lldb::addr_t address) {
 bool to_json(lldb::SBSymbol& symbol, boost::property_tree::ptree& pt, lldb::SBTarget* target = nullptr) {
     using namespace std;
     using namespace boost::property_tree;
+    using namespace lldb;
     
     pt.put("name", string(symbol.GetName()));
+    pt.put("type", novo::symbol_type_to_string(symbol.GetType()));
     
     if(symbol.GetMangledName() != NULL) {
         pt.put("mangled", string(symbol.GetMangledName()));
     }
     
-    ptree start_addr, end_addr;
-    to_json(symbol.GetStartAddress(), start_addr, target);
-    to_json(symbol.GetEndAddress(), end_addr, target);
+    SBAddress start_addr = symbol.GetStartAddress();
+    SBAddress end_addr = symbol.GetEndAddress();
     
-    pt.put_child("start_addr", start_addr);
-    pt.put_child("end_addr", end_addr);
-
-    return true;
-}
-
-bool to_json(const lldb::SBAddress& address, boost::property_tree::ptree& pt, lldb::SBTarget* target = nullptr) {
-    pt.put("file_addr", addr_to_string(address.GetFileAddress()));
+    pt.put("file_addr", addr_to_string(start_addr.GetFileAddress()));
     
     if(target != nullptr) {
-        pt.put("load_addr", addr_to_string(address.GetLoadAddress(*target)));
+        addr_t l_start_addr = start_addr.GetLoadAddress(*target);
+        
+        pt.put("load_addr", addr_to_string(l_start_addr));
+        pt.put("size", std::to_string(end_addr.GetLoadAddress(*target) - l_start_addr));
     }
     
     return true;

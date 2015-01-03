@@ -8,6 +8,8 @@
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/jquery.terminal.css">
+    <link rel="stylesheet" href="css/jquery.datatables.min.css">
+    <link rel="stylesheet" href="css/datatables.bootstrap.min.css">
 
 	<link href='css/normalize.css' rel='stylesheet' type='text/css' />
 	<link href='css/simple.css' rel='stylesheet' type='text/css' />
@@ -17,9 +19,10 @@
     <script type="text/javascript" src="js/underscore.js"></script>
 	<script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.terminal-0.8.8.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="js/angular.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="js/ui-bootstrap-tpls-0.9.0.js"></script>
+    <script type="text/javascript" src="js/ui-bootstrap.js"></script>
     <script type="text/javascript" src="js/novodb-lib.js"></script>
     <script type="text/javascript" src="js/util-lib.js"></script>
     <script type="text/javascript" src="js/novodb.js"></script>
@@ -28,6 +31,7 @@
 	<script type="text/javascript" src="js/handlebars.js"></script>
 	<script type="text/javascript" src="js/ventus.js"></script>
     <script type="text/javascript" src="js/ace-src-min-noconflict/ace.js"></script>
+    <script type="text/javascript" src="js/angular-datatables.min.js"></script>
     <script type="text/javascript" src="plugins/common.js"></script>
 
     <!-- insert plugins here -->
@@ -63,6 +67,9 @@
             </li>
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Regview')">Registers</a>
+            </li>
+            <li role="presentation">
+                <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Symbolics')">Symbols</a>
             </li>
           </ul>
         </div>
@@ -131,28 +138,3 @@
 
 </body>
 </html>
-
-
-
-<!--
-        <div class="col-md-4 column">
-            <button class="btn btn-default" ng-click="getModules()">Get Modules</button>
-            <input type="text" ng-model="module_search" ng-trim="true">
-            <table>
-                <tr ng-repeat="mod in module_output.modules | filter:module_search">
-                    <td>{{ mod.filename }}</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="col-md-4 column">
-            <button class="btn btn-default" ng-click="listSymbols()">List symbols</button>
-            <input type="text" ng-model="sym_search" ng-trim="true">
-            <table>
-                <tr ng-repeat="sym in symbols_output.symbols | filter:sym_search">
-                    <td>{{ sym.start_addr.load_addr }}</td>
-                    <td>{{ sym.name }}</td>
-                </tr>
-            </table>
-        </div>
-        -->

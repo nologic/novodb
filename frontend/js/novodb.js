@@ -25,7 +25,7 @@ function load_js_file(filename){
     }
 }
 
-window.novo = angular.module('novodb', ['ui.bootstrap']);
+window.novo = angular.module('novodb', ['ui.bootstrap', 'datatables']);
 
 novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, $filterProvider, $provide) {
     novo.controllerProvider = $controllerProvider;
@@ -68,12 +68,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 		$scope.getModules = function() {
 			session.getModules(function(data) {
 				$scope.module_output = data;
-			});
-		};
-
-		$scope.listSymbols = function() {
-            session.getSymbols(0, function(data) {
-				$scope.symbols_output = data;
 			});
 		};
 

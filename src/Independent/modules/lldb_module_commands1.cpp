@@ -7,6 +7,9 @@
 //
 
 #include "lldb_module_commands.h"
+#include "enum_to_string.h"
+
+#include <boost/regex.hpp>
 
 namespace novo {
     
@@ -23,23 +26,7 @@ namespace novo {
         return ss.str();
     }
     
-    std::string state_type_to_str(lldb::StateType state) {
-        switch(state) {
-            case lldb::eStateInvalid:   return std::string("invalid");
-            case lldb::eStateUnloaded:  return std::string("unloaded");
-            case lldb::eStateConnected: return std::string("connected");
-            case lldb::eStateAttaching: return std::string("attaching");
-            case lldb::eStateLaunching: return std::string("launching");
-            case lldb::eStateStopped:   return std::string("stopped");
-            case lldb::eStateRunning:   return std::string("running");
-            case lldb::eStateStepping:  return std::string("stepping");
-            case lldb::eStateCrashed:   return std::string("crashed");
-            case lldb::eStateDetached:  return std::string("detached");
-            case lldb::eStateExited:    return std::string("exited");
-            case lldb::eStateSuspended: return std::string("suspended");
-            default: return std::string("Unknown");
-        }
-    }
+    
     
 void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
     BOOST_LOG_TRIVIAL(trace) << "Llbd Plugin initializing";
@@ -179,26 +166,28 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
     
     req_router.register_path({"list", "symbols"}, {
         RequestConstraint::has_int("session"),
-        RequestConstraint::has_int("module")
+        RequestConstraint::has_int("module"),
+        RequestConstraint::has_int("index"),
+        RequestConstraint::has_int("count")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
         int module_index = stoi(req.at("module"));
+        size_t index_off = stol(req.at("index"));
+        size_t count = stol(req.at("count"));
         
         string session_id = req.at("session");
         LldbProcessSession& session = sessions.get_session(session_id);
         
         SBModule module = session.target.GetModuleAtIndex(module_index);
-        auto symbols = module.GetNumSymbols();
+        size_t symbols = min( (index_off + count), module.GetNumSymbols() );
         ptree sym_list;
         
-        for(decltype(symbols) s = 0; s < symbols; s++) {
+        for(size_t s = index_off; s < symbols; s++) {
             SBSymbol symbol = module.GetSymbolAtIndex(s);
             ptree sym_out;
-            
-            sym_out.put("index", to_string(s));
             
             to_json(symbol, sym_out, &session.target);
             
@@ -209,6 +198,59 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
         return ActionResponse::no_error();
     });
+    
+    req_router.register_path({"search", "symbols"}, {
+        RequestConstraint::has_int("session"),
+        RequestConstraint::has_int("module"),
+        RequestConstraint::has_int("index"),
+        RequestConstraint::has_int("count"),
+        RequestConstraint::has_int("max_matches"),
+        RequestConstraint::exists({"regex"})
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace lldb;
+        using namespace boost::property_tree;
+        
+        int module_index = stoi(req.at("module"));
+        size_t index_off = stol(req.at("index"));
+        size_t count = stol(req.at("count"));
+        size_t max_matches = stol(req.at("max_matches"));
+        
+        boost::regex expression(req.at("regex"));
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        SBModule module = session.target.GetModuleAtIndex(module_index);
+        size_t symbols = min( (index_off + count), module.GetNumSymbols() );
+        ptree sym_list;
+        size_t matches = 0;
+        size_t last_index = 0;
+        
+        for(size_t s = index_off; s < symbols && matches < max_matches; s++) {
+            using namespace boost;
+            
+            SBSymbol symbol = module.GetSymbolAtIndex(s);
+            ptree sym_out;
+            last_index = s;
+            
+            cmatch what;
+            
+            if(regex_match(symbol.GetName(), what, expression) ||
+                 (symbol.GetMangledName() != NULL && regex_match(symbol.GetMangledName(), what, expression)) ) {
+
+                to_json(symbol, sym_out, &session.target);
+                sym_list.push_back(make_pair("", sym_out));
+                
+                matches++;
+            }
+        }
+        
+        output.put("last_index", last_index);
+        output.put_child("symbols", sym_list);
+        
+        return ActionResponse::no_error();
+    }, PLAIN_NONBLOCK);
     
     req_router.register_path({"list", "modules"}, {
         RequestConstraint::has_int("session")
@@ -240,6 +282,9 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
                 }
             }
             
+            pt.put("index", std::to_string(i));
+            pt.put("symbols", std::to_string(mod.GetNumSymbols()));
+            
             auto num_sec = mod.GetNumSections();
             for(decltype(num_sec) s = 0; s < num_sec; s++) {
                 SBSection section = mod.GetSectionAtIndex(s);
@@ -248,6 +293,8 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
                 pt_section.put("index", to_string(s));
                 pt_section.put("name", string(section.GetName()));
                 pt_section.put("address", to_string(section.GetLoadAddress(session.target)));
+                pt_section.put("size", std::to_string(section.GetByteSize()));
+                pt_section.put("type", section_type_to_string(section.GetSectionType()));
                 
                 sections.push_back(make_pair("", pt_section));
             }
@@ -345,12 +392,12 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
             StateType state = lldb::eStateRunning;
             
             output.put("state", to_string(state));
-            output.put("description", state_type_to_str(state));
+            output.put("description", state_type_to_string(state));
         } else {
             StateType state = session.process.GetState();
         
             output.put("state", to_string(state));
-            output.put("description", state_type_to_str(state));
+            output.put("description", state_type_to_string(state));
             output.put("thread", to_string(session.process.GetSelectedThread().GetThreadID()));
         }
         
@@ -481,7 +528,6 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
         string session_id = req.at("session");
         LldbProcessSession& session = sessions.get_session(session_id);
-        //array<unsigned char, 4096> mem_arr;
         
         SBInstructionList insts = session.target.ReadInstructions(session.target.ResolveLoadAddress(addr), (uint32_t)count);
         auto inst_count = insts.GetSize();

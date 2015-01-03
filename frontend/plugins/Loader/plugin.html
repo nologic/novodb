@@ -1,4 +1,4 @@
-<div class="container">
+<div class="loader_plugin">
 	<div class="row" style="padding-top: 4px;">
 		<div class="col-xs-1">
 			<label for="proc_filter">Search</label>
@@ -11,17 +11,20 @@
 
 	<div class="row" style="padding-top: 4px">
 		<div class="proc_container col-xs-12">
-			<table class="process_view">
-				<tr>
-					<th>PID</th>
-					<th>Process</th>
-					<th>Path</th>
-				</tr>
-				<tr ng-repeat="proc in processes | filter:proc_filter" ng-dblclick="attach(proc)">
-					<td>{{ proc.pid }}</td>
-					<td>{{ proc.name }}</td>
-					<td>{{ proc.path }}</td>
-				</tr>
+			<table datatable="ng" class="row-border hover noselect">
+				<thead>
+					<tr>
+						<th>PID</th>
+						<th>Process</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="proc in processes | filter:proc_filter" ng-dblclick="attach(proc)" 
+					    title="{{ proc.path }}">
+						<td>{{ proc.pid }}</td>
+						<td>{{ proc.name }}</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>
