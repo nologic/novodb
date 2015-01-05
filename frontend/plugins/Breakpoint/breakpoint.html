@@ -1,0 +1,32 @@
+<div class="breakpoint_plugin">
+	<form class="form-inline">
+	<div class="form-group">
+	    <input type="text" name="input" ng-model="breakpoint_symbol" 
+	           required ng-trim="true" class="form-control" placeholder="Address (0x... | name)">
+    </div>
+    
+    <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
+
+    </form>
+
+    <table datatable="ng" class="row-border hover">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Hits</th>
+				<th>Enabled</th>
+				<th>Locations</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="bp in breakpoints">
+				<td>{{ bp.id }}</td>
+				<td>{{ bp.hits }}</td>
+				<td>{{ bp.enabled }}</td>
+				<td>{{ locations_string(bp.locations) }}</td>
+				<td>{{ description_string(bp.description) }}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

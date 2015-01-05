@@ -132,6 +132,17 @@ function create_ndb_session($http) {
         }, extract_data(f_success), f_fail);
     };
 
+    NdbSession.prototype.searchSymbols = function (module, start_ind, count, max_matches, regex, f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://search/symbols", {
+            session: session_id,
+            module: module,
+            index: start_ind,
+            count: count,
+            max_matches: max_matches,
+            regex: regex
+        }, extract_data(f_success), f_fail);
+    };
+
     NdbSession.prototype.getProcState = function (f_success, f_fail) {
         url_get_passthrough("dbg-lldb://proc/state", {
             session: session_id
@@ -141,11 +152,23 @@ function create_ndb_session($http) {
         f_success]), f_fail);
     };
 
-    NdbSession.prototype.setBreakpoint = function(symbol, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://breakpoint/set", {
-            session: session_id,
-            symbol: symbol
-        }, extract_data(f_success), f_fail);
+    // type = {"symbol", "address"}
+    NdbSession.prototype.addBreakpoint = function(point, type, f_success, f_fail) {
+        if(type == "symbol") {
+            url_get_passthrough("dbg-lldb://add/breakpoint", {
+                session: session_id,
+                symbol: point
+            }, extract_data(f_success), f_fail);
+        } else if(type == "address") {
+            url_get_passthrough("dbg-lldb://add/breakpoint", {
+                session: session_id,
+                address: point
+            }, extract_data(f_success), f_fail);
+        } else {
+            f_fail({
+                error: "unknown type info"
+            });
+        }
     };
 
     NdbSession.prototype.readInstructions = function(address, count, f_success, f_fail) {

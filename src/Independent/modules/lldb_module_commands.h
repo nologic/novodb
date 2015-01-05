@@ -37,9 +37,6 @@ namespace novo {
         
         // hack for non-async debugger. async doesn't work correctly.
         bool is_running;
-    
-    private:
-        IMPLEMENT_REFCOUNTING(LldbProcessSession)
     };
     
     class LldbSessionMap : public std::map<std::string, LldbProcessSession> {

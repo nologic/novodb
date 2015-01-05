@@ -114,24 +114,32 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         return ActionResponse::error(501, "Not Implemented");
     });
     
-    req_router.register_path({"breakpoint", "set"}, {
+    req_router.register_path({"add", "breakpoint"}, {
         RequestConstraint::has_int("session"),
-        RequestConstraint::exists({"symbol"})
+        RequestConstraint::exists_or({"symbol", "address"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
-        
-        string bp_symbol(req.at("symbol"));
         
         string session_id = req.at("session");
         LldbProcessSession& session = sessions.get_session(session_id);
         
         SBTarget& target = session.target;
         
-        SBBreakpoint bp = target.BreakpointCreateByName(bp_symbol.c_str());
+        SBBreakpoint bp;
+        
+        if(req.contains_key("address")) {
+            addr_t bp_addr = std::stoll(req.at("address"));
+
+            bp = target.BreakpointCreateByAddress(bp_addr);
+        } else {
+            string bp_symbol(req.at("symbol"));
+
+            bp = target.BreakpointCreateByName(bp_symbol.c_str());
+        }
         
         if(bp.IsValid()) {
-            output.put("msg", "Breakpoint set");
+            to_json(bp, output);
             
             return ActionResponse::no_error();
         } else {
@@ -139,6 +147,33 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         }
     });
     
+    req_router.register_path({"list", "breakpoint"}, {
+        RequestConstraint::has_int("session")
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace lldb;
+        using namespace boost::property_tree;
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        SBTarget& target = session.target;
+        ptree bp_list;
+        
+        for(uint32_t b = 0; b < target.GetNumBreakpoints(); b++) {
+            SBBreakpoint bp = target.GetBreakpointAtIndex(b);
+            ptree bp_out;
+            
+            to_json(bp, bp_out);
+            
+            bp_list.push_back(make_pair("", bp_out));
+        }
+        
+        output.put_child("breakpoints", bp_list);
+        
+        return ActionResponse::no_error();
+    });
+
     req_router.register_path({"launch"}, {
         RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
@@ -216,7 +251,12 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         size_t count = stol(req.at("count"));
         size_t max_matches = stol(req.at("max_matches"));
         
-        boost::regex expression(req.at("regex"));
+        boost::regex expression;
+        try {
+            expression.assign(req.at("regex"));
+        } catch(boost::regex_error& err) {
+            return ActionResponse::error(err.what());
+        }
         
         string session_id = req.at("session");
         LldbProcessSession& session = sessions.get_session(session_id);

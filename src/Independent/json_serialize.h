@@ -19,4 +19,5 @@ bool to_json(lldb::SBSymbol& symbol, boost::property_tree::ptree& pt, lldb::SBTa
 bool to_json(const lldb::SBAddress& address, boost::property_tree::ptree& pt, lldb::SBTarget* target);
 //bool to_json(const lldb::SBModule& symbol, boost::property_tree::ptree& pt);
 
+bool to_json(lldb::SBBreakpoint& bp, boost::property_tree::ptree& pt);
 #endif /* defined(__Novodb__json_serialize__) */

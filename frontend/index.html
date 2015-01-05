@@ -1,3 +1,23 @@
+<!--
+
+    Copyright (C) 2014  Mikhail Sosonkin
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+-->
+
 <!DOCTYPE html>
 <html lang="en" ng-app="novodb">
 <head>
@@ -55,7 +75,7 @@
                   data-toggle="dropdown" aria-expanded="true">
             <span class="glyphicon glyphicon-eye-open"></span>
           </button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="componentsMenu">
+          <ul class="dropdown-menu pull-left" role="menu" aria-labelledby="componentsMenu">
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="#" ng-click="instantiatePlugin('Memview')">Memory View</a>
             </li>
@@ -117,14 +137,14 @@
     <div class="sidenavbar_item" data-toggle-tp="tooltip" data-placement="right" title="Detatch Process">
         <button class="btn btn-default dropdown-toggle" type="button" 
                   data-toggle="dropdown" aria-expanded="true" ng-click="detach()">
-            <span class="glyphicon glyphicon-eject"></span>
+            <span class="glyphicon glyphicon-log-out"></span>
         </button>
     </div>
 
     <div class="sidenavbar_item" style="bottom: 0px; position: absolute;" data-toggle-tp="tooltip" 
-         data-placement="right" title="Help">
+         data-placement="right" title="About/Help">
         <button class="btn btn-default" type="button" id="componentsMenu" 
-                aria-expanded="true">
+                aria-expanded="true" data-toggle="modal" data-target="#about_screen">
             <span class="glyphicon glyphicon-question-sign"></span>
         </button>
     </div>
@@ -134,6 +154,43 @@
 </div>
 
 <div class="footer" id="footer_terminal">
+</div>
+
+<!-- Help Screen -->
+<div class="modal fade" id="about_screen" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true" style="z-index: 999999">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="myModalLabel">About Novodb</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+        <b>Novodb</b> is a debugger front end aimed at delivering powerful and flexible visualization technologies.
+        </p>
+
+        <p>
+        Version: <span>0.0.1a</span>
+        </p>
+
+        <p>
+        More help available at <a href="http://novodb.org">Novodb.org</a>
+        </p>
+
+        <pre>
+Novodb, Copyright (C) 2014 Mikhail Sosonkin
+Novodb comes with ABSOLUTELY NO WARRANTY; 
+for details see LICENSE.md.
+This is free software, and you are welcome to redistribute it
+under certain conditions; see LICENSE.md for details.
+        </pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>

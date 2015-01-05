@@ -9,29 +9,46 @@ load_plugin(function() {
     Plugin.prototype.attach_ui = function(angular_module, div_container_jq) {
         angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
             return {
-                templateUrl: 'plugins/' + pluginName + '/plugin.html',
+                templateUrl: 'plugins/' + pluginName + '/loader.html',
                 link: function(scope, element, attrs) {
                     scope.base_container = $(element);
                 }
             };
-        }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
-            function ($scope, $http, $compile) {
+        }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile', 'DTOptionsBuilder', 'DTColumnBuilder',
+            function ($scope, $http, $compile, DTOptionsBuilder, DTColumnBuilder) {
                 _instance.set_session($scope.$parent.session);
-                
 
-                $scope.load_processes = function() {
-                    $http.get('util://list/proc').then(function (data) {
-                        $scope.processes = data.data.processes.map(function(proc) {
-                            // load by path
-                            var slashIndex = proc.path.lastIndexOf('/');
-                            
-                            proc.name = proc.path.substring(slashIndex + 1, proc.path.length);
-                            proc.path = proc.path.substring(0, slashIndex + 1);
+                $scope.dtOptions = 
+                    DTOptionsBuilder.fromFnPromise(function() {
+                        return $http.get('util://list/proc').then(function (data) {
+                            return data.data.processes.map(function(proc) {
+                                    // load by path
+                                    var slashIndex = proc.path.lastIndexOf('/');
+                                    
+                                    proc.name = proc.path.substring(slashIndex + 1, proc.path.length);
+                                    proc.path = proc.path.substring(0, slashIndex + 1);
 
-                            return proc;
+                                    return proc;
+                                });
+                            });
+                        })
+                    .withPaginationType('full_numbers')
+                    .withOption('rowCallback', function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                        // Unbind first in order to avoid any duplicate handler (see https://github.com/l-lin/angular-datatables/issues/87)
+                        $('td', nRow).unbind('dblclick');
+                        $('td', nRow).bind('dblclick', function() {
+                            $scope.$apply(function() {
+                                $scope.attach(aData);
+                            });
                         });
+                        return nRow;
                     });
-                };
+
+                $scope.dtColumns = [
+                    DTColumnBuilder.newColumn('pid').withTitle('PID'),
+                    DTColumnBuilder.newColumn('name').withTitle('Process'),
+                    DTColumnBuilder.newColumn('path').withTitle('Path').notVisible()
+                ];
 
                 $scope.attach = function(proc) {
                     log("Attaching to " + proc.pid + ":" + proc.name + " ...");
@@ -42,8 +59,6 @@ load_plugin(function() {
                         log("Attaced to " + proc.pid + ":" + proc.name);
                     });
                 };
-
-                $scope.load_processes();
 
                 // register the loader commands:
                 register_command({

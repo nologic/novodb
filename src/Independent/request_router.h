@@ -64,6 +64,7 @@ namespace novo {
         
         // the constraint validators
         constraint exists(const std::vector<std::string>& keys);
+        constraint exists_or(const std::vector<std::string>& keys);
         constraint has_int(const std::string& key, int min = INT_MIN, int max = INT_MAX);
         constraint has_int(const std::string& key, int_bounds_check chfn);
         constraint matches(const std::string& key, const std::string& regex);
@@ -110,10 +111,6 @@ namespace novo {
             
             return false;
         }
-        
-    private:
-        
-        IMPLEMENT_REFCOUNTING(RequestPath);
     };
 
     class ActionResponse {
@@ -220,14 +217,16 @@ namespace novo {
         void set_stage(chunk_stage _stage) {
             stage = _stage;
         }
+        
+        bool contains_key(const std::string& key) const {
+            return this->count(key) > 0;
+        }
     private:
         CefRefPtr<CefRequest> request;
         RequestPath path;
         
         // for support of chunked request handlers
         chunk_stage stage;
-        
-        IMPLEMENT_REFCOUNTING(ActionRequest);
     };
 
     class RequestRouter {

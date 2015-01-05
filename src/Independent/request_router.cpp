@@ -134,6 +134,22 @@ namespace RequestConstraint {
         };
     }
 
+    constraint exists_or(const std::vector<std::string>& keys) {
+        return [keys] (const ActionRequest& req) {
+            
+            for(auto key : keys) {
+                if(req.count(key) > 0) {
+                    return Valid();
+                }
+            }
+            
+            std::ostringstream ss;
+            std::copy(keys.begin(), keys.end(), std::ostream_iterator<std::string>(ss, ", "));
+            
+            return Valid::aint("One of keys required: " + ss.str());
+        };
+    }
+    
     constraint has_int(const std::string& key, int min, int max) {
         return has_int(key, [min, max](int value) {
             return value <= max && value >= min;

@@ -1,41 +1,48 @@
 <div class="symbolics_plugin">
 
 	<tabset>
-	    <tab heading="Symbols" style="display: table-row">
-	    	<div class="mod_list_container" style="display: table-cell">
-	    		<input type="text" ng-model="mod_list_search" ng-trim="true">
-		    	<div ng-repeat="mod in modules | filter:{ filename: mod_list_search }" 
-		    	     class="list_mod noselect list_mod_{{ mod.index }}" 
-		    	     ng-click="clicked_module(mod)" title="{{ mod.filepath }}">
-		    		<span>{{ mod.filename }}</span>
-		    	</div>
-	    	</div>
+	    <tab heading="Symbols">
+	    	<form class="form-inline" role="form">
+	    	<div class="row">
+	    		<div class="col-xs-4">
+	    			<select id="selected_module" class="form-control">
+	    				<option ng-repeat="mod in modules" value="{{ mod.index }}">{{ mod.filename }}</option>
+	    			</select>
+	    		</div>
+	
+				<div class="col-xs-4 form-group">
+		    		<label class="sr-only" for="inputRegex">Regular Expression</label>
+		    		<input type="text" ng-model="sym_search_re" class="form-control" 
+		    		       id="inputRegex" placeholder="Regular Expression">
+	    		</div>
 
-	    	<div style="display: table-cell">
-	    		<table datatable="ng" class="row-border hover">
-		    		<thead>
-		    			<tr>
-		    				<td>Name</td>
-		    				<td>Load Address</td>
-		    				<td>Size</td>
-		    			</tr>
-		    		</thead>
-	    			<tbody>
-		    			<tr ng-repeat="md in module_data">
-		    				<td>{{ md.name }}</td>
-		    				<td>{{ md.load_addr }}</td>
-		    				<td>{{ md.size }}</td>
-		    			</tr>
-	    			</tbody>
-	    		</table>
+	    		<div class="col-xs-4">
+		    		<button class="btn" ng-click="search_symbols(sym_search_re)">Search</button>
+		    		<button class="btn" ng-click="get_more()">Get More</button>
+	    		</div>
 	    	</div>
-	    </tab>
+   	    	</form>
+
+    		<table datatable="ng" class="row-border hover">
+	    		<thead>
+	    			<tr>
+	    				<td>Name</td>
+	    				<td>Load Address</td>
+	    				<td>Size</td>
+	    			</tr>
+	    		</thead>
+    			<tbody>
+	    			<tr ng-repeat="md in symbol_list">
+	    				<td>{{ md.name }}</td>
+	    				<td>{{ md.load_addr }}</td>
+	    				<td>{{ md.size }}</td>
+	    			</tr>
+    			</tbody>
+    		</table>
+    	</tab>
 
 	    <tab heading="Sections" active="tab.active">
-		    <input type="text" ng-model="module_search" ng-trim="true">
-
-		    <div style="max-height:300px; overflow: scroll">
-		    <table class="table table-hover table-compact">
+		    <table class="table table-hover table-compact" datatable="ng">
 		    	<thead>
 		    		<th>Section</th>
 		    		<th>Type</th>
@@ -44,7 +51,7 @@
 		    		<th>Address</th>
 		    		<th>Size</th>
 		    	</thead>
-		    	<tbody ng-repeat="mod in modules | filter:{ filename: module_search }">
+		    	<tbody ng-repeat="mod in modules">
 		    		<tr ng-repeat="section in mod.sections" ng-click="select_module(mod)">
 						<td>{{ section.name }}</td>
 						<td>{{ section.type }}</td>
@@ -55,7 +62,6 @@
 					</tr>
 		    	</tbody>
 		    </table>
-			</div>
 	    </tab>
 	</tabset>
 </div>

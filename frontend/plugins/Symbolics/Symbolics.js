@@ -21,6 +21,18 @@ load_plugin(function() {
                     selected: ""
                 };
 
+                $scope.search_symbols = function(sym_search_re) {
+                    //var mi = $($scope.base_container.find(".list_mod.modSelected")[0]).attr("module-index");/*.each(function(i, r) {
+                    //    console.info($(r).attr("module-index")); 
+                    //});*/
+                    
+                    var mi = $('#selected_module').val();
+
+                    session.searchSymbols(mi, 0, 999999, 100, sym_search_re, function(data){
+                        $scope.symbol_list = data.symbols;
+                    }, log);
+                };
+
                 $scope.load_modules = function() {
                     session.getModules(function(data) {
                         $scope.modules = data.modules;
@@ -38,9 +50,9 @@ load_plugin(function() {
                 };
 
                 $scope.clicked_module = function(mod) {
-                    session.getSymbols(mod.index, function(data) {
+                    /*session.getSymbols(mod.index, function(data) {
                         $scope.module_data = data.symbols;
-                    });
+                    });*/
                     // because Angular sucks with <select>
                     var modDiv = $scope.base_container.find(".list_mod_" + mod.index);
 

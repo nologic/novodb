@@ -46,3 +46,33 @@ bool to_json(lldb::SBSymbol& symbol, boost::property_tree::ptree& pt, lldb::SBTa
     
     return true;
 }
+
+bool to_json(lldb::SBBreakpoint& bp, boost::property_tree::ptree& pt) {
+    using namespace lldb;
+    using namespace boost::property_tree;
+    
+    pt.put("id", bp.GetID());
+    pt.put("enabled", bp.IsEnabled());
+    pt.put("hits", bp.GetHitCount());
+    
+    SBStream desc;
+    if(bp.GetDescription(desc)) {
+        pt.put("description", desc.GetData());
+    }
+    
+    size_t locs = bp.GetNumLocations();
+    ptree locs_pt;
+    
+    for(uint32_t l = 0; l < locs; l++) {
+        SBBreakpointLocation loc = bp.GetLocationAtIndex(l);
+        ptree loc_pt;
+        
+        loc_pt.put("load_address", addr_to_string(loc.GetLoadAddress()));
+        
+        locs_pt.push_back(make_pair("", loc_pt));
+    }
+    
+    pt.put_child("locations", locs_pt);
+    
+    return true;
+}
