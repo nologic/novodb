@@ -1,5 +1,4 @@
 function create_ndb_session($http) {
-    var session_id = null;
     var mem_separator = ' ';
 
     // observable cached variables.
@@ -7,6 +6,10 @@ function create_ndb_session($http) {
     var procState = { state: 0, description: "invalid" };
     var selectedThread = undefined;
     var currentPc = undefined;
+
+    // "constant" values they shouldn't change across session.
+    var attachInfo = null;
+    var session_id = null;
 
     function NdbSession() {}
 
@@ -61,25 +64,32 @@ function create_ndb_session($http) {
     // cached values
     NdbSession.prototype.get_selectedThread = function() {
         return selectedThread;
-    }
+    };
 
     NdbSession.prototype.get_stepCount = function() {
         return stepCount;
-    }
+    };
 
     NdbSession.prototype.get_procState = function() {
         return procState;
-    }
+    };
 
     NdbSession.prototype.get_currentPc = function() {
         return currentPc;
-    }
+    };
+
+    // constant accessors
+    NdbSession.prototype.get_attach_info = function() {
+        return attachInfo;
+    };
 
     // backend function
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
         url_get_passthrough("dbg-lldb://create/target/attach", {
             pid: proc_pid
         }, extract_data([function(sdata) {
+            attachInfo = sdata;
+
             session_id = sdata.session;
             selectedThread = {
                 tid: sdata.current_tid

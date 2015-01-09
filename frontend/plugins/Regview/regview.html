@@ -1,18 +1,39 @@
-<div style="padding:5px">
-	<form>
-		<input class="operative_text form-control" type="text" ng-model="reg_search" ng-trim="true">
-	</form>
+<div ng-switch on="arch" style="padding:5px">
+	<br>
 
-	<table class="operative_text">
-	    <tr ng-if="reg_search.length > 0"
-	        ng-repeat="reg in register_output | filter:reg_search | filter:{value: '!!'}">
-	        <td style="padding-right: 10px;">{{ reg.name }}</td>
-	        <td>{{ reg.value }}</td>
-	    </tr>
-	    <tr ng-if="reg_search == undefined || reg_search.length == 0"
-	        ng-repeat="reg in register_output | filter:configRegisters | filter:{value: '!!'}">
-	        <td style="padding-right: 10px;">{{ reg.name }}</td>
-	        <td>{{ reg.value }}</td>
-	    </tr>
-	</table>
+    <div ng-switch-when="x86_64" class="operative_text">
+    	<div style="display:inline-block; white-space: nowrap;" ng-repeat="reg in showregs">
+	        <span class="operative_header">&nbsp;&nbsp;{{ reg.toUpperCase() }}:</span>
+	        <span>{{ reg_props[reg].substring(2) }}</span>
+        </div>
+
+        <br><br>
+
+        <div class="input-group-sm">
+			<select class="form-control selectpicker" ng-change="showregs.push(add_reg)" ng-model="add_reg">
+				<option ng-repeat="reg in register_output | selectedRegs:showregs | filter:{value: '!!'}" 
+				        value="{{ reg.name }}">
+					{{ reg.name }}: {{ reg.value }}
+				</option>
+			</select>
+		</div>
+    </div>
+    <div ng-switch-default>
+		<form>
+			<input class="operative_text form-control" type="text" ng-model="reg_search" ng-trim="true">
+		</form>
+
+		<table class="operative_text">
+		    <tr ng-if="reg_search.length > 0"
+		        ng-repeat="reg in register_output | filter:reg_search | filter:{value: '!!'}">
+		        <td style="padding-right: 10px;">{{ reg.name }}</td>
+		        <td>{{ reg.value }}</td>
+		    </tr>
+		    <tr ng-if="reg_search == undefined || reg_search.length == 0"
+		        ng-repeat="reg in register_output | filter:configRegisters | filter:{value: '!!'}">
+		        <td style="padding-right: 10px;">{{ reg.name }}</td>
+		        <td>{{ reg.value }}</td>
+		    </tr>
+		</table>
+    </div>
 </div>

@@ -17,8 +17,21 @@ load_plugin(function() {
             function ($scope, $http, $compile) {
                 _instance.set_session($scope.$parent.session);
 
+                $scope.reg_props = {};
+                $scope.showregs = ['rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp', 'rsp'];
+
                 $scope.readRegisters = function() {
                     session.readRegisters(0, 0, function(data) {
+                        $scope.reg_props = data.registers.reduce(function(acc, regset) {
+                            regset.values.reduce(function(acc2, reg) {
+                                acc2[reg.name] = reg.value;
+
+                                return acc2;
+                            }, acc);
+
+                            return acc;
+                        }, {});
+
                         $scope.register_output = data.registers.reduce(function(acc, regset) {
                             regset.values.forEach(function(reg) {
                                 acc.push(reg);
@@ -38,13 +51,32 @@ load_plugin(function() {
                     return val.name in chosen;
                 };
 
-                $scope.$watch(session.get_stepCount, function(new_step) {
+                var rem = $scope.$watch(session.get_stepCount, function(new_step) {
                     $scope.readRegisters();
                 });
 
+                session.add_destroy_listener(rem);
+
                 $scope.readRegisters();
+
+                $scope.arch = session.get_attach_info().triple.split("-")[0];
             }
-        ]);
+        ]).filter('selectedRegs', function() {
+            return function(regs, tags) {
+                if(regs == undefined) {
+                    return [];
+                } else {
+                    return regs.filter(function(reg) {
+                        if (tags.indexOf(reg.name) != -1) {
+                            return false;
+                        }
+
+                        return true;
+
+                    });
+                }
+            };
+        });
     }
 
     MemView.prototype.set_session = function(new_session) {

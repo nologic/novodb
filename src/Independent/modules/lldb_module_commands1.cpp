@@ -103,6 +103,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
             
             output.put("session", new_id);
             output.put("current_tid", std::to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("triple", session.target.GetTriple());
             
             return ActionResponse::no_error();
         } else {
@@ -382,7 +383,6 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
             for(auto p : vals) {
                 if(p.second != nullptr) {
                     rval.put(p.first, string(p.second));
-                    cout << p.first << " " << string(p.second) << endl;
                 }
             }
             

@@ -50,11 +50,13 @@ load_plugin(function() {
 
                 $scope.attach = function(proc) {
                     log("Attaching to " + proc.pid + ":" + proc.name + " ...");
-                    session.attach(proc.pid, function() {
+                    session.attach(proc.pid, function(data) {
+                        log(data);
+
                         $scope.$parent.closePlugin();
                         session.getProcState();
 
-                        log("Attaced to " + proc.pid + ":" + proc.name);
+                        log("Attached to " + proc.pid + ":" + proc.name);
                     });
                 };
 

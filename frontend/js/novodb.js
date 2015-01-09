@@ -83,7 +83,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 $scope.instantiatePlugin('Loader');
 
                 log("process detached");
-            }, log);
+            });
         }
 
         $scope.plugins = [];
@@ -166,11 +166,11 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     }
 
                     s.moveLeft = function() {
-                        console.info("moveup");
+                        console.info("moveleft");
                     }
 
                     s.moveRight = function() {
-                        console.info("moveup");
+                        console.info("moveright");
                     }
 
                     var template = 
