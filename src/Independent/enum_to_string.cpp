@@ -9,6 +9,22 @@
 #include "enum_to_string.h"
 
 namespace novo {
+    std::string return_status_to_string(lldb::ReturnStatus status) {
+        using namespace lldb;
+        
+        switch (status) {
+            case eReturnStatusInvalid: return std::string("Invalid");
+            case eReturnStatusSuccessFinishNoResult: return std::string("SuccessFinishNoResult");
+            case eReturnStatusSuccessFinishResult: return std::string("SuccessFinishResult");
+            case eReturnStatusSuccessContinuingNoResult: return std::string("SuccessContinuingNoResult");
+            case eReturnStatusSuccessContinuingResult: return std::string("SuccessContinuingResult");
+            case eReturnStatusStarted: return std::string("Started");
+            case eReturnStatusFailed: return std::string("Failed");
+            case eReturnStatusQuit: return std::string("Quit");
+            default: return "Unknown";
+        }
+    }
+    
     std::string state_type_to_string(lldb::StateType state) {
         switch(state) {
             case lldb::eStateInvalid:   return std::string("invalid");

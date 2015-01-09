@@ -1,12 +1,11 @@
 <div class="breakpoint_plugin">
 	<form class="form-inline">
-	<div class="form-group">
-	    <input type="text" name="input" ng-model="breakpoint_symbol" 
-	           required ng-trim="true" class="form-control" placeholder="Address (0x... | name)">
-    </div>
-    
-    <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
-
+		<div class="form-group">
+		    <input type="text" name="input" ng-model="breakpoint_symbol" 
+		           required ng-trim="true" class="form-control" placeholder="Address (0x... | name)">
+	    </div>
+	    
+	    <button class="btn btn-default" ng-click="setBreakpoint(breakpoint_symbol)">Set Breakpoint</button>
     </form>
 
     <table datatable="ng" class="row-border hover">

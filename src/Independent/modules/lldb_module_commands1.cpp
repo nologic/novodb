@@ -707,6 +707,31 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
         return ActionResponse::no_error();
     });
+    
+    req_router.register_path({"cmd", "lldb"}, {
+        RequestConstraint::has_int("session"),
+        RequestConstraint::exists({"cmd"})
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace lldb;
+        using namespace boost::property_tree;
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        SBDebugger debugger = session.target.GetDebugger();
+        
+        lldb::SBCommandReturnObject result;
+        
+        ReturnStatus ret = debugger.GetCommandInterpreter().HandleCommand(req.at("cmd").c_str(), result);
+        
+        output.put("ret", std::to_string(ret));
+        output.put("retstr", return_status_to_string(ret));
+        output.put("result", string(result.GetOutput()));
+        
+        return ActionResponse::no_error();
+    });
+
 }
 
 }

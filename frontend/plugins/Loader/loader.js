@@ -1,7 +1,5 @@
 load_plugin(function() {
     // these variable are "static" (ie. same across instances)
-    var _instance = undefined;
-    var session = undefined;
     var pluginName = "Loader";
 
     function Plugin() {}
@@ -16,22 +14,22 @@ load_plugin(function() {
             };
         }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile', 'DTOptionsBuilder', 'DTColumnBuilder',
             function ($scope, $http, $compile, DTOptionsBuilder, DTColumnBuilder) {
-                _instance.set_session($scope.$parent.session);
+                var session = $scope.$parent.session;
 
                 $scope.dtOptions = 
                     DTOptionsBuilder.fromFnPromise(function() {
-                        return $http.get('util://list/proc').then(function (data) {
-                            return data.data.processes.map(function(proc) {
-                                    // load by path
-                                    var slashIndex = proc.path.lastIndexOf('/');
-                                    
-                                    proc.name = proc.path.substring(slashIndex + 1, proc.path.length);
-                                    proc.path = proc.path.substring(0, slashIndex + 1);
+                        return utils.proc_list(function (data) {
+                            return data.processes.map(function(proc) {
+                                // load by path
+                                var slashIndex = proc.path.lastIndexOf('/');
+                                
+                                proc.name = proc.path.substring(slashIndex + 1, proc.path.length);
+                                proc.path = proc.path.substring(0, slashIndex + 1);
 
-                                    return proc;
-                                });
+                                return proc;
                             });
-                        })
+                        });
+                    })
                     .withPaginationType('full_numbers')
                     .withOption('rowCallback', function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                         // Unbind first in order to avoid any duplicate handler (see https://github.com/l-lin/angular-datatables/issues/87)
@@ -140,14 +138,7 @@ load_plugin(function() {
                             postfix = params[0].substring(slashIndex + 1, params[0].length);
                             prefix = params[0].substring(0, slashIndex + 1);
                             
-                            return $http.get('util://ls', {
-                                method: "GET",
-                                params: {
-                                    path: prefix,
-                                    startwith: postfix,
-                                    maxcount: 20
-                                }
-                            }).then(function (data) {
+                            return utils.ls(prefix, postfix, 20, function (data) {
                                 if('files' in data.data) {
                                     return data.data.files.map(function (file) {
                                         return prefix + file.file + (file.dir == "1"?"/":"");
@@ -165,9 +156,8 @@ load_plugin(function() {
                             if(params[1] != undefined) {
                                 session.setBreakpoint(params[1], function(data) {
                                     log("breakpoint set, launching");
+                                    
                                     session.launch(function(data) {
-                                        $('#controls_bar').show();
-
                                         log("Process launched");
                                     }, function(data) {
                                         log("Process launch failed");
@@ -188,6 +178,25 @@ load_plugin(function() {
 
                     execute: function(params) {
                         session.getProcState(log, log);
+                    }
+                });
+
+                register_command({
+                    cmd: "lldb",
+                    complete: function(params) {
+                        return ["[lldb command pass through]"];
+                    },
+
+                    execute: function(params) {
+                        session.lldbCmd(params.join(" "), function(data) {
+                            if(data.result != "") {
+                                data.result.split("\n").forEach(function(line) {
+                                    log(line);
+                                });
+                            } else {
+                                log(data);
+                            }
+                        }, log);
                     }
                 });
 
@@ -244,19 +253,9 @@ load_plugin(function() {
         ]);
     };
 
-    Plugin.prototype.set_session = function(new_session) {
-        session = new_session;
-    };
-
-    Plugin.prototype.set_sessions = function(all_sessions) {
-
-    };
-
     Plugin.prototype.get_plugin_name = function() {
-        return pluginName;
+        return "Process loader";
     };
 
-    _instance = new Plugin();
-
-    return _instance;
+    return new Plugin();
 }());

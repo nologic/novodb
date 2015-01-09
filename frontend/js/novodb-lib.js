@@ -40,7 +40,7 @@ function create_ndb_session($http) {
     }
 
     function url_get_passthrough(url, params, f_success, f_fail) {
-        $http.get(url, {
+        return $http.get(url, {
             method: "GET",
             params: params
         }).then(function (resp) {
@@ -249,7 +249,10 @@ function create_ndb_session($http) {
     NdbSession.prototype.continue_proc = function(f_success, f_fail) {
         url_get_passthrough("dbg-lldb://cmd/continue", {
             session: session_id
-        }, extract_data(f_success), f_fail);
+        }, extract_data([function(data){
+            // returned means we've stopped.
+            stepCount += 1;
+        }, f_success]), f_fail);
     };
 
     NdbSession.prototype.stop_proc = function(f_success, f_fail) {
@@ -263,10 +266,29 @@ function create_ndb_session($http) {
             session: session_id
         }, extract_data(f_success), f_fail);
     };
+
+    NdbSession.prototype.lldbCmd = function(cmd, f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://cmd/lldb", {
+            session: session_id,
+            cmd: cmd
+        }, extract_data([function(data){
+            // returned means we've stopped.
+            stepCount += 1;
+        }, f_success]), f_fail);
+    }; 
     // // end backend functions.
 
     // Front end functions
+    var destroy_listeners = [];
+    NdbSession.prototype.add_destroy_listener = function(listener) {
+        destroy_listeners.push(listener);
+    };
 
+    NdbSession.prototype.destroy = function() {
+        destroy_listeners.forEach(function(listener){
+            listener();
+        });
+    }
     // // end Front end functions
 
     return new NdbSession();

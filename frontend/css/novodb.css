@@ -23,12 +23,12 @@ body {
 }
 
 .operative_text {
-    font-family: "Courier New", monospace;
+    font-family: Monaco;
     font-size: 12px;
 }
 
 .operative_header {
-    font-family: "Courier New", monospace;
+    font-family: Monaco;
     font-size: 12px;
     font-weight: bold;
 }

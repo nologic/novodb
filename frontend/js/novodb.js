@@ -37,12 +37,32 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
     // Register routes with the $routeProvider
 }).controller("dbg", ['$scope', '$http', '$compile', '$timeout',
 	function($scope, $http, $compile, $timeout) {
-        var session = create_ndb_session($http);
+        window.utils = create_utils($http);
+        
+        $scope.new_current_session = function() {
+            $scope.session = create_ndb_session($http);
+
+            // watch state
+            var lastState = undefined;
+            var rem = $scope.$watch($scope.session.get_procState, function(new_state) {
+                if(lastState == undefined && new_state.state != 0) {
+                    // we just loaded or attached;
+                    lastState = new_state;
+                    log(lastState);
+
+                    $scope.instantiatePlugin('Regview');
+                    $scope.instantiatePlugin('Memview');
+                    $scope.instantiatePlugin('Insview');
+                }
+            });
+
+            $scope.session.add_destroy_listener(rem);
+
+            log("new session started");
+        };
 
         $scope.step = function () {
-            session.step(undefined, function(data){
-                dispatch_event(EVENT.ipchange);
-            });
+            $scope.session.step();
         };
 
         $scope.stepOver = function () {
@@ -50,43 +70,35 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         };
 
         $scope.continue_proc = function () {
-            session.continue_proc(function(data){
-                dispatch_event(EVENT.ipchange);
-            });
+            $scope.session.continue_proc();
         };
 
         $scope.detach = function() {
-            session.detach(log, log);
+            $scope.session.detach(function(data){
+                $('.plugin-outer').remove();
+
+                $scope.session.destroy();
+                $scope.new_current_session();
+
+                $scope.instantiatePlugin('Loader');
+
+                log("process detached");
+            }, log);
         }
-
-		$scope.getThreads = function() {
-			session.getThreads(function(resp) {
-				$scope.thread_list = JSON.stringify(resp);
-			});
-		};
-
-		$scope.getModules = function() {
-			session.getModules(function(data) {
-				$scope.module_output = data;
-			});
-		};
-
-        $scope.getFrames = function(thread_ind) {
-            session.getFrames(thread_ind, function(data) {
-                $scope.frames_list = JSON.stringify(data, null, "\t");
-            });
-        };
 
         $scope.plugins = [];
         $scope.instantiatePlugin = function(pluginName, params) {
             $timeout(function() {
                 $scope.plugins.push({
                     name: pluginName,
-                    session: session,
+                    session: $scope.session,
                     params: params
                 });
             });
         };
+
+        // start a session
+        $scope.new_current_session();
 
         register_command({
             cmd: "open",
@@ -112,20 +124,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         $scope.jQueryLoaded = function() {
             $scope.instantiatePlugin('Loader');
         }
-
-        // watch state
-        var lastState = undefined;
-        $scope.$watch(session.get_procState, function(new_state) {
-            if(lastState == undefined && new_state.state != 0) {
-                // we just loaded or attached;
-                lastState = new_state;
-                log(lastState);
-
-                $scope.instantiatePlugin('Regview');
-                $scope.instantiatePlugin('Memview');
-                $scope.instantiatePlugin('Insview');
-            }
-        });
 	}
 ]).directive("ndbPluginsContainer", function($compile) {
     return {

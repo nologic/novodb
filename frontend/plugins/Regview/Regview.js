@@ -8,7 +8,7 @@ load_plugin(function() {
     MemView.prototype.attach_ui = function(angular_module, div_container_jq) {
         angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
             return {
-                templateUrl: 'plugins/' + pluginName + '/plugin.html',
+                templateUrl: 'plugins/' + pluginName + '/regview.html',
                 link: function(scope, element, attrs) {
                     scope.base_container = $(element);
                 }

@@ -1,8 +1,12 @@
-<input type="text" name="input" ng-model="inst_addr" required ng-trim="true">
-<button class="btn btn-default" ng-click="readInstructions(inst_addr)">Read Instruction</button>
+<div class="instview_plugin">
 
-<table class="operative_text">
-    <tr ng-repeat="inst in inst_output.instructions">
-        <td>{{ inst.description }}</td>
-    </tr>
-</table>
+	<input class="form-control" type="text" name="input" ng-model="inst_addr" required 
+	       ng-trim="true" ng-change="readInstructions(inst_addr)">
+
+	<table class="operative_text">
+	    <tr ng-repeat="inst in inst_output.instructions">
+	        <td>{{ inst.description }}</td>
+	    </tr>
+	</table>
+
+</div>

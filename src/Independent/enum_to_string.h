@@ -21,6 +21,8 @@ namespace novo {
     std::string section_type_to_string(lldb::SectionType st);
     
     std::string symbol_type_to_string(lldb::SymbolType st);
+    
+    std::string return_status_to_string(lldb::ReturnStatus status);
 }
 
 #endif /* defined(__Novodb__enum_to_string__) */

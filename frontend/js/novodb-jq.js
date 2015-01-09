@@ -60,6 +60,7 @@ $( document ).ready(function() {
                 }
             }
 
+            log(event.keyCode);
             if (event.keyCode == 9) {
                 // tab completion
                 var cmdText = $.terminal.splitCommand(term.get_command());
