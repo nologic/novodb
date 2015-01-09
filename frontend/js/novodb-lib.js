@@ -300,9 +300,8 @@ function log(txt) {
     }
 
     console.info(txt);
-    output(txt);
-}
 
-function output(txt) {
-    $('#footer_terminal').terminal().echo(txt);
+    if(window.output) {
+        window.output(txt);
+    }
 }

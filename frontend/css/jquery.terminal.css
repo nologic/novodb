@@ -87,7 +87,7 @@
     float: left;
 }
 .terminal, .cmd {
-    font-family: FreeMono, monospace;
+    font-family: Monaco;
     color: #aaa;
     background-color: #000;
     font-size: 12px;

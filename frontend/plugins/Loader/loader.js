@@ -83,8 +83,6 @@ load_plugin(function() {
                     execute: function(params) {
                         function attach_pid(pid) {
                             session.attach(pid, function() {
-                                $('#controls_bar').show();
-
                                 log("Attaced to " + $item.pid);
                             });
                         }
@@ -139,8 +137,8 @@ load_plugin(function() {
                             prefix = params[0].substring(0, slashIndex + 1);
                             
                             return utils.ls(prefix, postfix, 20, function (data) {
-                                if('files' in data.data) {
-                                    return data.data.files.map(function (file) {
+                                if('files' in data) {
+                                    return data.files.map(function (file) {
                                         return prefix + file.file + (file.dir == "1"?"/":"");
                                     });
                                 } else {

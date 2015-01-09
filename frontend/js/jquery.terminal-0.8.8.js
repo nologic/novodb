@@ -3374,6 +3374,7 @@
             var strings = $.terminal.defaults.strings;
             var enabled = settings.enabled;
             var paused = false;
+
             // -----------------------------------------------------------------------
             // TERMINAL METHODS
             // -----------------------------------------------------------------------

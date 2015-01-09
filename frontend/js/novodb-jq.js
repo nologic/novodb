@@ -31,8 +31,8 @@ $( document ).ready(function() {
             term.echo("Command '" + cmdText.name + "' not found");
         }
     }, {
-        greetings: "[[i;red;]Welcome to Novodb. Enjoy your debugging experience!]",
-        keydown: function(event, term) {
+            greetings: "[[i;red;]Welcome to Novodb. Enjoy your debugging experience!]",
+            keydown: function(event, term) {
             function longest_start(arr, hint) {
                 if(hint == undefined) {
                     hint = "";
@@ -60,7 +60,6 @@ $( document ).ready(function() {
                 }
             }
 
-            log(event.keyCode);
             if (event.keyCode == 9) {
                 // tab completion
                 var cmdText = $.terminal.splitCommand(term.get_command());
@@ -124,5 +123,15 @@ $( document ).ready(function() {
         }
     });
 
+    window.output = function(txt) {
+        $('#footer_terminal').terminal().echo(txt);
+    }
+
     angular.element('#dbg').scope().jQueryLoaded();
 });
+
+function getStackTrace() {
+  var obj = {};
+  Error.captureStackTrace(obj, getStackTrace);
+  return obj.stack;
+};
