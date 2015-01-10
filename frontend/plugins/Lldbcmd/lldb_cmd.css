@@ -1,0 +1,10 @@
+.lldb_cmd_plugin {
+}
+
+.lldb_cmd_plugin .terminal .cmd {
+    font-family: Monaco;
+    color: black;
+    background-color: inherit;
+    font-size: 12px;
+    line-height: 14px;
+}

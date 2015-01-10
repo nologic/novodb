@@ -2,7 +2,7 @@
 	<br>
 
     <div ng-switch-when="x86_64" class="operative_text">
-    	<div style="display:inline-block; white-space: nowrap;" ng-repeat="reg in showregs">
+    	<div style="display:inline-block; white-space: nowrap;" ng-repeat="reg in showregs_x86_64">
 	        <span class="operative_header">&nbsp;&nbsp;{{ reg.toUpperCase() }}:</span>
 	        <span>{{ reg_props[reg].substring(2) }}</span>
         </div>
@@ -10,8 +10,8 @@
         <br><br>
 
         <div class="input-group-sm">
-			<select class="form-control selectpicker" ng-change="showregs.push(add_reg)" ng-model="add_reg">
-				<option ng-repeat="reg in register_output | selectedRegs:showregs | filter:{value: '!!'}" 
+			<select class="form-control selectpicker" ng-change="showregs_x86_64.push(add_reg)" ng-model="add_reg">
+				<option ng-repeat="reg in register_output | selectedRegs:showregs_x86_64 | filter:{value: '!!'}" 
 				        value="{{ reg.name }}">
 					{{ reg.name }}: {{ reg.value }}
 				</option>

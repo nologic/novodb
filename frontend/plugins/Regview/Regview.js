@@ -18,7 +18,7 @@ load_plugin(function() {
                 _instance.set_session($scope.$parent.session);
 
                 $scope.reg_props = {};
-                $scope.showregs = ['rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp', 'rsp'];
+                $scope.showregs_x86_64 = ['rip', 'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp', 'rsp'];
 
                 $scope.readRegisters = function() {
                     session.readRegisters(0, 0, function(data) {

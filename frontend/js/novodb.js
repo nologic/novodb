@@ -176,7 +176,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     var template = 
                         '<div class="plugin-outer">' +
                         '  <div class="plugin-toolbar noselect">' + 
-                        '    <span class="blue">' + d.name + '</span>' +
+                        '    <span class="blue" style="padding-bottom: 5px">' + d.name + '</span>' +
                         '    <span ng-click="moveUp()" class="glyphicon glyphicon-circle-arrow-up blue" aria-hidden="true"></span>' +
                         '    <span ng-click="moveDown()" class="glyphicon glyphicon-circle-arrow-down blue" aria-hidden="true"></span>' +
                         '    <span ng-click="closePlugin()" class="glyphicon glyphicon-remove-circle red" aria-hidden="true"></span>' +

@@ -182,25 +182,6 @@ load_plugin(function() {
                 });
 
                 register_command({
-                    cmd: "lldb",
-                    complete: function(params) {
-                        return ["[lldb command pass through]"];
-                    },
-
-                    execute: function(params) {
-                        session.lldbCmd(params.join(" "), function(data) {
-                            if(data.result != "") {
-                                data.result.split("\n").forEach(function(line) {
-                                    log(line);
-                                });
-                            } else {
-                                log(data);
-                            }
-                        }, log);
-                    }
-                });
-
-                register_command({
                     cmd: "threads",
                     complete: function(params) {
                         return ["(Get list of threads)"];
