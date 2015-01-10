@@ -730,7 +730,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         output.put("result", string(result.GetOutput()));
         
         return ActionResponse::no_error();
-    });
+    }, PLAIN_NONBLOCK);
 
 }
 

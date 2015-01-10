@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <memory>
 #include <queue>
+#include <algorithm>
 
 namespace novo {
     using namespace std;
@@ -226,8 +227,10 @@ namespace novo {
                     int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&match_cb, 0);
         
                     // where do we resume in the next window
-                    to_read -= read_bytes;
-                    total_scanned += read_bytes;
+                    size_t over_lap_bytes = std::min((size_t)1024, (size_t)(read_bytes - (*last_offset + 1)));
+                    
+                    to_read -= (read_bytes - over_lap_bytes);
+                    total_scanned += (read_bytes - over_lap_bytes);
 
                     { // protected output.
                         std::lock_guard<std::mutex> lock(*q_mutex);
