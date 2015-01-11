@@ -322,7 +322,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         output.add_child("regions", entries);
         
         return ActionResponse::no_error();
-    });
+    }, PLAIN_NONBLOCK);
     
     req_router.register_path({"list", "modules"}, {
         RequestConstraint::has_int("session")

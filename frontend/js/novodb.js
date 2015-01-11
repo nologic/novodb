@@ -41,6 +41,7 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         
         $scope.new_current_session = function() {
             $scope.session = create_ndb_session($http);
+            window.session = $scope.session;
 
             // watch state
             var lastState = undefined;

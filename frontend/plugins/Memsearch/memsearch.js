@@ -97,11 +97,11 @@ load_plugin(function() {
 
                 register_command({
                     cmd: "search",
-                    complete: function(params) {
+                    complete: function(params, _session) {
                         return ["[address] [length] [Yara]"];
                     },
 
-                    execute: function(params) {
+                    execute: function(params, _session) {
                         params[2] = "rule ExampleRule\n" +
                                     "{\n" +
                                     "   strings:\n" +
@@ -109,9 +109,9 @@ load_plugin(function() {
                                     "   condition:\n" + 
                                     "     $str\n" +
                                     "}";
-                        session.yaraSearch(params[0], params[1], params[2], 256, function(matches) {
+                        _session.yaraSearch(params[0], params[1], params[2], 256, function(matches) {
                             var retriever = setInterval(function() {
-                                session.yaraSearchResults(matches.output_path, function(data) {
+                                _session.yaraSearchResults(matches.output_path, function(data) {
                                     if(data.output != "") {
                                         data.output.forEach(function(match) {
                                             if('code' in match) {
@@ -125,25 +125,6 @@ load_plugin(function() {
                                     clearInterval(retriever);
                                 });
                             }, 100);
-                        }, log);
-                    }
-                });
-
-                register_command({
-                    cmd: "regions",
-                    complete: function(params) {
-                        return ["(Show memory regions)"];
-                    },
-
-                    execute: function(params) {
-                        session.listRegions(function(data) {
-                            if(data.regions != "") {
-                                data.regions.forEach(function(entry) {
-                                    
-                                });
-                            } else {
-                                log(data);
-                            }
                         });
                     }
                 });

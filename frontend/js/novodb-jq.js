@@ -22,7 +22,7 @@ $( document ).ready(function() {
                 return cmd.cmd;
             }).join(" "));
         } else if(execCmd.length == 1) {
-            var execStr = execCmd[0].execute(cmdText.args);
+            var execStr = execCmd[0].execute(cmdText.args, window.session);
 
             if(execStr != undefined) {
                 term.echo(execStr);
@@ -77,7 +77,7 @@ $( document ).ready(function() {
                         term.set_command(execCmd[0].cmd + " ");
                     }
 
-                    var compl = execCmd[0].complete(cmdText.args);
+                    var compl = execCmd[0].complete(cmdText.args, window.session);
 
                     if(compl != undefined) {
                         function proc_completes(arr) {

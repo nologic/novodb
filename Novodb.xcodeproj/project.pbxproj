@@ -529,7 +529,6 @@
 		2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "libs/cef_current/Release/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
 		27578AB71A521B0B0053CB9B /* enum_to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enum_to_string.cpp; path = Independent/enum_to_string.cpp; sourceTree = "<group>"; };
 		27578AB81A521B0B0053CB9B /* enum_to_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enum_to_string.h; path = Independent/enum_to_string.h; sourceTree = "<group>"; };
-		275B17DF1A61BC1200D54207 /* pstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pstream.h; path = Independent/pstream.h; sourceTree = "<group>"; };
 		2779B8C31A589B6D00D0C648 /* libboost_regex-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_regex-mt.a"; path = "../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_regex-mt.a"; sourceTree = "<group>"; };
 		2784219919D8946900592CA8 /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_serialize.cpp; path = Independent/json_serialize.cpp; sourceTree = "<group>"; };
 		2784219A19D8946900592CA8 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/json_serialize.h; sourceTree = "<group>"; };
@@ -936,7 +935,6 @@
 			children = (
 				27DD9DCE1A3397B000227D0B /* modules */,
 				2757502419BB1D4600784C39 /* util.h */,
-				275B17DF1A61BC1200D54207 /* pstream.h */,
 				2757501C19BB19F700784C39 /* simple_app.cpp */,
 				2757501D19BB19F700784C39 /* simple_app.h */,
 				2757501E19BB19F700784C39 /* simple_handler.cpp */,

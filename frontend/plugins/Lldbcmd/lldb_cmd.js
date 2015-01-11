@@ -33,25 +33,6 @@ load_plugin(function() {
                 }, {
                     greetings: "[[i;red;]This is a pass through terminal to LLDB"
                 });
-
-                register_command({
-                    cmd: "lldb",
-                    complete: function(params) {
-                        return ["[lldb command pass through]"];
-                    },
-
-                    execute: function(params) {
-                        session.lldbCmd(params.join(" "), function(data) {
-                            if(data.result != "") {
-                                data.result.split("\n").forEach(function(line) {
-                                    log(line);
-                                });
-                            } else {
-                                log(data);
-                            }
-                        }, log);
-                    }
-                });
             }
         ]);
     }
@@ -67,6 +48,28 @@ load_plugin(function() {
     Plugin.prototype.get_plugin_name = function() {
         return pluginName;
     };
+
+    // register commands
+    register_command({
+        cmd: "lldb",
+        session_required: true,
+        complete: function(params, _session) {
+            return ["[lldb command pass through]"];
+        },
+
+        execute: function(params, _session) {
+            _session.lldbCmd(params.join(" "), function(data) {
+                if(data.result != "") {
+                    data.result.split("\n").forEach(function(line) {
+                        log(line);
+                    });
+                } else {
+                    log(data);
+                }
+            });
+        }
+    });
+
 
     _instance = new Plugin();
 
