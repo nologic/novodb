@@ -293,6 +293,37 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         return ActionResponse::no_error();
     }, PLAIN_NONBLOCK);
     
+    req_router.register_path({"list", "regions"}, {
+        RequestConstraint::has_int("session")
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace boost::property_tree;
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        ptree entries;
+        auto regions = load_mmap(session.process.GetProcessID());
+        
+        for(auto entry : regions) {
+            ptree entry_pt;
+            
+            entry_pt.put("type", entry.type);
+            entry_pt.put("start", entry.start);
+            entry_pt.put("end", entry.end);
+            entry_pt.put("cur_perm", entry.cur_perm);
+            entry_pt.put("max_perm", entry.max_perm);
+            entry_pt.put("sharing_mode", entry.sharing_mode);
+            entry_pt.put("descriptor", entry.descriptor);
+            
+            entries.push_back(make_pair("", entry_pt));
+        }
+        
+        output.add_child("regions", entries);
+        
+        return ActionResponse::no_error();
+    });
+    
     req_router.register_path({"list", "modules"}, {
         RequestConstraint::has_int("session")
     }, [&sessions] ACTION_CALLBACK(req, output) {
@@ -731,7 +762,6 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
         return ActionResponse::no_error();
     }, PLAIN_NONBLOCK);
-
 }
 
 }

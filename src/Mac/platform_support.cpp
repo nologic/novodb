@@ -6,17 +6,20 @@
 //  Copyright (c) 2014 Mikhail Sosonkin. All rights reserved.
 //
 
-#include "../Independent/platform_support.h"
+#include "platform_support.h"
 
 #include <iostream>
 #include <errno.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/sysctl.h>
 #include <pwd.h>
 #include <libproc.h>
 #include <unistd.h>
 
 #include <signal.h>
+
+#include <regex>
 
 typedef struct kinfo_proc kinfo_proc;
 
@@ -121,7 +124,6 @@ std::vector<std::tuple<int, std::string>> get_process_listing() {
     if(GetBSDProcessList(&procList, &procCount) == 0) {
         for(size_t i = 0; i < procCount; i++) {
             pid_t pid = procList[i].kp_proc.p_pid;
-            int allow_dbg = procList[i].kp_proc.p_debugger;
             
             int ret = proc_pidpath (pid, pathbuf, sizeof(pathbuf));
             if ( ret <= 0 ) {
@@ -139,6 +141,45 @@ int get_page_size() {
     return getpagesize();
 }
 
-int pause_process(int pid) {
+int pause_process(unsigned long pid) {
     return kill(pid, SIGSTOP);
+}
+
+std::vector<vmmap_entry> load_mmap(unsigned long pid) {
+    using namespace std;
+    
+    regex expression("(.*?(?=  )) {2,}([0-9a-f]*)-([0-9a-f]*).*?([rwx-]{3})/([rwx-]{3}).*?SM=([A-Z]{3}) ?(.*)");
+    
+    FILE* vmout = popen(("/usr/bin/vmmap -w " + std::to_string(pid)).c_str(), "r");
+    
+    if(vmout == nullptr) {
+        perror("popen failed");
+    }
+    
+    char read_buf[1024];
+    
+    string line;
+    
+    vector<vmmap_entry> output;
+    
+    // read child's stdout
+    while (fgets(read_buf, 1023, vmout)) {
+        read_buf[1023] = 0;
+        
+        line.assign(read_buf);
+        smatch results;
+        
+        if(regex_search(line, results, expression)) {
+            vmmap_entry entry(results[1].str(), results[2].str(), results[3].str(), results[4].str(),
+                              results[5].str(), results[6].str(), results[7].str());
+            
+            output.push_back(entry);
+        }
+    }
+    
+    int r = pclose(vmout);
+    
+    cout << "pclose: " << r << endl;
+    
+    return output;
 }

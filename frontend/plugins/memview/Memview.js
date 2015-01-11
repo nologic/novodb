@@ -16,8 +16,6 @@ load_plugin(function() {
             };
         }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
             function ($scope, $http, $compile) {
-                console.info("Memview attach_ui");
-
                 _instance.set_session($scope.$parent.session);
                 
                 $scope.readMemory = function (_address) {

@@ -51,13 +51,13 @@ function create_ndb_session($http) {
                 f_success = default_success;
             }
 
-            f_success(resp);
+            return f_success(resp);
         }, function (resp) {
             if (f_fail == undefined) {
                 f_fail = default_err;
             }
 
-            f_fail(resp);
+            return f_fail(resp);
         });
     }
 
@@ -235,6 +235,12 @@ function create_ndb_session($http) {
                 return regval.name == "rip" || regval.name == "eip";
             })[0];
         }, f_success]), f_fail);
+    };
+
+    NdbSession.prototype.listRegions = function(f_success, f_fail) {
+        return url_get_passthrough("dbg-lldb://list/regions", {
+            session: session_id
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.writeRegisters = function(frame, thread, f_success, f_fail) {

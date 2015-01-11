@@ -9,20 +9,49 @@ load_plugin(function() {
     Plugin.prototype.attach_ui = function(angular_module, div_container_jq) {
         angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
             return {
-                templateUrl: 'plugins/' + pluginName + '/plugin.html',
+                templateUrl: 'plugins/' + pluginName + '/memsearch.html',
                 link: function(scope, element, attrs) {
                     scope.base_container = $(element);
                 }
             };
-        }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
-            function ($scope, $http, $compile) {
+        }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile', 'DTOptionsBuilder', 'DTColumnBuilder',
+            function ($scope, $http, $compile, DTOptionsBuilder, DTColumnBuilder) {
                 _instance.set_session($scope.$parent.session);
                 
+                // regions
+                $scope.dtOptions = 
+                    DTOptionsBuilder.fromFnPromise(function() {
+                        return session.listRegions(function(data) {
+                            if(data.regions != "") {
+                                return data.regions;
+                            } else {
+                                return [];
+                            }
+                        });
+                    })
+                    .withPaginationType('full_numbers');
+
+                $scope.dtColumns = [
+                    DTColumnBuilder.newColumn('type').withTitle('Type'),
+                    DTColumnBuilder.newColumn('start').withTitle('Start'),
+                    DTColumnBuilder.newColumn('end').withTitle('End'),
+                    DTColumnBuilder.newColumn('cur_perm').withTitle('Perm'),
+                    DTColumnBuilder.newColumn('max_perm').withTitle('Max'),
+                    DTColumnBuilder.newColumn('sharing_mode').withTitle('SM'),
+                    DTColumnBuilder.newColumn('descriptor').withTitle('Descriptor')
+                ];
+                // -regions
+
+
                 $scope.search_results = [];
 
-                var editor = ace.edit("yara_editor");
-                editor.setTheme("ace/theme/xcode");
-                editor.getSession().setMode("ace/mode/w");
+                var editor = undefined;
+
+                setTimeout(function() {
+                    editor = ace.edit("yara_editor");
+                    editor.setTheme("ace/theme/xcode");
+                    editor.getSession().setMode("ace/mode/w");
+                }, 10);
 
                 $scope.entryAddr = function(entry) {
                     return toHexString(parseInt(entry.base) + parseInt(entry.offset));
@@ -97,6 +126,25 @@ load_plugin(function() {
                                 });
                             }, 100);
                         }, log);
+                    }
+                });
+
+                register_command({
+                    cmd: "regions",
+                    complete: function(params) {
+                        return ["(Show memory regions)"];
+                    },
+
+                    execute: function(params) {
+                        session.listRegions(function(data) {
+                            if(data.regions != "") {
+                                data.regions.forEach(function(entry) {
+                                    
+                                });
+                            } else {
+                                log(data);
+                            }
+                        });
                     }
                 });
             }
