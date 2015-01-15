@@ -9,7 +9,7 @@
 #include "lldb_module_commands.h"
 #include "enum_to_string.h"
 
-#include <boost/regex.hpp>
+#include <regex>
 
 namespace novo {
     
@@ -111,8 +111,49 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         }
     }, PLAIN_NONBLOCK);
     
-    req_router.register_path({"create", "target", "remote"}, {}, [] ACTION_CALLBACK(req, output) {
-        return ActionResponse::error(501, "Not Implemented");
+    req_router.register_path({"create", "target", "remote"}, {
+        RequestConstraint::exists({"url"})
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace lldb;
+        using namespace std;
+        
+        SBDebugger debugger = SBDebugger::Create();
+        
+        debugger.SetAsync(false);
+        
+        if(!debugger.IsValid()) {
+            return ActionResponse::error("Debugger not valid");
+        }
+        
+        SBTarget target = debugger.CreateTarget(nullptr);
+        
+        if(!target.IsValid()) {
+            return ActionResponse::error("Target invalid");
+        }
+        
+        SBError error;
+        SBListener listener;
+        
+        LldbProcessSession session(target.ConnectRemote(listener, req.at("url").c_str(), nullptr, error));
+
+        if(error.Success()) {
+            string new_id = sessions.add_session(session);
+            
+            output.put("session", new_id);
+            output.put("current_tid", std::to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("triple", session.target.GetTriple());
+            
+            return ActionResponse::no_error();
+        } else {
+            SBStream desc;
+            
+            if(error.GetDescription(desc) && desc.GetSize() > 0) {
+                return ActionResponse::error("Failed to connect: " + string(desc.GetData()));
+            } else {
+                return ActionResponse::error("Failed to connect");
+            }
+        }
+
     });
     
     req_router.register_path({"add", "breakpoint"}, {
@@ -252,10 +293,10 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         size_t count = stol(req.at("count"));
         size_t max_matches = stol(req.at("max_matches"));
         
-        boost::regex expression;
+        regex expression;
         try {
             expression.assign(req.at("regex"));
-        } catch(boost::regex_error& err) {
+        } catch(regex_error& err) {
             return ActionResponse::error(err.what());
         }
         
@@ -269,8 +310,6 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         size_t last_index = 0;
         
         for(size_t s = index_off; s < symbols && matches < max_matches; s++) {
-            using namespace boost;
-            
             SBSymbol symbol = module.GetSymbolAtIndex(s);
             ptree sym_out;
             last_index = s;
