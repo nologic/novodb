@@ -298,6 +298,13 @@ function create_ndb_session($http) {
             // returned means we've stopped.
             stepCount += 1;
         }, f_success]), f_fail);
+    };
+
+    NdbSession.prototype.lldbCmdNoStep = function(cmd, f_success, f_fail) {
+        return url_get_passthrough("dbg-lldb://cmd/lldb", {
+            session: session_id,
+            cmd: cmd
+        }, extract_data(f_success), f_fail);
     }; 
     // // end backend functions.
 
