@@ -6,4 +6,13 @@
 		<table datatable="" dt-options="dtOptions" dt-columns="dtColumns" class="row-border hover noselect">
 		</table>
 	</div>
+	<hr>
+
+	<div>
+		<form class="form-inline">
+			<input class="form-control" required ng-trimmed="true" 
+			       placeholder="Remote connect> host:port" ng-model="hostport">
+			<button class="btn btn-info" type="submit" ng-click="connect(hostport)">Connect</button>
+		</form>
+	</div>
 </div>

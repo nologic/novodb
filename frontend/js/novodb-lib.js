@@ -103,6 +103,20 @@ function create_ndb_session($http) {
         f_success]), f_fail);
     };
 
+    NdbSession.prototype.connect = function(url, f_success, f_fail) {
+        url_get_passthrough("dbg-lldb://create/target/remote", {
+            url: url
+        }, extract_data([function(sdata) {
+            attachInfo = sdata;
+
+            session_id = sdata.session;
+            selectedThread = {
+                tid: sdata.current_tid
+            };
+        },
+        f_success]), f_fail);
+    };
+
     NdbSession.prototype.load = function (path, args, f_success, f_fail) {
         url_get_passthrough("dbg-lldb://create/target/exe", {
             path: path

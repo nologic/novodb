@@ -60,6 +60,12 @@ load_plugin(function() {
                     });
                 };
 
+                $scope.connect = function(hostport) {
+                    var url = "connect://" + hostport;
+
+                    session.connect(url, log);
+                };
+
                 // register the loader commands:
                 register_command({
                     cmd: "attach", 
