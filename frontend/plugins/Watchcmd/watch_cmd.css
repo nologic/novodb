@@ -1,2 +1,14 @@
 .watch_cmd_plugin {
+	max-height: 400px;
+}
+
+.watch_cmd_plugin .cmd_output {
+	height: 100%;
+	overflow: scroll;
+	max-height: 300px;
+}
+
+.watch_cmd_plugin .cmd_output pre {
+	background-color: inherit;
+	border: 0px;
 }
