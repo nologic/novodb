@@ -1,42 +1,54 @@
-load_plugin(function() {
-    var _instance = undefined;
-    var session = undefined;
+(function() {
     var pluginName = "Insview";
 
-    function InsView() {}
+    var pluginSpec = {
+        name: pluginName,
+        type: undefined,
 
-    InsView.prototype.attach_ui = make_ui_func(pluginName, ['$scope', '$http', '$compile',
-        function ($scope, $http, $compile) {
-            _instance.set_session($scope.$parent.session);
+        staticInit: function(angular_module) {
+            angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
+                return {
+                    templateUrl: 'plugins/' + pluginName + '/insview.html',
+                    link: function(scope, element, attrs) {
+                        scope.base_container = $(element);
+                    }
+                };
+            }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
+                function ($scope, $http, $compile) {
+                    var session = $scope.$parent.session;
 
-            $scope.readInstructions = function (_address) {
-                session.readInstructions(_address, 20, function(data) {
-                    $scope.inst_addr = _address;
-                    $scope.inst_output = data;
-                });
-            };
+                    $scope.readInstructions = function (_address) {
+                        session.readInstructions(_address, 20, function(data) {
+                            $scope.inst_addr = _address;
+                            $scope.inst_output = data;
+                        });
+                    };
 
-            $scope.$watch(session.get_currentPc, function(newVal) {
-                if(newVal != undefined) {
-                    $scope.readInstructions(newVal.value);
+                    $scope.$watch(session.get_currentPc, function(newVal) {
+                        if(newVal != undefined) {
+                            $scope.readInstructions(newVal.value);
+                        }
+                    });
                 }
-            });
+            ]);
+        },
+
+        constructor: function() {
+            return function() {
+                function Plugin() {}
+
+                Plugin.prototype.get_name = function() {
+                    return pluginName;
+                };
+
+                Plugin.prototype.get_descriptor = function() {
+                    return "Instruction Viewer";
+                };
+
+                return new Plugin();
+            }
         }
-    ]);
-
-    InsView.prototype.set_session = function(new_session) {
-        session = new_session;
     };
 
-    InsView.prototype.set_sessions = function(all_sessions) {
-
-    };
-
-    InsView.prototype.get_plugin_name = function() {
-        return pluginName;
-    };
-
-    _instance = new InsView();
-
-    return _instance;
-}());
+    register_plugin(pluginSpec);
+})();

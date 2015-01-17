@@ -297,7 +297,7 @@ namespace novo {
             if(error.IsValid() && error.GetCString()) {
                 return ActionResponse::error(string(error.GetCString()));
             } else {
-                return ActionResponse::error("Memory unreadable: " + to_string(error.GetError()));
+                return ActionResponse::error("Memory unreadable: " + to_string(addr));
             }
         }
     }

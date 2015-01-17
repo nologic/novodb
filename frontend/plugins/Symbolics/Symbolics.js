@@ -1,85 +1,92 @@
-load_plugin(function() {
-    var _instance = undefined;
-    var session = undefined;
+(function() {
     var pluginName = "Symbolics";
 
-    function Plugin() {}
+    var pluginSpec = {
+        name: pluginName,
+        type: undefined,
 
-    Plugin.prototype.attach_ui = function(angular_module, div_container_jq) {
-        angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
-            return {
-                templateUrl: 'plugins/' + pluginName + '/symbolics.html',
-                link: function(scope, element, attrs) {
-                    scope.base_container = $(element);
-                }
-            };
-        }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
-            function ($scope, $http, $compile) {
-                _instance.set_session($scope.$parent.session);
-
-                $scope.moduleList = {
-                    selected: ""
-                };
-
-                $scope.search_symbols = function(sym_search_re) {
-                    //var mi = $($scope.base_container.find(".list_mod.modSelected")[0]).attr("module-index");/*.each(function(i, r) {
-                    //    console.info($(r).attr("module-index")); 
-                    //});*/
-                    
-                    var mi = $('#selected_module').val();
-
-                    session.searchSymbols(mi, 0, 999999, 100, sym_search_re, function(data){
-                        $scope.symbol_list = data.symbols;
-                    }, log);
-                };
-
-                $scope.load_modules = function() {
-                    session.getModules(function(data) {
-                        $scope.modules = data.modules;
-                    });
-                }
-
-                $scope.load_symbols = function() {
-                    session.getSymbols(0, function(data) {
-                        $scope.symbols = data.symbols;
-                    });
-                };
-
-                $scope.selected_module = function() {
-                    log($scope.moduleList);
-                };
-
-                $scope.clicked_module = function(mod) {
-                    /*session.getSymbols(mod.index, function(data) {
-                        $scope.module_data = data.symbols;
-                    });*/
-                    // because Angular sucks with <select>
-                    var modDiv = $scope.base_container.find(".list_mod_" + mod.index);
-
-                    if(modDiv.hasClass("modSelected")) {
-                        mod.selected = false;
-                        modDiv.removeClass("modSelected");
-                    } else {
-                        mod.selected = true;
-                        modDiv.addClass("modSelected");
+        staticInit: function(angular_module) {
+            angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
+                return {
+                    templateUrl: 'plugins/' + pluginName + '/symbolics.html',
+                    link: function(scope, element, attrs) {
+                        scope.base_container = $(element);
                     }
                 };
+            }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
+                function ($scope, $http, $compile) {
+                    var session = $scope.$parent.session;
 
-                $scope.load_symbols();
-                $scope.load_modules();
+                    $scope.moduleList = {
+                        selected: ""
+                    };
+
+                    $scope.search_symbols = function(sym_search_re) {
+                        //var mi = $($scope.base_container.find(".list_mod.modSelected")[0]).attr("module-index");/*.each(function(i, r) {
+                        //    console.info($(r).attr("module-index")); 
+                        //});*/
+                        
+                        var mi = $('#selected_module').val();
+
+                        session.searchSymbols(mi, 0, 999999, 100, sym_search_re, function(data){
+                            $scope.symbol_list = data.symbols;
+                        }, log);
+                    };
+
+                    $scope.load_modules = function() {
+                        session.getModules(function(data) {
+                            $scope.modules = data.modules;
+                        });
+                    }
+
+                    $scope.load_symbols = function() {
+                        session.getSymbols(0, function(data) {
+                            $scope.symbols = data.symbols;
+                        });
+                    };
+
+                    $scope.selected_module = function() {
+                        log($scope.moduleList);
+                    };
+
+                    $scope.clicked_module = function(mod) {
+                        /*session.getSymbols(mod.index, function(data) {
+                            $scope.module_data = data.symbols;
+                        });*/
+                        // because Angular sucks with <select>
+                        var modDiv = $scope.base_container.find(".list_mod_" + mod.index);
+
+                        if(modDiv.hasClass("modSelected")) {
+                            mod.selected = false;
+                            modDiv.removeClass("modSelected");
+                        } else {
+                            mod.selected = true;
+                            modDiv.addClass("modSelected");
+                        }
+                    };
+
+                    $scope.load_symbols();
+                    $scope.load_modules();
+                }
+            ]);
+        },
+
+        constructor: function() {
+            return function() {
+                function Plugin() {}
+
+                Plugin.prototype.get_name = function() {
+                    return pluginName;
+                };
+
+                Plugin.prototype.get_descriptor = function() {
+                    return "Process loader";
+                };
+
+                return new Plugin();
             }
-        ]);
-    }
-
-    Plugin.prototype.set_session = function(new_session) {
-        session = new_session;
+        }
     };
 
-    Plugin.prototype.get_plugin_name = function() {
-        return pluginName;
-    };
-
-    _instance = new Plugin();
-
-    return _instance;
-}());
+    register_plugin(pluginSpec);
+})();

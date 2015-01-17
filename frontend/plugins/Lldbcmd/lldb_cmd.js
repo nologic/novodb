@@ -1,53 +1,60 @@
-load_plugin(function() {
-    var _instance = undefined;
-    var session = undefined;
+(function() {
     var pluginName = "Lldbcmd";
 
-    function Plugin() {}
+    var pluginSpec = {
+        name: pluginName,
+        type: undefined,
 
-    Plugin.prototype.attach_ui = function(angular_module, div_container_jq) {
-        angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
-            return {
-                templateUrl: 'plugins/' + pluginName + '/lldb_cmd.html',
-                link: function(scope, element, attrs) {
-                    scope.base_container = $(element);
-                }
-            };
-        }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
-            function ($scope, $http, $compile) {
-                _instance.set_session($scope.$parent.session);
-
-                $('#lldb_term').terminal(function (command, term) {
-                    // execute command!
-                    if(command != "") {
-                        session.lldbCmd(command, function(data) {
-                            if(data.result != "") {
-                                data.result.split("\n").forEach(function(line) {
-                                    term.echo(line);
-                                });
-                            } else {
-                                log(data);
-                            }
-                        });
+        staticInit: function(angular_module) {
+            angular_module.directive('ndbPlugin' + pluginName, ['$compile', function ($compile) {
+                return {
+                    templateUrl: 'plugins/' + pluginName + '/lldb_cmd.html',
+                    link: function(scope, element, attrs) {
+                        scope.base_container = $(element);
                     }
-                }, {
-                    greetings: "[[i;red;]This is a pass through terminal to LLDB"
-                });
+                };
+            }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
+                function ($scope, $http, $compile) {
+                    var session = $scope.$parent.session;
+
+                    $('#lldb_term').terminal(function (command, term) {
+                        // execute command!
+                        if(command != "") {
+                            session.lldbCmd(command, function(data) {
+                                if(data.result != "") {
+                                    data.result.split("\n").forEach(function(line) {
+                                        term.echo(line);
+                                    });
+                                } else {
+                                    log(data);
+                                }
+                            });
+                        }
+                    }, {
+                        greetings: "[[i;red;]This is a pass through terminal to LLDB"
+                    });
+                }
+            ]);
+        },
+
+        constructor: function() {
+            return function() {
+                function Plugin() {}
+
+                Plugin.prototype.get_name = function() {
+                    return pluginName;
+                };
+
+                Plugin.prototype.get_descriptor = function() {
+                    return "LLDB Command Line";
+                };
+
+                return new Plugin();
             }
-        ]);
-    }
-
-    Plugin.prototype.set_session = function(new_session) {
-        session = new_session;
+        }
     };
 
-    Plugin.prototype.set_sessions = function(all_sessions) {
-
-    };
-
-    Plugin.prototype.get_plugin_name = function() {
-        return pluginName;
-    };
+    register_plugin(pluginSpec);
 
     // register commands
     register_command({
@@ -69,9 +76,4 @@ load_plugin(function() {
             });
         }
     });
-
-
-    _instance = new Plugin();
-
-    return _instance;
-}());
+})();
