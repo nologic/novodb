@@ -13,8 +13,8 @@
                         scope.base_container = $(element);
                     }
                 };
-            }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile',
-                function ($scope, $http, $compile) {
+            }]).controller("ndbPlugin" + pluginName, ['$scope', '$http', '$compile', 'DTOptionsBuilder', 'DTColumnBuilder',
+                function ($scope, $http, $compile, DTOptionsBuilder, DTColumnBuilder) {
                     var session = $scope.$parent.session;
 
                     // regions

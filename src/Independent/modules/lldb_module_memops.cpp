@@ -215,7 +215,9 @@ namespace novo {
                 return;
             }
 
-            while(to_read > 0 && *done_code == DONE_NOT) {
+            bool keep_reading = true;
+            
+            while(keep_reading && *done_code == DONE_NOT) {
                 // first: read the memory
                 size_t read_bytes;
                 size_t read_cycle = min(allocated, to_read);
@@ -223,6 +225,9 @@ namespace novo {
                 if( (read_bytes = session.process.ReadMemory(addr + total_scanned, data, read_cycle, error)) <= 0) {
                     done_code->store(DONE_MEMORY_UNREADABLE);
                 } else {
+                    // If we read as much as we wanted, then read no more.
+                    keep_reading = (read_bytes != to_read);
+                    
                     // second: scan read memory
                     int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&match_cb, 0);
         
@@ -231,7 +236,7 @@ namespace novo {
                     
                     to_read -= (read_bytes - over_lap_bytes);
                     total_scanned += (read_bytes - over_lap_bytes);
-
+                    
                     { // protected output.
                         std::lock_guard<std::mutex> lock(*q_mutex);
             
