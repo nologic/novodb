@@ -92,7 +92,7 @@ RequestPath RequestPath::make_path(const boost::network::uri::uri& url) {
 
 // ActionRequest class
 
-ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request, chunk_stage _stage) : request(_request), stage(_stage) {
+ActionRequest::ActionRequest(CefRefPtr<CefRequest> _request, chunk_stage _stage) : stage(_stage) {
     using namespace boost::network::uri;
     using namespace boost;
     using namespace std;

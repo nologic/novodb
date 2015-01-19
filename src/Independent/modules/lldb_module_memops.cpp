@@ -226,7 +226,7 @@ namespace novo {
                     done_code->store(DONE_MEMORY_UNREADABLE);
                 } else {
                     // If we read as much as we wanted, then read no more.
-                    keep_reading = (read_bytes != to_read);
+                    keep_reading = ( (to_read - read_bytes) > 0);
                     
                     // second: scan read memory
                     int scan_ret = yr_rules_scan_mem(compiled_rules, data, read_bytes, 0, match_callback_function, (void*)&match_cb, 0);

@@ -202,10 +202,6 @@ namespace novo {
     public:
         ActionRequest(CefRefPtr<CefRequest> _request, chunk_stage _stage = NOT_CHUNKED);
         
-        const CefRequest& cef_request() const {
-            return *request;
-        }
-        
         const RequestPath& get_path() const {
             return path;
         }
@@ -222,7 +218,6 @@ namespace novo {
             return this->count(key) > 0;
         }
     private:
-        CefRefPtr<CefRequest> request;
         RequestPath path;
         
         // for support of chunked request handlers
@@ -241,8 +236,6 @@ namespace novo {
         
     private:
         std::vector<handler_entry> prefix_list;
-        
-        IMPLEMENT_REFCOUNTING(RequestRouter);
     };
     
 } // namespace novo

@@ -222,9 +222,10 @@
 		2757509F19BB32A800784C39 /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A019BB32FA00784C39 /* Chromium Embedded Framework.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */; };
 		275750A419BB738D00784C39 /* Novodb Helper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */; };
-		27578AB91A521B0B0053CB9B /* enum_to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27578AB71A521B0B0053CB9B /* enum_to_string.cpp */; };
-		27578ABA1A521B0B0053CB9B /* enum_to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27578AB71A521B0B0053CB9B /* enum_to_string.cpp */; };
-		2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
+		275B17E41A6C871D00D54207 /* enum_to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 275B17E01A6C871D00D54207 /* enum_to_string.cpp */; };
+		275B17E51A6C871D00D54207 /* enum_to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 275B17E01A6C871D00D54207 /* enum_to_string.cpp */; };
+		275B17E61A6C871D00D54207 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 275B17E21A6C871D00D54207 /* json_serialize.cpp */; };
+		275B17E71A6C871D00D54207 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 275B17E21A6C871D00D54207 /* json_serialize.cpp */; };
 		2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219C19DB5BCC00592CA8 /* platform_support.cpp */; };
 		278421A119DCE8B500592CA8 /* frontend in Resources */ = {isa = PBXBuildFile; fileRef = 278421A019DCE8B500592CA8 /* frontend */; };
 		27936AB119BA3C7B00EC4B6F /* novodb-help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */; };
@@ -244,7 +245,6 @@
 		27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501E19BB19F700784C39 /* simple_handler.cpp */; };
 		27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 271775AE19C0B30100051986 /* dbg_handler.cpp */; };
 		27E6B1C419EB6A8600681256 /* request_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 273823D819C47C7B00559F61 /* request_router.cpp */; };
-		27E6B1CA19EB6A8600681256 /* json_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2784219919D8946900592CA8 /* json_serialize.cpp */; };
 		27E6B1CD19EB6B7000681256 /* LLDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2717759E19BBD79000051986 /* LLDB.framework */; };
 		27E6B1CE19EB6B8A00681256 /* libboost_filesystem-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2739889A19E448A80010C12F /* libboost_filesystem-mt.a */; };
 		27E6B1CF19EB6B8A00681256 /* libboost_log-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 271A4F7B19CB6D6B0089495F /* libboost_log-mt.a */; };
@@ -525,11 +525,11 @@
 		2757502219BB1A3100784C39 /* simple_handler_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = simple_handler_mac.mm; path = Mac/simple_handler_mac.mm; sourceTree = "<group>"; };
 		2757502419BB1D4600784C39 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = Independent/util.h; sourceTree = "<group>"; };
 		2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "libs/cef_current/Release/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
-		27578AB71A521B0B0053CB9B /* enum_to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enum_to_string.cpp; path = Independent/enum_to_string.cpp; sourceTree = "<group>"; };
-		27578AB81A521B0B0053CB9B /* enum_to_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enum_to_string.h; path = Independent/enum_to_string.h; sourceTree = "<group>"; };
+		275B17E01A6C871D00D54207 /* enum_to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enum_to_string.cpp; path = Independent/modules/enum_to_string.cpp; sourceTree = "<group>"; };
+		275B17E11A6C871D00D54207 /* enum_to_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enum_to_string.h; path = Independent/modules/enum_to_string.h; sourceTree = "<group>"; };
+		275B17E21A6C871D00D54207 /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_serialize.cpp; path = Independent/modules/json_serialize.cpp; sourceTree = "<group>"; };
+		275B17E31A6C871D00D54207 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/modules/json_serialize.h; sourceTree = "<group>"; };
 		2779B8C31A589B6D00D0C648 /* libboost_regex-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_regex-mt.a"; path = "../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_regex-mt.a"; sourceTree = "<group>"; };
-		2784219919D8946900592CA8 /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_serialize.cpp; path = Independent/json_serialize.cpp; sourceTree = "<group>"; };
-		2784219A19D8946900592CA8 /* json_serialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_serialize.h; path = Independent/json_serialize.h; sourceTree = "<group>"; };
 		2784219C19DB5BCC00592CA8 /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = Mac/platform_support.cpp; sourceTree = "<group>"; };
 		2784219F19DB5C2D00592CA8 /* platform_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform_support.h; path = Independent/platform_support.h; sourceTree = "<group>"; };
 		278421A019DCE8B500592CA8 /* frontend */ = {isa = PBXFileReference; lastKnownFileType = folder; path = frontend; sourceTree = "<group>"; };
@@ -855,6 +855,10 @@
 		27DD9DCE1A3397B000227D0B /* modules */ = {
 			isa = PBXGroup;
 			children = (
+				275B17E01A6C871D00D54207 /* enum_to_string.cpp */,
+				275B17E11A6C871D00D54207 /* enum_to_string.h */,
+				275B17E21A6C871D00D54207 /* json_serialize.cpp */,
+				275B17E31A6C871D00D54207 /* json_serialize.h */,
 				27DD9DD91A33B46500227D0B /* lldb_module_commands.h */,
 				27DD9DD21A33A4A800227D0B /* lldb_module.cpp */,
 				27DD9DD51A33B40D00227D0B /* lldb_module_commands1.cpp */,
@@ -939,13 +943,9 @@
 				271775AF19C0B30100051986 /* dbg_handler.h */,
 				273823D819C47C7B00559F61 /* request_router.cpp */,
 				273823D919C47C7B00559F61 /* request_router.h */,
-				2784219919D8946900592CA8 /* json_serialize.cpp */,
-				2784219A19D8946900592CA8 /* json_serialize.h */,
 				2784219F19DB5C2D00592CA8 /* platform_support.h */,
 				27DD9DCA1A336B5F00227D0B /* Module.h */,
 				27DD9DCB1A3390E900227D0B /* Module.cpp */,
-				27578AB71A521B0B0053CB9B /* enum_to_string.cpp */,
-				27578AB81A521B0B0053CB9B /* enum_to_string.h */,
 				E78D96721638A18900DE580E /* Supporting Files */,
 			);
 			name = Novodb;
@@ -1546,21 +1546,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27578ABA1A521B0B0053CB9B /* enum_to_string.cpp in Sources */,
 				27E6B1D519EB6CD800681256 /* simple_handler_mac.mm in Sources */,
 				27DD9DCD1A3390E900227D0B /* Module.cpp in Sources */,
 				27E6B1D619EB6CD800681256 /* platform_support.cpp in Sources */,
 				27E6B1BE19EB6A8600681256 /* simple_app.cpp in Sources */,
+				275B17E71A6C871D00D54207 /* json_serialize.cpp in Sources */,
 				27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */,
 				27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */,
 				27E6B1E819EC6DAD00681256 /* validation_tests.cpp in Sources */,
+				275B17E51A6C871D00D54207 /* enum_to_string.cpp in Sources */,
 				27DD9DD81A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
 				27545F921A3E6A7000A894C4 /* action_tests.cpp in Sources */,
 				27DD9DD41A33A4A800227D0B /* lldb_module.cpp in Sources */,
 				27DD9DD11A33993400227D0B /* util_module.cpp in Sources */,
 				27DD9DE11A353B0100227D0B /* lldb_module_memops.cpp in Sources */,
 				27E6B1C419EB6A8600681256 /* request_router.cpp in Sources */,
-				27E6B1CA19EB6A8600681256 /* json_serialize.cpp in Sources */,
 				27E6B1D819EB71DE00681256 /* test_units.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1579,16 +1579,16 @@
 			files = (
 				2784219D19DB5BCC00592CA8 /* platform_support.cpp in Sources */,
 				2757502319BB1A3100784C39 /* simple_handler_mac.mm in Sources */,
+				275B17E61A6C871D00D54207 /* json_serialize.cpp in Sources */,
 				2757502119BB19F700784C39 /* simple_handler.cpp in Sources */,
 				27DD9DD01A33993400227D0B /* util_module.cpp in Sources */,
 				273823DA19C47C7B00559F61 /* request_router.cpp in Sources */,
 				27DD9DCC1A3390E900227D0B /* Module.cpp in Sources */,
-				2784219B19D8946900592CA8 /* json_serialize.cpp in Sources */,
 				27DD9DD71A33B40D00227D0B /* lldb_module_commands1.cpp in Sources */,
-				27578AB91A521B0B0053CB9B /* enum_to_string.cpp in Sources */,
 				E78D96A61638BA0B00DE580E /* main.mm in Sources */,
 				27DD9DD31A33A4A800227D0B /* lldb_module.cpp in Sources */,
 				27DD9DE01A353B0100227D0B /* lldb_module_memops.cpp in Sources */,
+				275B17E41A6C871D00D54207 /* enum_to_string.cpp in Sources */,
 				271775B019C0B30100051986 /* dbg_handler.cpp in Sources */,
 				2757502019BB19F700784C39 /* simple_app.cpp in Sources */,
 			);
