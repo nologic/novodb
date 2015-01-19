@@ -10,7 +10,6 @@
 #define __Novodb__dbg_handler__
 
 #include "include/cef_app.h"
-#include "boost/network/uri.hpp"
 
 #include "request_router.h"
 

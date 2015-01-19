@@ -16,7 +16,6 @@
 
 #include "dbg_handler.h"
 #include "include/cef_url.h"
-#include "lldb/API/LLDB.h"
 
 std::atomic<uint32> DbgResourceHandler::request_counter(0);
 
@@ -42,10 +41,10 @@ void DbgResourceHandler::GetResponseHeaders( CefRefPtr<CefResponse> response, in
     BOOST_LOG_TRIVIAL(trace) << request_id << " " << this->response.get_status() << " " << this->response.get_message();
 }
 
-bool DbgResourceHandler::ProcessRequest( CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback) {
+bool DbgResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback) {
     BOOST_LOG_TRIVIAL(trace) << request_id << " " << "Entering request " << request->GetURL().ToString();
     
-    ActionRequest a_req(request);
+    ActionRequest a_req(request->GetURL().ToString());
     
     try {
         
