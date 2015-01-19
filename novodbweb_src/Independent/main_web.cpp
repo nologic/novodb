@@ -55,7 +55,14 @@ namespace novo {
             
             BOOST_LOG_TRIVIAL(trace) << "Entering request " << req_info->uri;
             
-            ActionRequest a_req("http://" + std::string(req_info->uri).substr(uri_skip_ind));
+            // dummy URL to adjust to request format spec.
+            std::string url = "http://" + std::string(req_info->uri).substr(uri_skip_ind);
+            
+            if(req_info->query_string) {
+                url += "?" + std::string(req_info->query_string);
+            }
+            
+            ActionRequest a_req(url);
             ActionResponse response(ActionResponse::no_error());
             boost::property_tree::ptree output;
             
@@ -108,16 +115,19 @@ namespace novo {
             
             BOOST_LOG_TRIVIAL(trace) << "Request Processed (" << req_info->uri << ")";
             
-            std::stringstream ss;
-            boost::property_tree::write_json(ss, output, false);
-            
-            std::string out_data = ss.str();
-            output.clear();
-            
-            
             mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: application/javascript\r\n\r\n");
-            mg_printf(conn, "%s", out_data.c_str());
+
+            if(response.get_status() == 200) {
+                std::stringstream ss;
+                boost::property_tree::write_json(ss, output, false);
             
+                std::string out_data = ss.str();
+                output.clear();
+                
+                mg_printf(conn, "%s", out_data.c_str());
+            } else {
+                mg_printf(conn, "{ \"code\": %d, \"msg\": \"%s\"}", response.get_status(), response.get_message().c_str());
+            }
             
             return true;
         }
