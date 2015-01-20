@@ -199,5 +199,30 @@ under certain conditions; see LICENSE.md for details.
   </div>
 </div>
 
+<!-- Connect Screen -->
+<div class="modal fade" id="connect_screen" tabindex="-1" role="dialog" 
+     aria-labelledby="connect_screen_label" aria-hidden="true" style="z-index: 999999">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" id="connect_screen_label">Connect to a Novodb agent</h4>
+      </div>
+      <div class="modal-body">
+      <form>
+        <input type="text" class="form-control" placeholder="Agent IP/Host" ng-model="con_agent_host">
+        <input type="text" class="form-control" placeholder="Port" value="4070" ng-model="con_agent_port">
+      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" 
+                ng-click="connect_agent(con_agent_host, con_agent_port)">Connect</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

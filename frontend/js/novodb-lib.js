@@ -1,10 +1,3 @@
-// temp parameters
-//var url_prefix = "dbg-lldb://";
-//var call_method = "GET";
-
-var url_prefix = "http://localhost:4070/";
-var call_method = "JSONP";
-
 function create_ndb_session($http) {
     var mem_separator = ' ';
 
@@ -51,28 +44,30 @@ function create_ndb_session($http) {
     }
 
     function url_get_passthrough(path, params, f_success, f_fail) {
-        var url = undefined;
-
-        if(call_method == "JSONP") {
-            url = url_prefix + "dbg-lldb/" + path + "?callback=JSON_CALLBACK";
-        } else {
-            url = url_prefix + url;
-        }
-
         return $http({
-            url: url,
-            method: call_method,
+            url: window.path_to_url("dbg-lldb", path),
+            method: window.call_method,
             params: params
         }).then(function (resp) {
             if (f_success == undefined) {
                 f_success = default_success;
             }
             
-            if(call_method == "JSONP") {
+            if(call_method == "JSONP" && 'data' in resp) {
                 // mask it to make it look like we did a regular GET.
                 resp.status = resp.data.code;
                 resp.statusText = resp.msg;
                 resp.data = resp.data.output;
+            }
+            
+            if(call_method == "JSONP" && resp.status != 200) {
+                if (f_fail == undefined) {
+                    f_fail = default_err;
+                }
+
+                return f_fail(resp);
+            } else {
+                return f_success(resp);
             }
 
             return f_success(resp);
@@ -81,7 +76,7 @@ function create_ndb_session($http) {
                 f_fail = default_err;
             }
 
-            if(call_method == "JSONP") {
+            if(call_method == "JSONP" && 'data' in resp) {
                 resp.status = resp.data.code;
                 resp.statusText = resp.msg;
                 resp.data = resp.data.output;

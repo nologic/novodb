@@ -42,7 +42,7 @@ namespace novo {
         return 0;
     }
     
-    /*class UnknownHandler: public CivetHandler {
+    class UnknownHandler: public CivetHandler {
     public:
 
         bool handleGet(CivetServer *server, struct mg_connection *conn) {
@@ -50,7 +50,7 @@ namespace novo {
             
             return true;
         }
-    };*/
+    };
 
     class ModuleHandler: public CivetHandler {
     public:

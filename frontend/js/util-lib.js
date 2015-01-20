@@ -1,9 +1,3 @@
-//var url_prefix = "util://";
-//var call_method = "GET";
-
-var url_prefix = "http://localhost:4070/";
-var call_method = "JSONP";
-
 function toHexString(decNum) {
 	return parseInt(decNum).toString(16);
 }
@@ -41,37 +35,37 @@ function create_utils($http) {
     }
 
     function url_get_passthrough(path, params, f_success, f_fail) {
-        var url = undefined;
-
-        if(call_method == "JSONP") {
-            url = url_prefix + "util/" + path + "?callback=JSON_CALLBACK";
-        } else {
-            url = url_prefix + url;
-        }
-
         return $http({
-            url: url,
-            method: call_method,
+            url: window.path_to_url("util", path),
+            method: window.call_method,
             params: params
         }).then(function (resp) {
             if (f_success == undefined) {
                 f_success = default_success;
             }
             
-            if(call_method == "JSONP") {
+            if(call_method == "JSONP" && 'data' in resp) {
                 // mask it to make it look like we did a regular GET.
-                resp.status = resp.data.code;
+                resp.status = parseInt(resp.data.code);
                 resp.statusText = resp.msg;
                 resp.data = resp.data.output;
             }
 
-            return f_success(resp);
+            if(call_method == "JSONP" && resp.status != 200) {
+                if (f_fail == undefined) {
+                    f_fail = default_err;
+                }
+
+                return f_fail(resp);
+            } else {
+                return f_success(resp);
+            }
         }, function (resp) {
             if (f_fail == undefined) {
                 f_fail = default_err;
             }
 
-            if(call_method == "JSONP") {
+            if(call_method == "JSONP" && 'data' in resp) {
                 resp.status = resp.data.code;
                 resp.statusText = resp.msg;
                 resp.data = resp.data.output;

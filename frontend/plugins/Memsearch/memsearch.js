@@ -47,7 +47,10 @@
                     var editor = undefined;
 
                     setTimeout(function() {
-                        editor = ace.edit("yara_editor");
+                        var editDom = $scope.base_container.find("#yara_editor");
+                        console.info(editDom);
+
+                        editor = ace.edit(editDom[0]);
                         editor.setTheme("ace/theme/xcode");
                         editor.getSession().setMode("ace/mode/w");
                     }, 10);

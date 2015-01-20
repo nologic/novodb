@@ -2121,10 +2121,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(PROJECT_DIR)/libs/LLDB.framework/Headers",
 					"$(SRCROOT)/libs/cpp-netlib-0.11.0-final",
+					"$(SRCROOT)/libs/yara/include",
 					/usr/local/Cellar/boost/1.55.0_1/include,
 					/Users/mike/cef/llvm/include,
 					"/Users/mike//cef/cfe-3.5.0.src/include",
-					"$(SRCROOT)/libs/yara/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2164,10 +2164,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(PROJECT_DIR)/libs/LLDB.framework/Headers",
 					"$(SRCROOT)/libs/cpp-netlib-0.11.0-final",
+					"$(SRCROOT)/libs/yara/include",
 					/usr/local/Cellar/boost/1.55.0_1/include,
 					/Users/mike/cef/llvm/include,
 					"/Users/mike//cef/cfe-3.5.0.src/include",
-					"$(SRCROOT)/libs/yara/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;

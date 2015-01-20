@@ -25,6 +25,11 @@ function load_js_file(filename){
     }
 }
 
+window.path_to_url = function(plugin, path) {
+    return plugin + "://" + path;
+};
+window.call_method = "GET";
+
 window.novo = angular.module('novodb', ['ui.bootstrap', 'datatables']);
 
 novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, $filterProvider, $provide) {
@@ -39,6 +44,14 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 	function($scope, $http, $compile, $timeout) {
         window.utils = create_utils($http);
         
+        $scope.connect_agent = function(con_agent_host, con_agent_port) {
+            window.path_to_url = function(plugin, path) {
+                return "http://" + con_agent_host + ":" + con_agent_port + "/" + path + "?callback=JSON_CALLBACK";
+            };
+
+            window.call_method = "JSONP";
+        };
+
         $scope.new_current_session = function() {
             $scope.session = create_ndb_session($http);
             window.session = $scope.session;
