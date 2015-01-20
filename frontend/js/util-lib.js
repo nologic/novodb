@@ -1,3 +1,9 @@
+//var url_prefix = "util://";
+//var call_method = "GET";
+
+var url_prefix = "http://localhost:4070/";
+var call_method = "JSONP";
+
 function toHexString(decNum) {
 	return parseInt(decNum).toString(16);
 }
@@ -34,13 +40,29 @@ function create_utils($http) {
         }
     }
 
-    function url_get_passthrough(url, params, f_success, f_fail) {
-        return $http.get(url, {
-            method: "GET",
+    function url_get_passthrough(path, params, f_success, f_fail) {
+        var url = undefined;
+
+        if(call_method == "JSONP") {
+            url = url_prefix + "util/" + path + "?callback=JSON_CALLBACK";
+        } else {
+            url = url_prefix + url;
+        }
+
+        return $http({
+            url: url,
+            method: call_method,
             params: params
         }).then(function (resp) {
             if (f_success == undefined) {
                 f_success = default_success;
+            }
+            
+            if(call_method == "JSONP") {
+                // mask it to make it look like we did a regular GET.
+                resp.status = resp.data.code;
+                resp.statusText = resp.msg;
+                resp.data = resp.data.output;
             }
 
             return f_success(resp);
@@ -49,12 +71,18 @@ function create_utils($http) {
                 f_fail = default_err;
             }
 
+            if(call_method == "JSONP") {
+                resp.status = resp.data.code;
+                resp.statusText = resp.msg;
+                resp.data = resp.data.output;
+            }
+
             return f_fail(resp);
         });
     }
 
     Utils.prototype.ls = function(path, startwith, maxcount, f_success, f_fail) {
-    	return url_get_passthrough("util://ls", {
+    	return url_get_passthrough("ls", {
             path: path,
             startwith: startwith,
             maxcount: maxcount
@@ -62,7 +90,7 @@ function create_utils($http) {
     };
 
     Utils.prototype.proc_list = function(f_success, f_fail) {
-    	return url_get_passthrough("util://list/proc", {}, extract_data(f_success), f_fail);
+    	return url_get_passthrough("list/proc", {}, extract_data(f_success), f_fail);
     };
     // // end backend functions.
 

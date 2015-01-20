@@ -1,3 +1,10 @@
+// temp parameters
+//var url_prefix = "dbg-lldb://";
+//var call_method = "GET";
+
+var url_prefix = "http://localhost:4070/";
+var call_method = "JSONP";
+
 function create_ndb_session($http) {
     var mem_separator = ' ';
 
@@ -43,19 +50,41 @@ function create_ndb_session($http) {
         }
     }
 
-    function url_get_passthrough(url, params, f_success, f_fail) {
-        return $http.get(url, {
-            method: "GET",
+    function url_get_passthrough(path, params, f_success, f_fail) {
+        var url = undefined;
+
+        if(call_method == "JSONP") {
+            url = url_prefix + "dbg-lldb/" + path + "?callback=JSON_CALLBACK";
+        } else {
+            url = url_prefix + url;
+        }
+
+        return $http({
+            url: url,
+            method: call_method,
             params: params
         }).then(function (resp) {
             if (f_success == undefined) {
                 f_success = default_success;
+            }
+            
+            if(call_method == "JSONP") {
+                // mask it to make it look like we did a regular GET.
+                resp.status = resp.data.code;
+                resp.statusText = resp.msg;
+                resp.data = resp.data.output;
             }
 
             return f_success(resp);
         }, function (resp) {
             if (f_fail == undefined) {
                 f_fail = default_err;
+            }
+
+            if(call_method == "JSONP") {
+                resp.status = resp.data.code;
+                resp.statusText = resp.msg;
+                resp.data = resp.data.output;
             }
 
             return f_fail(resp);
@@ -90,7 +119,7 @@ function create_ndb_session($http) {
 
     // backend function
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://create/target/attach", {
+        url_get_passthrough("create/target/attach", {
             pid: proc_pid
         }, extract_data([function(sdata) {
             attachInfo = sdata;
@@ -104,7 +133,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.connect = function(url, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://create/target/remote", {
+        url_get_passthrough("create/target/remote", {
             url: url
         }, extract_data([function(sdata) {
             attachInfo = sdata;
@@ -118,7 +147,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.load = function (path, args, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://create/target/exe", {
+        url_get_passthrough("create/target/exe", {
             path: path
         }, extract_data([function(sdata) {
             session_id = sdata.session;
@@ -126,13 +155,13 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.launch = function (f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://launch", {
+        url_get_passthrough("launch", {
             session: session_id
         }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getThreads = function (f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://list/threads", {
+        url_get_passthrough("list/threads", {
             session: session_id
         }, extract_data([function(data) {
             selectedThread = data.threads.filter(function(th) {
@@ -142,27 +171,27 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.getModules = function (f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://list/modules", {
+        url_get_passthrough("list/modules", {
             session: session_id
         }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getFrames = function (thread_ind, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://list/frames", {
+        url_get_passthrough("list/frames", {
             session: session_id,
             thread: thread_ind
         }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.getSymbols = function (module, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://list/symbols", {
+        url_get_passthrough("list/symbols", {
             session: session_id,
             module: module
         }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.searchSymbols = function (module, start_ind, count, max_matches, regex, f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://search/symbols", {
+        url_get_passthrough("search/symbols", {
             session: session_id,
             module: module,
             index: start_ind,
@@ -173,7 +202,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.getProcState = function (f_success, f_fail) {
-        url_get_passthrough("dbg-lldb://proc/state", {
+        url_get_passthrough("proc/state", {
             session: session_id
         }, extract_data([function(data) {
             procState = data;
@@ -184,12 +213,12 @@ function create_ndb_session($http) {
     // type = {"symbol", "address"}
     NdbSession.prototype.addBreakpoint = function(point, type, f_success, f_fail) {
         if(type == "symbol") {
-            url_get_passthrough("dbg-lldb://add/breakpoint", {
+            url_get_passthrough("add/breakpoint", {
                 session: session_id,
                 symbol: point
             }, extract_data(f_success), f_fail);
         } else if(type == "address") {
-            url_get_passthrough("dbg-lldb://add/breakpoint", {
+            url_get_passthrough("add/breakpoint", {
                 session: session_id,
                 address: point
             }, extract_data(f_success), f_fail);
@@ -201,7 +230,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.readInstructions = function(address, count, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://read/instructions", {
+        return url_get_passthrough("read/instructions", {
             session: session_id,
             address: address,
             count: count
@@ -209,7 +238,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.readMemory = function(address, count, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://read/memory", {
+        return url_get_passthrough("read/memory", {
             session: session_id,
             address: address,
             count: count,
@@ -218,7 +247,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.yaraSearch = function(address, length, pattern, max_matches, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://search/memory/yara", {
+        return url_get_passthrough("search/memory/yara", {
             session: session_id,
             address: address,
             length: length,
@@ -228,7 +257,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.yaraSearchResults = function(path, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://" + path, {
+        return url_get_passthrough(path, {
         }, extract_data(f_success), f_fail);
     };
 
@@ -237,7 +266,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.writeByte = function(address, byte, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://write/byte", {
+        return url_get_passthrough("write/byte", {
             session: session_id,
             address: address,
             'byte': byte
@@ -245,7 +274,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.readRegisters = function(frame, thread, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://list/registers", {
+        return url_get_passthrough("list/registers", {
             session: session_id,
             frame: frame,
             thread: thread
@@ -257,7 +286,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.listRegions = function(f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://list/regions", {
+        return url_get_passthrough("list/regions", {
             session: session_id
         }, extract_data([function(data) {
             mem_maps = data.regions;
@@ -274,7 +303,7 @@ function create_ndb_session($http) {
             tid = selectedThread.tid;
         }
 
-        return url_get_passthrough("dbg-lldb://cmd/step", {
+        return url_get_passthrough("cmd/step", {
             session: session_id,
             tid: tid
         }, extract_data([function(data) {
@@ -284,7 +313,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.continue_proc = function(f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://cmd/continue", {
+        return url_get_passthrough("cmd/continue", {
             session: session_id
         }, extract_data([function(data){
             // returned means we've stopped.
@@ -293,19 +322,19 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.stop_proc = function(f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://cmd/stop", {
+        return url_get_passthrough("cmd/stop", {
             session: session_id
         }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.detach = function(f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://cmd/detach", {
+        return url_get_passthrough("cmd/detach", {
             session: session_id
         }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.lldbCmd = function(cmd, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://cmd/lldb", {
+        return url_get_passthrough("cmd/lldb", {
             session: session_id,
             cmd: cmd
         }, extract_data([function(data){
@@ -315,7 +344,7 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.lldbCmdNoStep = function(cmd, f_success, f_fail) {
-        return url_get_passthrough("dbg-lldb://cmd/lldb", {
+        return url_get_passthrough("cmd/lldb", {
             session: session_id,
             cmd: cmd
         }, extract_data(f_success), f_fail);

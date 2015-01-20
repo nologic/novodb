@@ -41,6 +41,16 @@ namespace novo {
     
         return 0;
     }
+    
+    /*class UnknownHandler: public CivetHandler {
+    public:
+
+        bool handleGet(CivetServer *server, struct mg_connection *conn) {
+            mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: application/javascript\r\n\r\n");
+            
+            return true;
+        }
+    };*/
 
     class ModuleHandler: public CivetHandler {
     public:
@@ -65,68 +75,84 @@ namespace novo {
             ActionRequest a_req(url);
             ActionResponse response(ActionResponse::no_error());
             boost::property_tree::ptree output;
+            std::string callback;
             
-            try {
+            if(a_req.contains_key("callback")) {
+                callback.assign(a_req.at("callback"));
                 
-                auto handler_pair = router.find_handler(a_req);
-                auto handler = std::get<0>(handler_pair);
-                auto type = std::get<1>(handler_pair);
-                
-                auto proc_func = [this, &response, &output, handler, a_req]() {
-                    response = handler(a_req, output);
+                try {
                     
-                    if(response.do_remove()) {
-                        router.unregister_path(a_req.get_path());
+                    auto handler_pair = router.find_handler(a_req);
+                    auto handler = std::get<0>(handler_pair);
+                    auto type = std::get<1>(handler_pair);
+                    
+                    auto proc_func = [this, &response, &output, handler, a_req]() {
+                        response = handler(a_req, output);
+                        
+                        if(response.do_remove()) {
+                            router.unregister_path(a_req.get_path());
+                        }
+                    };
+                    
+                    auto chunked_proc = [this, &response, handler, a_req, &output]() {
+                        response = handler(a_req, output);
+                        
+                        output.put("output_path", response.get_path().toString());
+                        this->router.register_path(response.get_path(), {}, response.get_output_handler());
+                        
+                        auto proc = response.get_processing_handler();
+                        
+                        // start the processing.
+                        std::thread(proc).detach();
+                    };
+                    
+                    switch(type) {
+                        case PLAIN_NONBLOCK:
+                        case PLAIN_BLOCK:
+                            proc_func();
+                            break;
+                        
+                        case CHUNKED_NONBLOCKING:
+                            chunked_proc();
+                            break;
                     }
-                };
-                
-                auto chunked_proc = [this, &response, handler, a_req, &output]() {
-                    response = handler(a_req, output);
                     
-                    output.put("output_path", response.get_path().toString());
-                    this->router.register_path(response.get_path(), {}, response.get_output_handler());
+                } catch(RequestConstraint::Valid& not_valid){
+                    // request is not valid, this should not happen unless of
+                    // a programmer fail therefore accepting performance overhead
                     
-                    auto proc = response.get_processing_handler();
-                    
-                    // start the processing.
-                    std::thread(proc).detach();
-                };
-                
-                switch(type) {
-                    case PLAIN_NONBLOCK:
-                    case PLAIN_BLOCK:
-                        proc_func();
-                        break;
-                    
-                    case CHUNKED_NONBLOCKING:
-                        chunked_proc();
-                        break;
+                    response = ActionResponse::error(not_valid);
+                } catch (bool not_found) {
+                    // 'not_found' should only be false but shouldn't happen unless a typo occurs.
+                    response = ActionResponse::error(404, "Handler not found");
                 }
                 
-            } catch(RequestConstraint::Valid& not_valid){
-                // request is not valid, this should not happen unless of
-                // a programmer fail therefore accepting performance overhead
-                
-                response = ActionResponse::error(not_valid);
-            } catch (bool not_found) {
-                // 'not_found' should only be false but shouldn't happen unless a typo occurs.
-                response = ActionResponse::error(404, "Handler not found");
+                BOOST_LOG_TRIVIAL(trace) << "Request Processed (" << req_info->uri << ")";
+            } else {
+                response = ActionResponse::error("'callback' parameter missing");
             }
-            
-            BOOST_LOG_TRIVIAL(trace) << "Request Processed (" << req_info->uri << ")";
             
             mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: application/javascript\r\n\r\n");
 
-            if(response.get_status() == 200) {
-                std::stringstream ss;
-                boost::property_tree::write_json(ss, output, false);
+            boost::property_tree::ptree output_wrap;
             
-                std::string out_data = ss.str();
-                output.clear();
-                
+            output_wrap.put("code", response.get_status());
+            output_wrap.put("msg", response.get_message());
+            
+            if(output.size() > 0) {
+                output_wrap.add_child("output", output);
+            }
+            
+            std::stringstream ss;
+            boost::property_tree::write_json(ss, output_wrap, false);
+            
+            std::string out_data = ss.str();
+            output.clear();
+            
+            if(callback.empty()) {
                 mg_printf(conn, "%s", out_data.c_str());
             } else {
-                mg_printf(conn, "{ \"code\": %d, \"msg\": \"%s\"}", response.get_status(), response.get_message().c_str());
+                mg_printf(conn, "%s(%s);", callback.c_str(), out_data.c_str());
             }
             
             return true;
