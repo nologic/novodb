@@ -361,7 +361,7 @@
 		273BD50C1A6CB4690088D05A /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = novodblib_src/Darwin/platform_support.cpp; sourceTree = SOURCE_ROOT; };
 		273BD5131A6CB90C0088D05A /* Novodbweb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Novodbweb; sourceTree = BUILT_PRODUCTS_DIR; };
 		273BD51A1A6CBB100088D05A /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Module.cpp; path = novodbweb_src/Independent/Module.cpp; sourceTree = SOURCE_ROOT; };
-		273BD51C1A6CBB310088D05A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = novodbweb_src/Mac/main.cpp; sourceTree = SOURCE_ROOT; };
+		273BD51C1A6CBB310088D05A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = novodbweb_src/Darwin/main.cpp; sourceTree = SOURCE_ROOT; };
 		273BD5211A6CBD6D0088D05A /* main_web.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main_web.cpp; path = novodbweb_src/Independent/main_web.cpp; sourceTree = SOURCE_ROOT; };
 		273BD5221A6CBD6D0088D05A /* main_web.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main_web.h; path = novodbweb_src/Independent/main_web.h; sourceTree = SOURCE_ROOT; };
 		273BD52D1A6CC4680088D05A /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
@@ -2127,8 +2127,6 @@
 					"$(SRCROOT)/libs/cpp-netlib-0.11.0-final",
 					"$(SRCROOT)/libs/yara/include",
 					/usr/local/Cellar/boost/1.55.0_1/include,
-					/Users/mike/cef/llvm/include,
-					"/Users/mike//cef/cfe-3.5.0.src/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2170,8 +2168,6 @@
 					"$(SRCROOT)/libs/cpp-netlib-0.11.0-final",
 					"$(SRCROOT)/libs/yara/include",
 					/usr/local/Cellar/boost/1.55.0_1/include,
-					/Users/mike/cef/llvm/include,
-					"/Users/mike//cef/cfe-3.5.0.src/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2370,6 +2366,7 @@
 				273BD5191A6CB90C0088D05A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		275B18131A6CA6CC00D54207 /* Build configuration list for PBXNativeTarget "Novolib" */ = {
 			isa = XCConfigurationList;
