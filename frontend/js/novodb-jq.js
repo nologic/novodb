@@ -128,6 +128,12 @@ $( document ).ready(function() {
     }
 
     angular.element('#dbg').scope().jQueryLoaded();
+
+    console.info(window.cef_embed);
+
+    if(window.cef_embed == undefined) {
+        $('#connect_screen').modal('show');
+    }
 });
 
 function getStackTrace() {

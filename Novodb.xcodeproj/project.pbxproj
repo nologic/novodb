@@ -46,6 +46,8 @@
 		273BD52E1A6CC4680088D05A /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 273BD52D1A6CC4680088D05A /* libSystem.dylib */; };
 		273BD5301A6CC4730088D05A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 273BD52F1A6CC4730088D05A /* libcrypto.dylib */; };
 		273BD5331A6CCA420088D05A /* libcivetweb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 273BD5321A6CCA420088D05A /* libcivetweb.a */; };
+		273BD5341A734AB00088D05A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 273BD52F1A6CC4730088D05A /* libcrypto.dylib */; };
+		273BD5351A734AB80088D05A /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 273BD52D1A6CC4680088D05A /* libSystem.dylib */; };
 		275182EB1A5A30BD00D44336 /* cef_atomicops_x86_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 275182241A5A30BD00D44336 /* cef_atomicops_x86_gcc.cc */; };
 		275182EC1A5A30BD00D44336 /* cef_bind_helpers.cc in Sources */ = {isa = PBXBuildFile; fileRef = 275182251A5A30BD00D44336 /* cef_bind_helpers.cc */; };
 		275182ED1A5A30BD00D44336 /* cef_callback_helpers.cc in Sources */ = {isa = PBXBuildFile; fileRef = 275182261A5A30BD00D44336 /* cef_callback_helpers.cc */; };
@@ -342,7 +344,7 @@
 		273823E119C4E64400559F61 /* libcppnetlib-uri.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcppnetlib-uri.a"; path = "libs/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a"; sourceTree = "<group>"; };
 		2739889A19E448A80010C12F /* libboost_filesystem-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_filesystem-mt.a"; path = "../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_filesystem-mt.a"; sourceTree = "<group>"; };
 		273988A019EB57E00010C12F /* UnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
-		273BD4ED1A6CB3E80088D05A /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Module.h; path = novolib_src/Independent/Module.h; sourceTree = SOURCE_ROOT; };
+		273BD4ED1A6CB3E80088D05A /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Module.h; path = novodblib_src/Independent/Module.h; sourceTree = SOURCE_ROOT; };
 		273BD4EF1A6CB3E80088D05A /* enum_to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = enum_to_string.cpp; sourceTree = "<group>"; };
 		273BD4F01A6CB3E80088D05A /* enum_to_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enum_to_string.h; sourceTree = "<group>"; };
 		273BD4F11A6CB3E80088D05A /* json_serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = json_serialize.cpp; sourceTree = "<group>"; };
@@ -352,11 +354,11 @@
 		273BD4F51A6CB3E80088D05A /* lldb_module_commands1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lldb_module_commands1.cpp; sourceTree = "<group>"; };
 		273BD4F61A6CB3E80088D05A /* lldb_module_memops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lldb_module_memops.cpp; sourceTree = "<group>"; };
 		273BD4F71A6CB3E80088D05A /* util_module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util_module.cpp; sourceTree = "<group>"; };
-		273BD4F81A6CB3E80088D05A /* platform_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform_support.h; path = novolib_src/Independent/platform_support.h; sourceTree = SOURCE_ROOT; };
-		273BD4F91A6CB3E80088D05A /* request_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = request_router.cpp; path = novolib_src/Independent/request_router.cpp; sourceTree = SOURCE_ROOT; };
-		273BD4FA1A6CB3E80088D05A /* request_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = request_router.h; path = novolib_src/Independent/request_router.h; sourceTree = SOURCE_ROOT; };
-		273BD4FB1A6CB3E80088D05A /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = novolib_src/Independent/util.h; sourceTree = SOURCE_ROOT; };
-		273BD50C1A6CB4690088D05A /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = novolib_src/Mac/platform_support.cpp; sourceTree = SOURCE_ROOT; };
+		273BD4F81A6CB3E80088D05A /* platform_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = platform_support.h; path = novodblib_src/Independent/platform_support.h; sourceTree = SOURCE_ROOT; };
+		273BD4F91A6CB3E80088D05A /* request_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = request_router.cpp; path = novodblib_src/Independent/request_router.cpp; sourceTree = SOURCE_ROOT; };
+		273BD4FA1A6CB3E80088D05A /* request_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = request_router.h; path = novodblib_src/Independent/request_router.h; sourceTree = SOURCE_ROOT; };
+		273BD4FB1A6CB3E80088D05A /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = novodblib_src/Independent/util.h; sourceTree = SOURCE_ROOT; };
+		273BD50C1A6CB4690088D05A /* platform_support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = platform_support.cpp; path = novodblib_src/Mac/platform_support.cpp; sourceTree = SOURCE_ROOT; };
 		273BD5131A6CB90C0088D05A /* Novodbweb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Novodbweb; sourceTree = BUILT_PRODUCTS_DIR; };
 		273BD51A1A6CBB100088D05A /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Module.cpp; path = novodbweb_src/Independent/Module.cpp; sourceTree = SOURCE_ROOT; };
 		273BD51C1A6CBB310088D05A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = novodbweb_src/Mac/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -571,7 +573,7 @@
 		275B180B1A6CA6CB00D54207 /* libNovolib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNovolib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		278421A019DCE8B500592CA8 /* frontend */ = {isa = PBXFileReference; lastKnownFileType = folder; path = frontend; sourceTree = "<group>"; };
 		27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Novodb Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		27936AAE19B9F3E400EC4B6F /* Novodb Helper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Novodb Helper-Info.plist"; path = "/Users/mike/GitHub/Novodb/src/Mac/Resources/Novodb Helper-Info.plist"; sourceTree = "<absolute>"; };
+		27936AAE19B9F3E400EC4B6F /* Novodb Helper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Novodb Helper-Info.plist"; path = "/Users/mike/GitHub/Novodb/novodbgui_src/Mac/Resources/Novodb Helper-Info.plist"; sourceTree = "<absolute>"; };
 		27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "novodb-help.cpp"; path = "Mac/novodb-help.cpp"; sourceTree = "<group>"; };
 		27DD9DCB1A3390E900227D0B /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Module.cpp; path = Independent/Module.cpp; sourceTree = "<group>"; };
 		27DD9DDD1A35341F00227D0B /* libyara.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyara.a; path = libs/yara/libyara.a; sourceTree = "<group>"; };
@@ -587,9 +589,9 @@
 		E78D96A01638BA0B00DE580E /* Novodb-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Novodb-Prefix.pch"; path = "Mac/Novodb-Prefix.pch"; sourceTree = "<group>"; };
 		E78D96A31638BA0B00DE580E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = Mac/main.mm; sourceTree = "<group>"; };
 		E78D96A71638BA3200DE580E /* Novodb-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Novodb-Info.plist"; path = "Mac/Resources/Novodb-Info.plist"; sourceTree = "<group>"; };
-		E78D96B41638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = src/Mac/Resources/en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		E78D96B61638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = src/Mac/Resources/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		E78D96B81638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = src/Mac/Resources/en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		E78D96B41638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = novodbgui_src/Mac/Resources/en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E78D96B61638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = novodbgui_src/Mac/Resources/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E78D96B81638BA4B00DE580E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = novodbgui_src/Mac/Resources/en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -657,6 +659,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				273BD5351A734AB80088D05A /* libSystem.dylib in Frameworks */,
+				273BD5341A734AB00088D05A /* libcrypto.dylib in Frameworks */,
 				273BD50E1A6CB8020088D05A /* LLDB.framework in Frameworks */,
 				275B18261A6CA8E100D54207 /* libNovolib.a in Frameworks */,
 				27DD9DDE1A35341F00227D0B /* libyara.a in Frameworks */,
@@ -688,7 +692,7 @@
 				273BD4F71A6CB3E80088D05A /* util_module.cpp */,
 			);
 			name = modules;
-			path = novolib_src/Independent/modules;
+			path = novodblib_src/Independent/modules;
 			sourceTree = SOURCE_ROOT;
 		};
 		273BD5141A6CB90C0088D05A /* Novodbweb */ = {
@@ -960,7 +964,7 @@
 				27545F911A3E6A7000A894C4 /* action_tests.cpp */,
 			);
 			name = unit_tests;
-			path = src/unit_tests;
+			path = novodbgui_src/unit_tests;
 			sourceTree = "<group>";
 		};
 		E78D965C1638A18900DE580E = {
@@ -1033,7 +1037,7 @@
 				E78D96721638A18900DE580E /* Supporting Files */,
 			);
 			name = Novoui;
-			path = src;
+			path = novodbgui_src;
 			sourceTree = "<group>";
 		};
 		E78D96721638A18900DE580E /* Supporting Files */ = {
@@ -2186,10 +2190,10 @@
 					"$(PROJECT_DIR)/src",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "src/Mac/Novodb-Prefix.pch";
+				GCC_PREFIX_HEADER = "novodbgui_src/Mac/Novodb-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/libs/cef_current";
-				INFOPLIST_FILE = "src/Mac/Resources/Novodb Helper-Info.plist";
+				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb Helper-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				PRODUCT_NAME = "Novodb Helper";
@@ -2209,10 +2213,10 @@
 					"$(PROJECT_DIR)/src",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "src/Mac/Novodb-Prefix.pch";
+				GCC_PREFIX_HEADER = "novodbgui_src/Mac/Novodb-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/libs/cef_current";
-				INFOPLIST_FILE = "src/Mac/Resources/Novodb Helper-Info.plist";
+				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb Helper-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				PRODUCT_NAME = "Novodb Helper";
@@ -2283,13 +2287,13 @@
 					"$(PROJECT_DIR)/libs",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "src/Mac/Novodb-Prefix.pch";
+				GCC_PREFIX_HEADER = "novodbgui_src/Mac/Novodb-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/libs/cef_current",
 					/usr/local/Cellar/boost/1.55.0_1/include,
 				);
-				INFOPLIST_FILE = "src/Mac/Resources/Novodb-Info.plist";
+				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/libs/boost-1.55.0_1",
@@ -2317,13 +2321,13 @@
 					"$(PROJECT_DIR)/libs",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "src/Mac/Novodb-Prefix.pch";
+				GCC_PREFIX_HEADER = "novodbgui_src/Mac/Novodb-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/libs/cef_current",
 					/usr/local/Cellar/boost/1.55.0_1/include,
 				);
-				INFOPLIST_FILE = "src/Mac/Resources/Novodb-Info.plist";
+				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/libs/boost-1.55.0_1",

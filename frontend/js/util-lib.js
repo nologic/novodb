@@ -52,6 +52,7 @@ function create_utils($http) {
             }
 
             if(call_method == "JSONP" && resp.status != 200) {
+                // this is actually a non-success message.
                 if (f_fail == undefined) {
                     f_fail = default_err;
                 }

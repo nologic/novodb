@@ -86,6 +86,8 @@ std::string pre_process_url(const std::string& url) {
     stringstream js_files;
     stringstream css_files;
     
+    js_files << "<script type=\"text/javascript\">window.cef_embed = true;</script>" << endl;
+    
     for_each_plugin(path(base_path), [&js_files, &css_files] (std::string& name, boost::property_tree::ptree& plugin_def) {
         boost::property_tree::ptree& jstree = plugin_def.get_child("js_files");
         boost::property_tree::ptree& csstree = plugin_def.get_child("css_files");

@@ -1,5 +1,7 @@
 # Novodb - Deep inspection beyond debugging #
 
+Novodb is a platform for building inspection user interfaces.
+
 A new way to debug software. A plugin architecture is designed to support many use cases by providing customization and extensibility.
 
 ## Use cases ##
