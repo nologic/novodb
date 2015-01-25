@@ -46,10 +46,15 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         
         $scope.connect_agent = function(con_agent_host, con_agent_port) {
             window.path_to_url = function(plugin, path) {
-                return "http://" + con_agent_host + ":" + con_agent_port + "/" + path + "?callback=JSON_CALLBACK";
+                return "http://" + con_agent_host + ":" + con_agent_port + "/" + plugin + 
+                       "/" + path + "?callback=JSON_CALLBACK";
             };
 
             window.call_method = "JSONP";
+
+            // start a session
+            $scope.new_current_session();
+            $scope.instantiatePlugin('Loader');
         };
 
         $scope.new_current_session = function() {
@@ -111,8 +116,10 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
             });
         };
 
-        // start a session
-        $scope.new_current_session();
+        if(window.cef_embed != undefined) {
+            // start a session
+            $scope.new_current_session();
+        }
 
         register_command({
             cmd: "open",
@@ -136,7 +143,9 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
         });
 
         $scope.jQueryLoaded = function() {
-            $scope.instantiatePlugin('Loader');
+            if(window.cef_embed != undefined) {
+                $scope.instantiatePlugin('Loader');
+            }
         }
 	}
 ]).directive("ndbPluginsContainer", function($compile) {

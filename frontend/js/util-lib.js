@@ -66,7 +66,7 @@ function create_utils($http) {
                 f_fail = default_err;
             }
 
-            if(call_method == "JSONP" && 'data' in resp) {
+            if(call_method == "JSONP" && 'data' in resp && resp.data != undefined) {
                 resp.status = resp.data.code;
                 resp.statusText = resp.msg;
                 resp.data = resp.data.output;
