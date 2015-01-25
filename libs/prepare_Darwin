@@ -7,7 +7,7 @@ cd $1 && [ -e prepare_Darwin ] && [ ! -e prepared ] && \
 ln -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
 
 cd src/civetweb && \
-make lib && \
+make lib WITH_CPP=1 && \
 cd ../../ && \
 ln -s src/civetweb/libcivetweb.a libcivetweb.a && \
 

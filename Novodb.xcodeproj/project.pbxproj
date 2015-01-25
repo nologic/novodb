@@ -257,6 +257,7 @@
 		27D70DA11A74A6260046B684 /* libcppnetlib-uri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D70D9B1A74A3320046B684 /* libcppnetlib-uri.a */; };
 		27DD9DCC1A3390E900227D0B /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCB1A3390E900227D0B /* Module.cpp */; };
 		27DD9DCD1A3390E900227D0B /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCB1A3390E900227D0B /* Module.cpp */; };
+		27E2C6321A74ACC500A549A3 /* libcivetweb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D70D9D1A74A34D0046B684 /* libcivetweb.a */; };
 		27E6B1BE19EB6A8600681256 /* simple_app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501C19BB19F700784C39 /* simple_app.cpp */; };
 		27E6B1C019EB6A8600681256 /* simple_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2757501E19BB19F700784C39 /* simple_handler.cpp */; };
 		27E6B1C219EB6A8600681256 /* dbg_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 271775AE19C0B30100051986 /* dbg_handler.cpp */; };
@@ -653,6 +654,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27E2C6321A74ACC500A549A3 /* libcivetweb.a in Frameworks */,
 				27D70D9C1A74A3320046B684 /* libcppnetlib-uri.a in Frameworks */,
 				27D70D9A1A74A3150046B684 /* libyara.a in Frameworks */,
 				273BD5351A734AB80088D05A /* libSystem.dylib in Frameworks */,
@@ -2293,7 +2295,10 @@
 				);
 				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/libs";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/libs",
+					"$(PROJECT_DIR)/libs/src/civetweb",
+				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PRODUCT_NAME = Novodb;
@@ -2323,7 +2328,10 @@
 				);
 				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/libs";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/libs",
+					"$(PROJECT_DIR)/libs/src/civetweb",
+				);
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PRODUCT_NAME = Novodb;
