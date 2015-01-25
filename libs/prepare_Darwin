@@ -4,8 +4,6 @@ set -o xtrace
 # go to libs
 cd $1 && [ -e prepare_Darwin ] && [ ! -e prepared ] && \
 
-ln -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
-
 cd src/civetweb && \
 make lib WITH_CPP=1 && \
 cd ../../ && \
@@ -15,20 +13,24 @@ cmake CMakeLists.txt && \
 make cppnetlib-uri && \
 cd ../../ && \
 
-cd src/yara && \
+cd src && \
+tar xvfz yara-3.2.0.tar.gz && \
+cd yara-3.2.0 && \
+./bootstrap.sh && \
 ./configure && \
 make && \
 cd ../../ && \
 
+ln -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
 ln -s src/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a libcppnetlib-uri.a && \
 ln -s src/civetweb/libcivetweb.a libcivetweb.a && \
-ln -s src/yara/libyara/.libs/libyara.a libyara.a && \
+ln -s src/yara-3.2.0/libyara/.libs/libyara.a libyara.a && \
 
 ln -s src/gtest.framework gtest.framework && \
 ln -s src/LLDB.framework LLDB.framework && \
 
 ln -s LLDB.framework/Headers lldb_include && \
-ln -s src/yara/libyara/include yara_include && \
+ln -s src/yara-3.2.0/libyara/include yara_include && \
 ln -s src/cpp-netlib-0.11.0-final/ netlib_include && \
 ln -s src/civetweb/include civetweb_include && \
 
