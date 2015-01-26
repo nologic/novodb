@@ -4,7 +4,11 @@ project (Novodb)
 message(STATUS OS:${CMAKE_SYSTEM_NAME})
 message(STATUS PROCESSOR:${CMAKE_SYSTEM_PROCESSOR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=gnu++11 -stdlib=libc++")
+IF(APPLE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=gnu++11 -stdlib=libc++")
+ELSE(APPLE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=gnu++11")
+ENDIF (APPLE)
 
 add_subdirectory(novodblib_src)
 add_subdirectory(novodbweb_src)

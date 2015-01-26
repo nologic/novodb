@@ -10,7 +10,9 @@
 
 #include "lldb_module_commands.h"
 
-#include "yara.h"
+extern "C" {
+        #include "yara.h"
+}
 
 namespace novo {
     

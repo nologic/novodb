@@ -3,7 +3,7 @@ FILE(GLOB NDB_WEB_CPP Independent/*.cpp
                       ${CMAKE_SYSTEM_NAME}/*.cpp)
 
 set(Boost_USE_STATIC_LIBS ON)
-FIND_PACKAGE(Boost COMPONENTS filesystem-mt log-mt system-mt thread-mt REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS filesystem log system thread REQUIRED)
 
 INCLUDE_DIRECTORIES(../libs/civetweb_include
 					../novodblib_src/Independent
@@ -14,7 +14,7 @@ ADD_EXECUTABLE(novodbweb ${NDB_WEB_CPP})
 
 FIND_LIBRARY(NETLIB cppnetlib-uri PATHS ../libs NO_DEFAULT_PATH)
 FIND_LIBRARY(CIVETLIB NAMES civetweb PATHS ../libs NO_DEFAULT_PATH)
-FIND_LIBRARY(NOVOLIB NAMES novolib PATHS ../novodblib_src NO_DEFAULT_PATH)
+# FIND_LIBRARY(NOVOLIB NAMES novolib PATHS ../novodblib_src NO_DEFAULT_PATH)
 FIND_LIBRARY(YARA_LIBRARY NAMES yara PATHS ../libs NO_DEFAULT_PATH)
 
 IF(APPLE)
@@ -33,7 +33,7 @@ ENDIF (APPLE)
 
 TARGET_LINK_LIBRARIES(novodbweb ${Boost_LIBRARIES})
 TARGET_LINK_LIBRARIES(novodbweb ${CIVETLIB})
-TARGET_LINK_LIBRARIES(novodbweb ${NOVOLIB})
+TARGET_LINK_LIBRARIES(novodbweb novolib)
 TARGET_LINK_LIBRARIES(novodbweb ${EXTRA_LIBS} )
 TARGET_LINK_LIBRARIES(novodbweb ${YARA_LIBRARY} )
 TARGET_LINK_LIBRARIES(novodbweb ${NETLIB} )
