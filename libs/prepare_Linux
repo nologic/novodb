@@ -16,9 +16,7 @@ cd ../../ && \
 cd src && \
 tar xvfz yara-3.2.0.tar.gz && \
 cd yara-3.2.0 && \
-./bootstrap.sh && \
-./configure && \
-make && \
+sh build.sh && \
 cd ../../ && \
 
 ln -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
@@ -38,4 +36,5 @@ touch prepared
 
 # echo "deb http://llvm.org/apt/wheezy/ llvm-toolchain-wheezy main"> /etc/apt/sources.list.d/llvm.list
 # apt-get update
-# apt-get install lldb-3.4 lldb-3.4-dev
+# apt-get install lldb-3.4 lldb-3.4-dev libclang-3.4-dev libc++-dev
+# sudo update-alternatives --config c++

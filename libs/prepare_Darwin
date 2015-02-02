@@ -21,17 +21,23 @@ cd yara-3.2.0 && \
 make && \
 cd ../../ && \
 
-ln -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
-ln -s src/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a libcppnetlib-uri.a && \
-ln -s src/civetweb/libcivetweb.a libcivetweb.a && \
-ln -s src/yara-3.2.0/libyara/.libs/libyara.a libyara.a && \
+ln -i -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
 
-ln -s src/gtest.framework gtest.framework && \
-ln -s src/LLDB.framework LLDB.framework && \
+ln -i -s src/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a libcppnetlib-uri.a && \
+ln -i -s src/civetweb/libcivetweb.a libcivetweb.a && \
+ln -i -s src/yara-3.2.0/libyara/.libs/libyara.a libyara.a && \
 
-ln -s LLDB.framework/Headers lldb_include && \
-ln -s src/yara-3.2.0/libyara/include yara_include && \
-ln -s src/cpp-netlib-0.11.0-final/ netlib_include && \
-ln -s src/civetweb/include civetweb_include && \
+ln -i -s /usr/local/lib/libboost_log-mt.a libboost_log-mt.a && \
+ln -i -s /usr/local/lib/libboost_filesystem-mt.a libboost_filesystem-mt.a && \
+ln -i -s /usr/local/lib/libboost_system-mt.a libboost_system-mt.a && \
+ln -i -s /usr/local/lib/libboost_thread-mt.a libboost_thread-mt.a && \
+
+ln -i -s src/gtest.framework gtest.framework && \
+ln -i -s src/LLDB.framework LLDB.framework && \
+
+ln -i -s src/lldb_headers lldb_include && \
+ln -i -s src/yara-3.2.0/libyara/include yara_include && \
+ln -i -s src/cpp-netlib-0.11.0-final/ netlib_include && \
+ln -i -s src/civetweb/include civetweb_include && \
 
 touch prepared
