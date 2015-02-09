@@ -1,0 +1,11 @@
+cef_current
+libcivetweb.a
+LLDB.framework
+prepared
+civetweb_include
+libcppnetlib-uri.a
+lldb_include
+yara_include
+gtest.framework
+libyara.a
+netlib_include

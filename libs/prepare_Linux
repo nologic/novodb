@@ -2,7 +2,7 @@
 set -o xtrace
 
 # go to libs
-cd $1 && [ -e prepare_Darwin ] && [ ! -e prepared ] && \
+cd $1 && [ -e prepare_Linux ] && [ ! -e prepared ] && \
 
 cd src/civetweb && \
 make lib WITH_CPP=1 && \
@@ -24,10 +24,6 @@ ln -s src/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a libcppnetl
 ln -s src/civetweb/libcivetweb.a libcivetweb.a && \
 ln -s src/yara-3.2.0/libyara/.libs/libyara.a libyara.a && \
 
-ln -s src/gtest.framework gtest.framework && \
-ln -s src/LLDB.framework LLDB.framework && \
-
-ln -s LLDB.framework/Headers lldb_include && \
 ln -s src/yara-3.2.0/libyara/include yara_include && \
 ln -s src/cpp-netlib-0.11.0-final/ netlib_include && \
 ln -s src/civetweb/include civetweb_include && \
