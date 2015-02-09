@@ -40,7 +40,6 @@
 	<script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.terminal-0.8.8.js"></script>
     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
-    <!--<script type="text/javascript" src="js/jquery.hotkeys.js"></script>-->
     <script type="text/javascript" src="js/angular.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/ui-bootstrap.js"></script>
@@ -56,9 +55,24 @@
     <script type="text/javascript" src="plugins/common.js"></script>
 
     <!-- insert plugins here -->
-    {{js_files}}
+<script type="text/javascript" src="plugins/Breakpoint/Breakpoint.js"></script>
+<script type="text/javascript" src="plugins/Insview/insview.js"></script>
+<script type="text/javascript" src="plugins/Lldbcmd/lldb_cmd.js"></script>
+<script type="text/javascript" src="plugins/Loader/loader.js"></script>
+<script type="text/javascript" src="plugins/Memsearch/memsearch.js"></script>
+<script type="text/javascript" src="plugins/Memview/memview.js"></script>
+<script type="text/javascript" src="plugins/Regview/Regview.js"></script>
+<script type="text/javascript" src="plugins/Symbolics/symbolics.js"></script>
+<script type="text/javascript" src="plugins/Watchcmd/watch_cmd.js"></script>
 
-    {{css_files}}
+
+    <link rel="stylesheet" href="plugins/Lldbcmd/lldb_cmd.css">
+<link rel="stylesheet" href="plugins/Loader/loader.css">
+<link rel="stylesheet" href="plugins/Memsearch/memsearch.css">
+<link rel="stylesheet" href="plugins/Memview/memview.css">
+<link rel="stylesheet" href="plugins/Symbolics/symbolics.css">
+<link rel="stylesheet" href="plugins/Watchcmd/watch_cmd.css">
+
     <!-- plugins done -->
 </head>
 

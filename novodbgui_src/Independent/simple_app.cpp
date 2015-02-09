@@ -81,7 +81,7 @@ std::string pre_process_url(const std::string& url) {
     }
     
     std::string base_path = url.substr(7);
-    std::string data = slurp(base_path + "/index.html");
+    std::string data = slurp(base_path + "/index-embed.html");
     
     stringstream js_files;
     stringstream css_files;
@@ -161,7 +161,7 @@ void SimpleApp::OnContextInitialized() {
     }
     
     if(append_file) {
-        url += "/frontend/index.html";
+        url += "/frontend/index-embed.html";
     }
 
     // start plugins
