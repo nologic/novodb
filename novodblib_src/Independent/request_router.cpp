@@ -75,17 +75,26 @@ std::tuple<path_handler, handler_type> RequestRouter::find_handler(const ActionR
     }
 }
 
-RequestPath make_path(const boost::network::uri::uri& url) {
-    using namespace boost::network::uri;
+RequestPath make_path(std::string url) {
     using namespace boost;
     using namespace std;
+
+    // remove [http]://
+    string::size_type prot_loc = url.find("://");
+    if(prot_loc != string::npos) {
+        url = url.substr(prot_loc + 3);
+    }
+    
+    // remove ? and beyond
+    string::size_type query_loc = url.find("?");
+    if(query_loc != string::npos) {
+        url = url.substr(0, query_loc);
+    }
     
     vector<string> path_vec;
-    string path(url.host());
-    path.append(url.path());
     
-    if(path.size() > 0) {
-        split(path_vec, path, is_any_of("/"), token_compress_on);
+    if(url.size() > 0) {
+        split(path_vec, url, is_any_of("/"), token_compress_on);
     }
     
     return RequestPath(path_vec);
@@ -94,22 +103,22 @@ RequestPath make_path(const boost::network::uri::uri& url) {
 // ActionRequest class
 
 ActionRequest::ActionRequest(std::string url_str, chunk_stage _stage) : stage(_stage) {
-    using namespace boost::network::uri;
     using namespace boost;
     using namespace std;
     
-    uri req_url(url_str);
-    string url_query(req_url.query());
+    this->path = make_path(url_str);
     
-    this->path = make_path(req_url);
+    vector<string> query_params;
+    string::size_type query_loc = url_str.find("?");
     
-    vector<uri::string_type> query_params;
-    if(url_query.size() > 0) {
+    if(query_loc != string::npos) {
+        string url_query(url_str.substr(query_loc + 1));
+        
         split(query_params, url_query, is_any_of("&"));
     }
     
     for_each(query_params.begin(), query_params.end(), [this](const string& param) {
-        vector<uri::string_type> param_parts;
+        vector<string> param_parts;
         split(param_parts, param, is_any_of("="));
         
         if(param_parts.size() > 1) {

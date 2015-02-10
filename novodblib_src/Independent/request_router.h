@@ -76,8 +76,6 @@ namespace novo {
 
     class RequestPath : public std::vector<std::string> {
     public:
-        //static RequestPath make_path(const boost::network::uri::uri& url);
-        
         RequestPath(const std::vector<std::string>& other_vec) : std::vector<std::string>(other_vec) {
             
         }

@@ -246,9 +246,9 @@
 		275750A419BB738D00784C39 /* Novodb Helper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */; };
 		275B18251A6CA82300D54207 /* LLDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2717759E19BBD79000051986 /* LLDB.framework */; };
 		275B18261A6CA8E100D54207 /* libNovolib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 275B180B1A6CA6CB00D54207 /* libNovolib.a */; };
+		2763ADDC1A8A6271000250A5 /* libcppnetlib-uri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2763ADDB1A8A6271000250A5 /* libcppnetlib-uri.a */; };
 		278421A119DCE8B500592CA8 /* frontend in Resources */ = {isa = PBXBuildFile; fileRef = 278421A019DCE8B500592CA8 /* frontend */; };
 		27936AB119BA3C7B00EC4B6F /* novodb-help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27936AAF19BA3C7B00EC4B6F /* novodb-help.cpp */; };
-		27D70D9C1A74A3320046B684 /* libcppnetlib-uri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D70D9B1A74A3320046B684 /* libcppnetlib-uri.a */; };
 		27D70D9F1A74A5620046B684 /* libcivetweb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D70D9D1A74A34D0046B684 /* libcivetweb.a */; };
 		27D70DA11A74A6260046B684 /* libcppnetlib-uri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D70D9B1A74A3320046B684 /* libcppnetlib-uri.a */; };
 		27DD9DCC1A3390E900227D0B /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DD9DCB1A3390E900227D0B /* Module.cpp */; };
@@ -568,6 +568,7 @@
 		2757502419BB1D4600784C39 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = Independent/util.h; sourceTree = "<group>"; };
 		2757509D19BB32A800784C39 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "libs/cef_current/Release/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
 		275B180B1A6CA6CB00D54207 /* libNovolib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNovolib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2763ADDB1A8A6271000250A5 /* libcppnetlib-uri.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcppnetlib-uri.a"; path = "libs/src/cpp-netlib-0.11.1-final/libs/network/src/libcppnetlib-uri.a"; sourceTree = "<group>"; };
 		278421A019DCE8B500592CA8 /* frontend */ = {isa = PBXFileReference; lastKnownFileType = folder; path = frontend; sourceTree = "<group>"; };
 		27936AAD19B9F3E400EC4B6F /* Novodb Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Novodb Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27936AAE19B9F3E400EC4B6F /* Novodb Helper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Novodb Helper-Info.plist"; path = "/Users/mike/GitHub/Novodb/novodbgui_src/Mac/Resources/Novodb Helper-Info.plist"; sourceTree = "<absolute>"; };
@@ -5608,10 +5609,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2763ADDC1A8A6271000250A5 /* libcppnetlib-uri.a in Frameworks */,
 				27E2DB971A7F1E3B00A549A3 /* libyara.a in Frameworks */,
 				27E2C6331A76F76E00A549A3 /* libboost_log-mt.a in Frameworks */,
 				27E2C6321A74ACC500A549A3 /* libcivetweb.a in Frameworks */,
-				27D70D9C1A74A3320046B684 /* libcppnetlib-uri.a in Frameworks */,
 				273BD5351A734AB80088D05A /* libSystem.dylib in Frameworks */,
 				273BD5341A734AB00088D05A /* libcrypto.dylib in Frameworks */,
 				273BD50E1A6CB8020088D05A /* LLDB.framework in Frameworks */,
@@ -14927,6 +14928,7 @@
 		E78D966A1638A18900DE580E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2763ADDB1A8A6271000250A5 /* libcppnetlib-uri.a */,
 				27E2DB941A76F9D100A549A3 /* libyara.a */,
 				27E2C6351A76F8E800A549A3 /* libs */,
 				27D70D9D1A74A34D0046B684 /* libcivetweb.a */,
@@ -16186,8 +16188,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/libs/src/yara/libyara/.libs",
-					"$(PROJECT_DIR)/libs/src/cpp-netlib-0.11.0-final/libs/network/src",
+					"$(PROJECT_DIR)/libs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -16233,8 +16234,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/libs/src/yara/libyara/.libs",
-					"$(PROJECT_DIR)/libs/src/cpp-netlib-0.11.0-final/libs/network/src",
+					"$(PROJECT_DIR)/libs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -16357,10 +16357,7 @@
 				);
 				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/libs",
-					"$(PROJECT_DIR)/libs/src/yara-3.2.0/libyara/.libs",
-				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/libs";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PRODUCT_NAME = Novodb;
@@ -16391,10 +16388,7 @@
 				);
 				INFOPLIST_FILE = "novodbgui_src/Mac/Resources/Novodb-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/libs",
-					"$(PROJECT_DIR)/libs/src/yara-3.2.0/libyara/.libs",
-				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/libs";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PRODUCT_NAME = Novodb;
