@@ -1,4 +1,6 @@
 # Build Novodblib
+# order of the libraries matters very much. If a symbol is not requested by the time
+# it is loaded by linker then it is thrown out.
 FILE(GLOB NDB_WEB_CPP Independent/*.cpp 
                       ${CMAKE_SYSTEM_NAME}/*.cpp)
 
@@ -18,9 +20,9 @@ FIND_LIBRARY(YARA_LIBRARY NAMES yara PATHS ../libs NO_DEFAULT_PATH)
 
 IF(APPLE)
 	# find apple frameworks.
-   FIND_LIBRARY(LLDB_LIBRARY LLDB PATHS ../libs)
-   MARK_AS_ADVANCED (LLDB_LIBRARY)
-   SET(EXTRA_LIBS ${LLDB_LIBRARY})
+	FIND_LIBRARY(LLDB_LIBRARY LLDB PATHS ../libs)
+   	MARK_AS_ADVANCED (LLDB_LIBRARY)
+  	SET(EXTRA_LIBS ${LLDB_LIBRARY})
 
 	FIND_LIBRARY(SYSTEM_LIBRARY NAMES System PATHS ../libs)
 	TARGET_LINK_LIBRARIES(novodbweb ${SYSTEM_LIBRARY})
@@ -29,13 +31,25 @@ IF(APPLE)
 	TARGET_LINK_LIBRARIES(novodbweb ${CRYPTO_LIBRARY})
 ENDIF (APPLE)
 
+FIND_LIBRARY(LLDB_LIBRARY lldb PATHS /usr/lib/llvm-3.4/lib)
+MARK_AS_ADVANCED (LLDB_LIBRARY)
+SET(EXTRA_LIBS ${LLDB_LIBRARY})
+
+
+FIND_LIBRARY(M_LIBRARY m)
+TARGET_LINK_LIBRARIES(novodbweb ${M_LIBRARY})
+
+
+
 message(STATUS ${Boost_LIBRARIES})
 message(STATUS ${Boost_INCLUDE_DIR})
-TARGET_LINK_LIBRARIES(novodbweb ${Boost_LIBRARIES})
 TARGET_LINK_LIBRARIES(novodbweb ${CIVETLIB})
 TARGET_LINK_LIBRARIES(novodbweb novolib)
 TARGET_LINK_LIBRARIES(novodbweb ${EXTRA_LIBS} )
 TARGET_LINK_LIBRARIES(novodbweb ${YARA_LIBRARY} )
 TARGET_LINK_LIBRARIES(novodbweb ${NETLIB} )
+TARGET_LINK_LIBRARIES(novodbweb ${Boost_LIBRARIES})
 
+FIND_LIBRARY(DL_LIBRARY dl)
+TARGET_LINK_LIBRARIES(novodbweb ${DL_LIBRARY})
 message(STATUS "Novodb Webserver files: ${NDB_WEB_CPP}")
