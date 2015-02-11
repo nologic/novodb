@@ -227,9 +227,18 @@ under certain conditions; see LICENSE.md for details.
       </div>
       <div class="modal-body">
       <form>
-        <input type="text" class="form-control" placeholder="Agent IP/Host" ng-model="con_agent_host">
+        <input type="text" class="form-control" placeholder="Agent IP/Host:port" ng-model="con_agent_host">
         <input type="text" class="form-control" placeholder="Port" value="4070" ng-model="con_agent_port">
       </form>
+
+      <p>
+        <span>Download Agent:</span><br>
+        <ul class="list-inline">
+          <li>[<a href="Novodbweb-20150204.tar.gz">For OSX</a>]</li>
+          <li>[<a href="novodbweb_linux-20150211.gz">For Ubuntu</a>]</li>
+        </ul>
+      </p>
+      
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" 
