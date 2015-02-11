@@ -5,7 +5,7 @@ FILE(GLOB NDB_WEB_CPP Independent/*.cpp
                       ${CMAKE_SYSTEM_NAME}/*.cpp)
 
 set(Boost_USE_STATIC_LIBS ON)
-FIND_PACKAGE(Boost COMPONENTS filesystem log system thread REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS regex filesystem log system thread REQUIRED)
 
 INCLUDE_DIRECTORIES(../libs/civetweb_include
 					../novodblib_src/Independent

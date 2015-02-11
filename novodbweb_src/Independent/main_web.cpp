@@ -71,7 +71,7 @@ namespace novo {
             if(req_info->query_string) {
                 url += "?" + std::string(req_info->query_string);
             }
-            
+
             ActionRequest a_req(url);
             ActionResponse response(ActionResponse::no_error());
             boost::property_tree::ptree output;
