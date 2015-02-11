@@ -9,7 +9,7 @@
 #include "lldb_module_commands.h"
 #include "enum_to_string.h"
 
-#include <regex>
+#include <boost/regex.hpp>
 
 namespace novo {
     
@@ -293,10 +293,10 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         size_t count = stol(req.at("count"));
         size_t max_matches = stol(req.at("max_matches"));
         
-        regex expression;
+        boost::regex expression;
         try {
             expression.assign(req.at("regex"));
-        } catch(regex_error& err) {
+        } catch(boost::regex_error& err) {
             return ActionResponse::error(err.what());
         }
         
@@ -314,10 +314,10 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
             ptree sym_out;
             last_index = s;
             
-            cmatch what;
+            boost::cmatch what;
             
-            if(regex_match(symbol.GetName(), what, expression) ||
-                 (symbol.GetMangledName() != NULL && regex_match(symbol.GetMangledName(), what, expression)) ) {
+            if(boost::regex_match(symbol.GetName(), what, expression) ||
+                 (symbol.GetMangledName() != NULL && boost::regex_match(symbol.GetMangledName(), what, expression)) ) {
 
                 to_json(symbol, sym_out, &session.target);
                 sym_list.push_back(make_pair("", sym_out));

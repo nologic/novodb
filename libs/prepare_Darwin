@@ -31,6 +31,7 @@ ln -i -s /usr/local/lib/libboost_log-mt.a libboost_log-mt.a && \
 ln -i -s /usr/local/lib/libboost_filesystem-mt.a libboost_filesystem-mt.a && \
 ln -i -s /usr/local/lib/libboost_system-mt.a libboost_system-mt.a && \
 ln -i -s /usr/local/lib/libboost_thread-mt.a libboost_thread-mt.a && \
+ln -i -s /usr/local/lib/libboost_regex.a libboost_regex.a && \
 
 ln -i -s src/gtest.framework gtest.framework && \
 ln -i -s src/LLDB.framework LLDB.framework && \
