@@ -9,3 +9,4 @@ yara_include
 gtest.framework
 libyara.a
 netlib_include
+lldb_headers
