@@ -1,8 +1,11 @@
 # Novodb - Deep inspection beyond debugging #
 
-Novodb is a platform for building inspection user interfaces.
+Novodb is a platform for building inspection user interfaces. It is particulary aimed at imporving binary analysis. Novodb leverages LLDB to build innovative debugging tools.
 
-A new way to debug software. A plugin architecture is designed to support many use cases by providing customization and extensibility.
+There are several major components:
+* Novodbweb is a webserver that provides a RESTful interface to LLDB and yara libraries. The server can be used by either Novodbui or the frontend on http://novodb.org
+* Nobodbui is a Chrome Embedded Frame work UI that provides a native type debugging UI for LLDB. It uses the same framework that is available on novodb.org. The JavaScript UI support custom plugins for building new analysis tools.
+* Novodblib is an underlying library that supports the other binary components mentioned above. The library supports a plugin architecture where developers can build extensions to support other inspection tools. 
 
 ## Use cases ##
 We aim to support the following use cases.
