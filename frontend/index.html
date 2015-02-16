@@ -216,7 +216,7 @@ under certain conditions; see LICENSE.md for details.
 
 <!-- Connect Screen -->
 <div class="modal fade" id="connect_screen" tabindex="-1" role="dialog" 
-     aria-labelledby="connect_screen_label" aria-hidden="true" style="z-index: 999999">
+     aria-labelledby="connect_screen_label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -227,8 +227,10 @@ under certain conditions; see LICENSE.md for details.
       </div>
       <div class="modal-body">
       <form>
-        <input type="text" class="form-control" placeholder="Agent IP/Host:port" ng-model="con_agent_host">
-        <input type="text" class="form-control" placeholder="Port" value="4070" ng-model="con_agent_port">
+        Agent IP/Host[:port]
+        <input class="form-control" 
+               placeholder="Agent IP/Host[:port]" ng-model="connect_agent_str"
+               ng-keyup="$event.keyCode == 13 ? connect_agent(connect_agent_str) : null">
       </form>
 
       <p>
@@ -242,7 +244,7 @@ under certain conditions; see LICENSE.md for details.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" 
-                ng-click="connect_agent(con_agent_host, con_agent_port)">Connect</button>
+                ng-click="connect_agent(connect_agent_str)">Connect</button>
       </div>
     </div>
   </div>

@@ -44,13 +44,26 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 	function($scope, $http, $compile, $timeout) {
         window.utils = create_utils($http);
         
-        $scope.connect_agent = function(con_agent_host, con_agent_port) {
+        $scope.connect_agent_str = "localhost:4070";
+
+        $scope.connect_agent = function(con_agent) {
+            var host = con_agent.split(":");
+            var port = host[1];
+
+            host = host[0];
+
+            if(port === undefined) {
+                port = "4070";
+            }
+
             window.path_to_url = function(plugin, path) {
-                return "http://" + con_agent_host + ":" + con_agent_port + "/" + plugin + 
+                return "http://" + host + ":" + port + "/" + plugin + 
                        "/" + path + "?callback=JSON_CALLBACK";
             };
 
             window.call_method = "JSONP";
+
+            $('#connect_screen').modal('hide');
 
             // start a session
             $scope.new_current_session();
