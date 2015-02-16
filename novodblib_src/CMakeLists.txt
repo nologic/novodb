@@ -5,9 +5,9 @@ FILE(GLOB NDB_LIB_CPP Independent/*.cpp
 
 INCLUDE_DIRECTORIES(../libs/netlib_include 
                     ../libs/yara_include
-		    ../libs/lldb_include
+		    		../libs/lldb_include
                     /usr/lib/llvm-3.4/include
-		    Independent)
+		    		Independent)
 
 
 ADD_LIBRARY(novolib STATIC ${NDB_LIB_CPP})
