@@ -801,6 +801,45 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
         return ActionResponse::no_error();
     }, PLAIN_NONBLOCK);
+    
+    req_router.register_path({"cmd", "lldb", "complete"}, {
+        RequestConstraint::has_int("session"),
+        RequestConstraint::has_int("maxmatches"),
+        RequestConstraint::has_int("cursor"),
+        RequestConstraint::exists({"cmd"})
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace lldb;
+        using namespace boost::property_tree;
+        
+        string session_id = req.at("session");
+        LldbProcessSession& session = sessions.get_session(session_id);
+        
+        SBDebugger debugger = session.target.GetDebugger();
+        
+        lldb::SBStringList result;
+        
+        string cmd = req.at("cmd");
+        uint32_t cursor = stoi(req.at("cursor"));
+        uint32_t maxElems = stoi(req.at("maxmatches"));
+        
+        int matches = debugger.GetCommandInterpreter().HandleCompletion(cmd.c_str(), cursor, 0, maxElems, result);
+        
+        ptree result_out;
+        
+        for(int i = 0; i < result.GetSize(); i++) {
+            const char* str = result.GetStringAtIndex(i);
+            ptree res_out;
+            
+            res_out.put("", string(str));
+            result_out.push_back(make_pair("", res_out));
+        }
+        
+        output.put("matches", std::to_string(matches));
+        output.add_child("results", result_out);
+        
+        return ActionResponse::no_error();
+    }, PLAIN_NONBLOCK);
 }
 
 }
