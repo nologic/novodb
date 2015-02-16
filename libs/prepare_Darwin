@@ -8,7 +8,7 @@ cd src/civetweb && \
 make lib WITH_CPP=1 && \
 cd ../../ && \
 
-cd src/cpp-netlib-0.11.0-final && \
+cd src/cpp-netlib-0.11.1-final && \
 cmake CMakeLists.txt && \
 make cppnetlib-uri && \
 cd ../../ && \
@@ -23,7 +23,7 @@ cd ../../ && \
 
 ln -i -s src/cef_binary_3.2217.1940_macosx64 cef_current && \
 
-ln -i -s src/cpp-netlib-0.11.0-final/libs/network/src/libcppnetlib-uri.a libcppnetlib-uri.a && \
+ln -i -s src/cpp-netlib-0.11.1-final/libs/network/src/libcppnetlib-uri.a libcppnetlib-uri.a && \
 ln -i -s src/civetweb/libcivetweb.a libcivetweb.a && \
 ln -i -s src/yara-3.2.0/libyara/.libs/libyara.a libyara.a && \
 
@@ -38,7 +38,7 @@ ln -i -s src/LLDB.framework LLDB.framework && \
 
 ln -i -s src/lldb_headers lldb_include && \
 ln -i -s src/yara-3.2.0/libyara/include yara_include && \
-ln -i -s src/cpp-netlib-0.11.0-final/ netlib_include && \
+ln -i -s src/cpp-netlib-0.11.1-final/ netlib_include && \
 ln -i -s src/civetweb/include civetweb_include && \
 
 touch prepared

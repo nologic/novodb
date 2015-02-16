@@ -11,6 +11,7 @@
 #include <memory>
 #include <queue>
 #include <algorithm>
+#include <iostream>
 
 extern "C" {
 	#include "yara.h"

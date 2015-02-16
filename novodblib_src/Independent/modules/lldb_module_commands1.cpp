@@ -10,6 +10,7 @@
 #include "enum_to_string.h"
 
 #include <boost/regex.hpp>
+#include <iostream>
 
 namespace novo {
     
