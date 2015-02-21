@@ -29,7 +29,7 @@ function create_ndb_session($http) {
     function extract_data(func) {
         return function(resp){
             if(func == undefined) {
-                return;
+                return resp.data;
             } else if(typeof(func) == "function") {
                 return func(resp.data);
             } else {
@@ -336,6 +336,14 @@ function create_ndb_session($http) {
             // returned means we've stopped.
             stepCount += 1;
         }, f_success]), f_fail);
+    };
+
+    NdbSession.prototype.lldbCmdComplete = function(cmd, cursor, maxmatches, f_success, f_fail) {
+        return url_get_passthrough("cmd/lldb/complete", {
+            session: session_id,
+            cmd: cmd,
+            cursor: cursor
+        }, extract_data(f_success), f_fail);
     };
 
     NdbSession.prototype.lldbCmdNoStep = function(cmd, f_success, f_fail) {

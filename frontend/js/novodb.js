@@ -72,7 +72,9 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
         $scope.new_current_session = function() {
             $scope.session = create_ndb_session($http);
-            window.session = $scope.session;
+            window.getCurrentSession = function() {
+                return $scope.session;
+            };
 
             // watch state
             var lastState = undefined;
@@ -136,16 +138,18 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
         register_command({
             cmd: "open",
+            quick_help: "[plugin name] ...",
             complete: function(params) {
-                if(params.length == 0) {
-                    return ["[plugin name] ..."];
-                } else {
-                    return window.plugin_specs.map(function(spec) {
-                        return spec.get_plugin_name();
-                    }).filter(function(name) {
-                        return name.startsWith(params[params.length - 1]);
-                    });
+                var startStr = (params.length > 0)?params[params.length - 1]:"";
+                var ret = [];
+
+                for(name in window.loaded_plugins) {
+                    if(name.startsWith(startStr)) {
+                        ret.push(name);
+                    }
                 }
+
+                return ret;
             },
 
             execute: function(params) {

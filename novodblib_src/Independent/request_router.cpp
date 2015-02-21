@@ -166,8 +166,24 @@ namespace RequestConstraint {
         });
     }
     
+    constraint has_addr(const std::string& key) {
+        return [&key](const ActionRequest& req) {
+            if(req.count(key) == 0) {
+                return Valid::aint("Key required: " + key);
+            } else {
+                try {
+                    std::stoull(req.at(key), 0, 16);
+                    
+                    return Valid();
+                } catch(std::invalid_argument& ex) {
+                    return Valid::aint("Value not address for: " + key + "(" + std::string(ex.what()) + ")");
+                }
+            }
+        };
+    }
+    
     constraint has_int(const std::string& key, int_bounds_check chfn) {
-        return [key, chfn] (const ActionRequest& req) {
+        return [&key, chfn] (const ActionRequest& req) {
             if(req.count(key) == 0) {
                 return Valid::aint("Key required: " + key);
             } else {

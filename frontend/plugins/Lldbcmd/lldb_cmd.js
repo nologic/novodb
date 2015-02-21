@@ -59,9 +59,11 @@
     // register commands
     register_command({
         cmd: "lldb",
-        session_required: true,
-        complete: function(params, _session) {
-            return ["[lldb command pass through]"];
+        quick_help: "[lldb command pass through]",
+        complete: function(cmdline, params, cursor, _session) {
+            return _session.lldbCmdComplete(params.join(' '), cursor - 5).then(function(data) {
+                return data.results;
+            });
         },
 
         execute: function(params, _session) {

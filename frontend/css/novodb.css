@@ -19,7 +19,7 @@ body {
     right: 0px;
     margin-bottom: 0px;
     overflow: scroll;
-    z-index: 99999
+    z-index: 1000
 }
 
 .operative_text {
@@ -91,7 +91,7 @@ body {
     border-bottom-right-radius: 8px;
     padding-top: 4px;
     padding-bottom: 4px;
-    z-index: 99999;
+    z-index: 1000;
 }
 
 .sidenavbar_item {

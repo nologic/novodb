@@ -805,7 +805,6 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
     
     req_router.register_path({"cmd", "lldb", "complete"}, {
         RequestConstraint::has_int("session"),
-        RequestConstraint::has_int("maxmatches"),
         RequestConstraint::has_int("cursor"),
         RequestConstraint::exists({"cmd"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
@@ -822,9 +821,8 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
         string cmd = req.at("cmd");
         uint32_t cursor = stoi(req.at("cursor"));
-        uint32_t maxElems = stoi(req.at("maxmatches"));
         
-        int matches = debugger.GetCommandInterpreter().HandleCompletion(cmd.c_str(), cursor, 0, maxElems, result);
+        int matches = debugger.GetCommandInterpreter().HandleCompletion(cmd.c_str(), cursor, 0, -1, result);
         
         ptree result_out;
         
