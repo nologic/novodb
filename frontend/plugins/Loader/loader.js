@@ -249,6 +249,18 @@
                             }
                         }
                     });
+
+                    register_command({
+                        cmd: "sessions",
+                        complete: function(params) {
+                            return ["(Get session state)"];
+                        },
+
+                        execute: function(params) {
+                            session.listSessions(log, log);
+                        }
+                    });
+
                 }
             ]);
         },

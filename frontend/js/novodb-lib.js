@@ -117,6 +117,24 @@ function create_ndb_session($http) {
     }
 
     // backend function
+    NdbSession.prototype.listSessions = function(f_success, f_fail) {
+        url_get_passthrough("sessions", {
+        }, extract_data(f_success), f_fail);
+    };
+
+    NdbSession.prototype.attachSession = function(sdata, f_success, f_fail) {
+        attachInfo = sdata;
+
+        session_id = sdata.session;
+        selectedThread = {
+            tid: sdata.current_tid
+        };
+
+        setTimeout(function(){
+            f_success(sdata);
+        }, 0);
+    };
+
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
         url_get_passthrough("create/target/attach", {
             pid: proc_pid

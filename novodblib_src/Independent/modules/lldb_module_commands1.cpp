@@ -40,6 +40,29 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         return ActionResponse::no_error();
     });
     
+    req_router.register_path({"sessions"}, {
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace boost::property_tree;
+        
+        ptree session_list;
+        cout << sessions.size() << endl;
+        for(auto s_ent = begin(sessions); s_ent != end(sessions); s_ent++) {
+            ptree sess_out;
+            LldbProcessSession& session = s_ent->second;
+            
+            sess_out.put("session", s_ent->first);
+            sess_out.put("current_tid", std::to_string(session.process.GetSelectedThread().GetThreadID()));
+            sess_out.put("triple", session.target.GetTriple());
+            
+            session_list.push_back(make_pair("", sess_out));
+        }
+        
+        output.put_child("sessions", session_list);
+        
+        return ActionResponse::no_error();
+    });
+ 
     req_router.register_path({"create", "target", "exe"}, {
         RequestConstraint::exists({"path"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
