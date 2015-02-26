@@ -17,8 +17,21 @@
                 function ($scope, $http, $compile) {
                     var session = $scope.$parent.session;
 
+                    // defaults
+                    $scope.show_defaults = {
+                        'x86_64': ['rip', 'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp', 'rsp'],
+                        'armv7s': ['pc', 'sp']
+                    };
+
                     $scope.reg_props = {};
-                    $scope.showregs_x86_64 = ['rip', 'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp', 'rsp'];
+                    $scope.showregs = [];
+
+                    $scope.arch = session.get_architecture();
+                    if($scope.arch in $scope.show_defaults) {
+                        $scope.showregs = $scope.show_defaults[$scope.arch];
+                    } else {
+                        log("no register detaults for architecture: " + $scope.arch);
+                    }
 
                     $scope.readRegisters = function() {
                         session.readRegisters(0, 0, function(data) {
@@ -58,8 +71,6 @@
                     session.add_destroy_listener(rem);
 
                     $scope.readRegisters();
-
-                    $scope.arch = session.get_attach_info().triple.split("-")[0];
                 }
             ]).filter('selectedRegs', function() {
                 return function(regs, tags) {

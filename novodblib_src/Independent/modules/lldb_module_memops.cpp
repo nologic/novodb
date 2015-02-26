@@ -315,7 +315,7 @@ namespace novo {
 void register_memops(RequestRouter& req_router, LldbSessionMap& sessions) {
     req_router.register_path({"read", "memory"}, {
         RequestConstraint::has_int("session"),
-        RequestConstraint::exists({"address"}),
+        RequestConstraint::has_addr({"address"}),
         RequestConstraint::has_int("count")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         string session_id = req.at("session");

@@ -49,13 +49,16 @@
                         DTColumnBuilder.newColumn('path').withTitle('Path').notVisible()
                     ];
 
+                    function in_process() {
+                        $scope.$parent.closePlugin();
+                        session.getProcState();
+                    }
+
                     $scope.attach = function(proc) {
                         log("Attaching to " + proc.pid + ":" + proc.name + " ...");
                         session.attach(proc.pid, function(data) {
                             log(data);
-
-                            $scope.$parent.closePlugin();
-                            session.getProcState();
+                            in_process();
 
                             log("Attached to " + proc.pid + ":" + proc.name);
                         });
@@ -64,7 +67,16 @@
                     $scope.connect = function(hostport) {
                         var url = "connect://" + hostport;
 
-                        session.connect(url, log);
+                        session.connect(url, function(data) {
+                            log(data);
+
+                            in_process();
+
+                            log("connected to " + hostport);
+                        }, function(data){
+                            log(data);
+                            log("unable to connect to " + hostport);
+                        });
                     };
 
                     // register the loader commands:

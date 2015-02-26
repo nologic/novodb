@@ -112,6 +112,10 @@ function create_ndb_session($http) {
         return attachInfo;
     };
 
+    NdbSession.prototype.get_architecture = function() {
+        return attachInfo.triple.split("-")[0];
+    }
+
     // backend function
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
         url_get_passthrough("create/target/attach", {
@@ -275,7 +279,8 @@ function create_ndb_session($http) {
             thread: thread
         }, extract_data([function(data) {
             currentPc = data.registers[0].values.filter(function(regval) {
-                return regval.name == "rip" || regval.name == "eip";
+                // not general, but ok for now.
+                return regval.name == "rip" || regval.name == "eip" || regval.name == "pc";
             })[0];
         }, f_success]), f_fail);
     };
