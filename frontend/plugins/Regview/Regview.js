@@ -34,7 +34,7 @@
                     }
 
                     $scope.readRegisters = function() {
-                        session.readRegisters(0, 0, function(data) {
+                        session.readRegisters(undefined, undefined, function(data) {
                             $scope.reg_props = data.registers.reduce(function(acc, regset) {
                                 regset.values.reduce(function(acc2, reg) {
                                     acc2[reg.name] = reg.value;

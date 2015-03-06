@@ -17,6 +17,12 @@
                 function ($scope, $http, $compile, DTOptionsBuilder, DTColumnBuilder) {
                     var session = $scope.$parent.session;
 
+                    $scope.sessions = [];
+                    // load the sessions
+                    session.listSessions(function(data) {
+                        $scope.sessions = data.sessions;
+                    });
+
                     $scope.dtOptions = 
                         DTOptionsBuilder.fromFnPromise(function() {
                             return utils.proc_list(function (data) {
@@ -76,6 +82,15 @@
                         }, function(data){
                             log(data);
                             log("unable to connect to " + hostport);
+                        });
+                    };
+
+                    $scope.attachSession = function(s) {
+                        session.attachSession(s, function(data) {
+                            in_process();
+
+                            log("Attached to session");
+                            log(s);
                         });
                     };
 

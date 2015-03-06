@@ -446,20 +446,21 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
     
     req_router.register_path({"list", "registers"}, {
         RequestConstraint::has_int("session"),
-        RequestConstraint::has_int("thread"),
+        RequestConstraint::has_int("tid"),
         RequestConstraint::has_int("frame")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int thread_ind = stoi(req.at("thread"));
+        int tid = stoi(req.at("tid"));
         int frame_ind  = stoi(req.at("frame"));
         
         string session_id = req.at("session");
         LldbProcessSession& session = sessions.get_session(session_id);
         
-        SBFrame frame = session.process.GetThreadAtIndex(thread_ind).GetFrameAtIndex(frame_ind);
+        SBThread thread = session.process.GetThreadByID(tid);
+        SBFrame frame = thread.GetFrameAtIndex(frame_ind);
         
         SBValueList reg_vals = frame.GetRegisters();
         ptree regvals;
@@ -532,7 +533,8 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
             output.put("state", to_string(state));
             output.put("description", state_type_to_string(state));
-            output.put("thread", to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("current_tid", to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("frame", to_string(session.process.GetSelectedThread().GetSelectedFrame().GetFrameID()));
         }
         
         return ActionResponse::no_error();
@@ -709,7 +711,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         SBThread thread = session.process.GetThreadByID(tid);
         
         if(thread.IsValid()) {
-            thread.StepInstruction(false);
+            thread.StepInto();
         } else {
             return ActionResponse::error("Invalid thread selected");
         }
