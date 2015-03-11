@@ -686,6 +686,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
             inst_out.put("branch", to_string(inst.DoesBranch()));
             inst_out.put("valid", to_string(inst.IsValid()));
             inst_out.put("comment", string(inst.GetComment(session.target)));
+            inst_out.put("address", to_string(inst.GetAddress().GetLoadAddress(session.target)));
             
             insts_out.push_back(make_pair("", inst_out));
         }
@@ -711,7 +712,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         SBThread thread = session.process.GetThreadByID(tid);
         
         if(thread.IsValid()) {
-            thread.StepInto();
+            thread.StepInstruction(false);
         } else {
             return ActionResponse::error("Invalid thread selected");
         }
@@ -778,6 +779,9 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         if(error.Fail()) {
             ActionResponse::error(error.GetCString());
         } else {
+            SBDebugger debugger = session.target.GetDebugger();
+            SBDebugger::Destroy(debugger);
+            
             sessions.erase(session_id);
         }
         

@@ -132,7 +132,7 @@
             if(call_method == "JSONP" && 'data' in resp) {
                 // mask it to make it look like we did a regular GET.
                 resp.status = resp.data.code;
-                resp.statusText = resp.msg;
+                resp.statusText = resp.data.msg;
                 resp.data = resp.data.output;
             }
             
