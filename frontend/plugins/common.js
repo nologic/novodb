@@ -76,6 +76,11 @@ var EVENT = {
     ipchange: "ip-change"
 };
 
+var PLUGIN_TYPE = {
+    console: "console",
+    windowed: "windowed"
+};
+
 function dispatch_event(type, params, plugin_type, plugin_instance) {
     var event = new Event(type);
     event.params = params;
