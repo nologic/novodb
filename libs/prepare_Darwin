@@ -8,7 +8,9 @@ cd src/civetweb && \
 make lib WITH_CPP=1 && \
 cd ../../ && \
 
-cd src/cpp-netlib-0.11.1-final && \
+cd src && \
+tar xvfz cpp-netlib-0.11.1-final.tar.gz && \
+cd cpp-netlib-0.11.1-final && \
 cmake CMakeLists.txt && \
 make cppnetlib-uri && \
 cd ../../ && \

@@ -61,6 +61,7 @@ namespace novo {
         // the constraint validators
         constraint exists(const std::vector<std::string>& keys);
         constraint exists_or(const std::vector<std::string>& keys);
+        constraint has_addr(const std::string& key);
         constraint has_int(const std::string& key, int min = INT_MIN, int max = INT_MAX);
         constraint has_int(const std::string& key, int_bounds_check chfn);
         constraint matches(const std::string& key, const std::string& regex);

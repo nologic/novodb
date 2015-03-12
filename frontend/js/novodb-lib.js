@@ -78,7 +78,7 @@ function create_ndb_session($http) {
 
             if(call_method == "JSONP" && 'data' in resp) {
                 resp.status = resp.data.code;
-                resp.statusText = resp.msg;
+                resp.statusText = resp.data.msg;
                 resp.data = resp.data.output;
             }
 
@@ -112,7 +112,29 @@ function create_ndb_session($http) {
         return attachInfo;
     };
 
+    NdbSession.prototype.get_architecture = function() {
+        return attachInfo.triple.split("-")[0];
+    }
+
     // backend function
+    NdbSession.prototype.listSessions = function(f_success, f_fail) {
+        url_get_passthrough("sessions", {
+        }, extract_data(f_success), f_fail);
+    };
+
+    NdbSession.prototype.attachSession = function(sdata, f_success, f_fail) {
+        attachInfo = sdata;
+
+        session_id = sdata.session;
+        selectedThread = {
+            tid: sdata.current_tid
+        };
+
+        setTimeout(function(){
+            f_success(sdata);
+        }, 0);
+    };
+
     NdbSession.prototype.attach = function(proc_pid, f_success, f_fail) {
         url_get_passthrough("create/target/attach", {
             pid: proc_pid
@@ -269,13 +291,22 @@ function create_ndb_session($http) {
     };
 
     NdbSession.prototype.readRegisters = function(frame, thread, f_success, f_fail) {
+        if(thread === undefined) {
+            thread = selectedThread.tid;
+        }
+
+        if(frame === undefined) {
+            frame = procState.frame;
+        }
+
         return url_get_passthrough("list/registers", {
             session: session_id,
             frame: frame,
-            thread: thread
+            tid: thread
         }, extract_data([function(data) {
             currentPc = data.registers[0].values.filter(function(regval) {
-                return regval.name == "rip" || regval.name == "eip";
+                // not general, but ok for now.
+                return regval.name == "rip" || regval.name == "eip" || regval.name == "pc";
             })[0];
         }, f_success]), f_fail);
     };

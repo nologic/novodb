@@ -40,6 +40,29 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         return ActionResponse::no_error();
     });
     
+    req_router.register_path({"sessions"}, {
+    }, [&sessions] ACTION_CALLBACK(req, output) {
+        using namespace std;
+        using namespace boost::property_tree;
+        
+        ptree session_list;
+        cout << sessions.size() << endl;
+        for(auto s_ent = begin(sessions); s_ent != end(sessions); s_ent++) {
+            ptree sess_out;
+            LldbProcessSession& session = s_ent->second;
+            
+            sess_out.put("session", s_ent->first);
+            sess_out.put("current_tid", std::to_string(session.process.GetSelectedThread().GetThreadID()));
+            sess_out.put("triple", session.target.GetTriple());
+            
+            session_list.push_back(make_pair("", sess_out));
+        }
+        
+        output.put_child("sessions", session_list);
+        
+        return ActionResponse::no_error();
+    });
+ 
     req_router.register_path({"create", "target", "exe"}, {
         RequestConstraint::exists({"path"})
     }, [&sessions] ACTION_CALLBACK(req, output) {
@@ -423,20 +446,21 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
     
     req_router.register_path({"list", "registers"}, {
         RequestConstraint::has_int("session"),
-        RequestConstraint::has_int("thread"),
+        RequestConstraint::has_int("tid"),
         RequestConstraint::has_int("frame")
     }, [&sessions] ACTION_CALLBACK(req, output) {
         using namespace std;
         using namespace lldb;
         using namespace boost::property_tree;
         
-        int thread_ind = stoi(req.at("thread"));
+        int tid = stoi(req.at("tid"));
         int frame_ind  = stoi(req.at("frame"));
         
         string session_id = req.at("session");
         LldbProcessSession& session = sessions.get_session(session_id);
         
-        SBFrame frame = session.process.GetThreadAtIndex(thread_ind).GetFrameAtIndex(frame_ind);
+        SBThread thread = session.process.GetThreadByID(tid);
+        SBFrame frame = thread.GetFrameAtIndex(frame_ind);
         
         SBValueList reg_vals = frame.GetRegisters();
         ptree regvals;
@@ -509,7 +533,8 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         
             output.put("state", to_string(state));
             output.put("description", state_type_to_string(state));
-            output.put("thread", to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("current_tid", to_string(session.process.GetSelectedThread().GetThreadID()));
+            output.put("frame", to_string(session.process.GetSelectedThread().GetSelectedFrame().GetFrameID()));
         }
         
         return ActionResponse::no_error();
@@ -661,6 +686,7 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
             inst_out.put("branch", to_string(inst.DoesBranch()));
             inst_out.put("valid", to_string(inst.IsValid()));
             inst_out.put("comment", string(inst.GetComment(session.target)));
+            inst_out.put("address", to_string(inst.GetAddress().GetLoadAddress(session.target)));
             
             insts_out.push_back(make_pair("", inst_out));
         }
@@ -753,6 +779,9 @@ void register_commands(RequestRouter& req_router, LldbSessionMap& sessions) {
         if(error.Fail()) {
             ActionResponse::error(error.GetCString());
         } else {
+            SBDebugger debugger = session.target.GetDebugger();
+            SBDebugger::Destroy(debugger);
+            
             sessions.erase(session_id);
         }
         

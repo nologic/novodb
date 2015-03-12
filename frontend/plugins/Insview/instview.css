@@ -1,0 +1,23 @@
+.instview_plugin {
+}
+
+.instview_plugin .instructions .address {
+	padding-right: 5px
+}
+
+.instview_plugin .list_mod {
+	cursor: default;
+	display: block;
+}
+
+.instview_plugin .mod_list_container {
+	height: 300px; 
+	width: 30%; 
+	overflow: scroll;
+	overflow-x: hidden;
+	display: block;
+}
+
+.instview_plugin .modSelected {
+	color: red;
+}
