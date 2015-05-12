@@ -109,8 +109,6 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
 
         $scope.detach = function() {
             $scope.session.detach(function(data){
-                $('.plugin-outer').remove();
-
                 $scope.session.destroy();
                 $scope.new_current_session();
 
@@ -119,6 +117,40 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                 log("process detached");
             });
         }
+
+        window.myLayout = new GoldenLayout({
+            content:[{
+                type: 'row',
+                isClosable: false,
+                content: []
+            }]
+        }, $('#plugins_container'));
+
+        window.myLayout.registerComponent( 'angularModule', function( container, state ) {
+            state.store_item(container);
+
+            element = container.getElement();
+            element.html( state.template );
+
+            angular
+                .module( state.module )
+                .value( 'container', container )
+                .value( 'state', state );
+
+            angular.bootstrap( element[ 0 ], [ state.module ] );
+        });
+
+        window.myLayout.init();
+
+        function resizedw(){
+            window.myLayout.updateSize();
+        }
+
+        var doit;
+        window.onresize = function(){
+          clearTimeout(doit);
+          doit = setTimeout(resizedw, 100);
+        };
 
         $scope.plugins = [];
         $scope.instantiatePlugin = function(pluginName, params) {
@@ -185,49 +217,37 @@ novo.config(function(/*$routeProvider, */$controllerProvider, $compileProvider, 
                     
                     angular.extend(s, d); //copy data onto it
 
-                    s.moveUp = function() {
-                        var prev = compiled.prev();
-                        
-                        if(prev != undefined) {
-                            compiled.insertBefore(prev);
-                        }
-                    }
-
-                    s.moveDown = function() {
-                        var next = compiled.next();
-
-                        if(next != undefined) {
-                            compiled.insertBefore(prev);
-                        }
-                    }
-
                     s.closePlugin = function() {
-                        compiled.remove();
-                    }
-
-                    s.moveLeft = function() {
-                        console.info("moveleft");
-                    }
-
-                    s.moveRight = function() {
-                        console.info("moveright");
+                        window.myLayout.removeChild(s.window_id);
                     }
 
                     var template = 
-                        '<div class="plugin-outer">' +
-                        '  <div class="plugin-toolbar noselect">' + 
-                        '    <span class="blue" style="padding-bottom: 5px">' + d.name + '</span>' +
-                        '    <span ng-click="moveUp()" class="glyphicon glyphicon-circle-arrow-up blue" aria-hidden="true"></span>' +
-                        '    <span ng-click="moveDown()" class="glyphicon glyphicon-circle-arrow-down blue" aria-hidden="true"></span>' +
-                        '    <span ng-click="closePlugin()" class="glyphicon glyphicon-remove-circle red" aria-hidden="true"></span>' +
-                        '  </div>' +
-                        '  <div class="plugin-container" ndb-Plugin-' + d.name + ' ng-controller="ndbPlugin' + d.name + '">' + 
-                        '  </div>' +
-                        '</div>'
+                        '<div class="plugin-container" ndb-Plugin-' + d.name + 
+                        ' ng-controller="ndbPlugin' + d.name + '"></div>';
 
                     var compiled = $compile(template)(s);
 
-                    elem.append(compiled); // compile template & append
+                    var contentItem = null;
+
+                    window.myLayout.root.contentItems[0].addChild({
+                        width: 20,
+                        title: d.name,
+                        type: 'component',
+                        componentName: 'angularModule',
+                        componentState: {
+                            module: 'novodb',
+                            template: compiled,
+                            store_item: function(item) {
+                                // a very convoluted way of obtaining the container item
+                                // called in the angularModule function.
+                                contentItem = item;
+                            }
+                        }
+                    });
+
+                    s.closePlugin = function() {
+                        contentItem.close();
+                    };
                 }
             }, true); //look deep into object
         }

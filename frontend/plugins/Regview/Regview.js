@@ -20,7 +20,7 @@
                     // defaults
                     $scope.show_defaults = {
                         'x86_64': ['rip', 'rax', 'rbx', 'rcx', 'rdx', 'rdi', 'rsi', 'rbp', 'rsp'],
-                        'armv7s': ['pc', 'sp']
+                        'armv7s': ['pc', 'sp', 'lr', 'r0']
                     };
 
                     $scope.reg_props = {};

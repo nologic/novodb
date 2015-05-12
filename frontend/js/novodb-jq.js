@@ -34,7 +34,7 @@ $( document ).ready(function() {
             greetings: "[[i;red;]Welcome to Novodb. Enjoy your debugging experience!]",
             exit: false,
             clear: false,
-            completion: function(term, command, callback) { //function(event, term) {
+            completion: function(term, command, callback) {
                 // tab completion
                 var cmdLine = term.get_command();
                 var cmdText = $.terminal.split_command(cmdLine);
@@ -64,8 +64,8 @@ $( document ).ready(function() {
                         callback(compl);
                     }
                 }
-        }
-    });
+            }
+        });
 
     window.output = function(txt) {
         $('#footer_terminal').terminal().echo(txt);
